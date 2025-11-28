@@ -11,12 +11,7 @@
     </div>
 
     <div class="top-actions">
-      <button
-        class="notif-btn"
-        type="button"
-        (click)="openNotifications()"
-        title="Notifikasi"
-      >
+      <button class="notif-btn" type="button" (click)="openNotifications()" title="Notifikasi">
         🔔
       </button>
 
@@ -39,7 +34,12 @@
 
     <!-- DROPDOWN USER MENU -->
     <div class="user-menu" *ngIf="showMenu">
-      <div class="menu-item" *ngIf="userRole === 'auditorium_admin'" (click)="goAdmin()">Admin Dashboard</div>
+      <div class="menu-item" *ngIf="userRole === 'auditorium_admin'" (click)="goAdmin()">
+        Admin Dashboard
+      </div>
+      <div class="menu-item" *ngIf="userRole === 'organizer'" (click)="goOrganizer()">
+        Dashboard
+      </div>
       <div class="menu-item" (click)="logout()">Logout</div>
     </div>
   </header>
@@ -51,15 +51,10 @@
         <p class="hero-label">Now Showing</p>
         <h1 class="hero-title">{{ movies[0].title }}</h1>
         <p class="hero-subtitle">
-          {{ movies[0].genre }} · Rating
-          {{ movies[0].rating | number : '1.1-1' }} ·
-          {{ movies[0].duration }}
+          {{ movies[0].genre }} · Rating {{ movies[0].rating | number : '1.1-1' }} · {{
+          movies[0].duration }}
         </p>
-        <button
-          class="hero-btn"
-          type="button"
-          (click)="goMovie(movies[0].id)"
-        >
+        <button class="hero-btn" type="button" (click)="goMovie(movies[0].id)">
           See today's schedule
         </button>
       </div>
@@ -94,16 +89,10 @@
       </div>
 
       <div class="movie-scroll">
-        <div
-          class="movie-tile"
-          *ngFor="let movie of movies"
-          (click)="goMovie(movie.id)"
-        >
+        <div class="movie-tile" *ngFor="let movie of movies" (click)="goMovie(movie.id)">
           <div class="tile-poster">
             <img [src]="movie.poster" [alt]="movie.title" />
-            <div class="tile-rating">
-              ★ {{ movie.rating | number : '1.1-1' }}
-            </div>
+            <div class="tile-rating">★ {{ movie.rating | number : '1.1-1' }}</div>
             <div class="tile-badge new" *ngIf="movie.isNew">NEW</div>
             <div class="tile-badge imax" *ngIf="movie.isImax">IMAX</div>
           </div>
@@ -123,17 +112,11 @@
       </div>
 
       <div class="movie-grid">
-        <div
-          class="movie-card"
-          *ngFor="let movie of movies"
-          (click)="goMovie(movie.id)"
-        >
+        <div class="movie-card" *ngFor="let movie of movies" (click)="goMovie(movie.id)">
           <div class="poster-wrap">
             <img [src]="movie.poster" [alt]="movie.title" />
             <div class="age-badge">{{ movie.ageRating }}</div>
-            <div class="rating-badge">
-              ★ {{ movie.rating | number : '1.1-1' }}
-            </div>
+            <div class="rating-badge">★ {{ movie.rating | number : '1.1-1' }}</div>
             <div class="corner-tag imax" *ngIf="movie.isImax">IMAX</div>
             <div class="corner-tag new" *ngIf="movie.isNew">NEW</div>
           </div>
@@ -160,11 +143,7 @@
       <div class="nav-icon">🏠</div>
       <div class="nav-label">Home</div>
     </button>
-    <button
-      class="nav-item"
-      type="button"
-      (click)="router.navigate(['/tiket-saya'])"
-    >
+    <button class="nav-item" type="button" (click)="router.navigate(['/tiket-saya'])">
       <div class="nav-icon">🎟️</div>
       <div class="nav-label">Tickets</div>
     </button>

@@ -239,6 +239,10 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/admin-dashboard']);
   }
 
+  goOrganizer() {
+    this.router.navigate(['/dashboard']);
+  }
+
   logout() {
     localStorage.removeItem('tix-current-user');
     this.router.navigate(['/login']);

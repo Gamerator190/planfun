@@ -1,169 +1,189 @@
 <div class="dashboard">
-  <!-- HEADER -->
-  <div class="dashboard-header">
-    <h1 class="header-title">Event Organizer Dashboard</h1>
-    <p class="header-subtitle">Manage events, organizers, and system analytics</p>
-  </div>
+  <!-- TOP BAR HEADER -->
+  <header class="top-bar">
+    <div class="brand">
+      <div class="logo">PLAN<span>FUN</span></div>
+    </div>
 
-  <!-- ACTION BUTTONS -->
-  <div class="action-buttons">
-    <button class="btn" (click)="showChoice('analytics-reports')">
-      📊 Analytics Reports
-    </button>
-    <button class="btn" (click)="showChoice('create-event')">
-      ➕ Create Event
-    </button>
-    <button class="btn" (click)="showChoice('edit-event')">
-      ✏️ Edit Event
-    </button>
-  </div>
+    <div class="top-actions">
+      <button class="notif-btn" type="button" (click)="openNotifications()" title="Notifikasi">
+        🔔
+      </button>
 
-  <!-- CREATE EVENT SECTION -->
-  @if(activeChoice === 'create-event') {
-  <div class="card">
-    <div class="card-body">
-      <h2 class="card-title">Create New Event</h2>
-      
-      <div class="form-row">
-        <div class="form-group">
-          <label for="event-title">Event Title *</label>
-          <input 
-            type="text" 
-            id="event-title" 
-            name="event-title" 
-            placeholder="Enter event name"
-          />
+      <div class="user-pill" (click)="toggleUserMenu()">
+        <div class="avatar-wrap">
+          <div class="avatar-glow"></div>
+          <div class="avatar">{{ userName[0] || 'A' }}</div>
         </div>
-        <div class="form-group">
-          <label for="event-location">Event Location *</label>
-          <input 
-            type="text" 
-            id="event-location" 
-            name="event-location" 
-            placeholder="e.g., Main Auditorium"
-          />
+
+        <div class="user-meta">
+          <div class="hello">Hi 👋</div>
+          <div class="name">{{ userName }}</div>
+        </div>
+
+        <div class="icon">
+          <span>▾</span>
         </div>
       </div>
+    </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label for="event-date">Event Date *</label>
-          <input 
-            type="date" 
-            id="event-date" 
-            name="event-date"
-          />
-        </div>
-        <div class="form-group">
-          <label for="event-time">Event Time *</label>
-          <input 
-            type="time" 
-            id="event-time" 
-            name="event-time"
-          />
-        </div>
-      </div>
+    <!-- DROPDOWN USER MENU -->
+    <div class="user-menu" *ngIf="showMenu">
+      <div class="menu-item" (click)="goHome()">Homepage</div>
+      <div class="menu-item" (click)="logout()">Logout</div>
+    </div>
+  </header>
 
-      <div class="form-group">
-        <label for="event-description">Event Description</label>
-        <textarea 
-          id="event-description" 
-          name="event-description"
-          placeholder="Enter event details and description..."
-        ></textarea>
-      </div>
+  <!-- MAIN CONTENT -->
+  <main class="dashboard-content">
+    <!-- HEADER -->
+    <div class="dashboard-header">
+      <h1 class="content-title">Event Organizer Dashboard</h1>
+      <p class="content-subtitle">Manage events and system analytics</p>
+    </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label for="event-promo-code">Promo Code (Optional)</label>
-          <input 
-            type="text" 
-            id="event-promo-code" 
-            name="event-promo-code" 
-            placeholder="e.g., SUMMER20"
-          />
-        </div>
-        <div class="form-group">
-          <label for="event-discount">Discount Value %</label>
-          <div class="discount-row">
-            <input 
-              type="number" 
-              id="event-discount" 
-              name="event-discount" 
-              placeholder="0"
-              min="0"
-              max="100"
+    <!-- ACTION BUTTONS -->
+    <div class="action-buttons">
+      <button class="btn" (click)="showChoice('analytics-reports')">📊 Analytics Reports</button>
+      <button class="btn" (click)="showChoice('create-event')">➕ Create Event</button>
+      <button class="btn" (click)="showChoice('edit-event')">✏️ Edit Event</button>
+    </div>
+
+    <!-- CREATE EVENT SECTION -->
+    @if(activeChoice === 'create-event') {
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">Create New Event</h2>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="event-title">Event Title</label>
+            <input type="text" id="event-title" name="event-title" placeholder="Enter event name" />
+          </div>
+          <div class="form-group">
+            <label for="event-location">Event Location</label>
+            <input
+              type="text"
+              id="event-location"
+              name="event-location"
+              placeholder="e.g., Main Auditorium"
             />
-            <span>%</span>
           </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="event-poster">Event Poster (Optional)</label>
-        <input 
-          type="file" 
-          id="event-poster" 
-          name="event-poster" 
-          accept="image/*"
-        />
-      </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="event-date">Event Date</label>
+            <input type="date" id="event-date" name="event-date" />
+          </div>
+          <div class="form-group">
+            <label for="event-time">Event Time</label>
+            <input type="time" id="event-time" name="event-time" />
+          </div>
+        </div>
 
-      <div class="form-actions">
-        <button class="form-btn form-btn-submit" type="button">Create Event</button>
-        <button class="form-btn form-btn-cancel" type="button" (click)="showChoice('')">Cancel</button>
+        <div class="form-group">
+          <label for="event-description">Event Description</label>
+          <textarea
+            id="event-description"
+            name="event-description"
+            placeholder="Enter event details and description..."
+          ></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="event-promo-code">Promo Code (Optional)</label>
+            <input
+              type="text"
+              id="event-promo-code"
+              name="event-promo-code"
+              placeholder="e.g., SUMMER20"
+            />
+          </div>
+          <div class="form-group">
+            <label for="event-discount">Discount Value %</label>
+            <div class="discount-row">
+              <input
+                type="number"
+                id="event-discount"
+                name="event-discount"
+                placeholder="0"
+                min="0"
+                max="100"
+              />
+              <span>%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="event-poster">Event Poster (Optional)</label>
+          <input type="file" id="event-poster" name="event-poster" accept="image/*" />
+        </div>
+
+        <div class="form-actions">
+          <button class="form-btn form-btn-submit" type="button">Create Event</button>
+          <button class="form-btn form-btn-cancel" type="button" (click)="showChoice('')">
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-  }
+    }
 
-  <!-- EDIT EVENT SECTION -->
-  @else if(activeChoice === 'edit-event') {
-  <div class="card">
-    <div class="card-body">
-      <h2 class="card-title">Edit Event</h2>
-      
-      <div class="form-group">
-        <label for="select-event">Select Event to Edit</label>
-        <select id="select-event" name="select-event">
-          <option value="">Choose an event...</option>
-          <option value="1">Summer Concert 2025</option>
-          <option value="2">Tech Conference</option>
-          <option value="3">Film Festival</option>
-        </select>
-      </div>
+    <!-- EDIT EVENT SECTION -->
+    @else if(activeChoice === 'edit-event') {
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">Edit Event</h2>
 
-      <div class="placeholder-content">
-        <div class="placeholder-icon">📝</div>
-        <p class="placeholder-text">Select an event to begin editing</p>
-      </div>
+        <div class="form-group">
+          <label for="select-event">Select Event to Edit</label>
+          <select id="select-event" name="select-event">
+            <option value="">Choose an event...</option>
+            <option value="1">Summer Concert 2025</option>
+            <option value="2">Tech Conference</option>
+            <option value="3">Film Festival</option>
+          </select>
+        </div>
 
-      <div class="form-actions">
-        <button class="form-btn form-btn-submit" type="button">Update Event</button>
-        <button class="form-btn form-btn-cancel" type="button" (click)="showChoice('')">Cancel</button>
-      </div>
-    </div>
-  </div>
-  }
+        <div class="placeholder-content">
+          <div class="placeholder-icon">📝</div>
+          <p class="placeholder-text">Select an event to begin editing</p>
+        </div>
 
-  <!-- ANALYTICS & REPORTS SECTION -->
-  @else if(activeChoice === 'analytics-reports') {
-  <div class="card">
-    <div class="card-body">
-      <h2 class="card-title">Analytics & Reports</h2>
-      
-      <div class="placeholder-content">
-        <div class="placeholder-icon">📈</div>
-        <p class="placeholder-text">Analytics dashboard coming soon</p>
-        <p style="font-size: 12px; color: #9ca3af; margin-top: 8px;">
-          Real-time event metrics, ticket sales, and user engagement data will appear here
-        </p>
-      </div>
-
-      <div class="form-actions">
-        <button class="form-btn form-btn-cancel" type="button" (click)="showChoice('')">Close</button>
+        <div class="form-actions">
+          <button class="form-btn form-btn-submit" type="button">Update Event</button>
+          <button class="form-btn form-btn-cancel" type="button" (click)="showChoice('')">
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-  }
+    }
+
+    <!-- ANALYTICS & REPORTS SECTION -->
+    @else if(activeChoice === 'analytics-reports') {
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">Analytics & Reports</h2>
+
+        <div class="placeholder-content">
+          <div class="placeholder-icon">📈</div>
+          <p class="placeholder-text">Analytics dashboard coming soon</p>
+          <p style="font-size: 12px; color: #9ca3af; margin-top: 8px">
+            Real-time event metrics, ticket sales, and user engagement data will appear here
+          </p>
+        </div>
+
+        <div class="form-actions">
+          <button class="form-btn form-btn-cancel" type="button" (click)="showChoice('')">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+  </main>
 </div>
