@@ -89,8 +89,27 @@ export class AdminDashboard implements OnInit {
   }
 
   register() {
-    if (!this.name || !this.email || !this.password || !this.confirmPassword) {
+    if (
+      !this.name ||
+      !this.email ||
+      !this.password ||
+      !this.confirmPassword ||
+      !this.role ||
+      !this.phone ||
+      !this.organization
+    ) {
       alert('All fields are required!');
+      return;
+    }
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(this.email)) {
+      alert('Invalid email address!');
+      return;
+    }
+
+    if (isNaN(Number(this.phone))) {
+      alert('Invalid phone number! Please enter only numbers.');
       return;
     }
 
@@ -105,10 +124,14 @@ export class AdminDashboard implements OnInit {
     }
 
     const users = this.getUsersFromStorage();
-    const already = users.find((u) => u.email === this.email);
+    const existingUser = users.find((u) => u.email === this.email || u.name === this.name);
 
-    if (already) {
-      alert('This email is already registered, please use a different email.');
+    if (existingUser) {
+      if (existingUser.email === this.email) {
+        alert('This email is already registered, please use a different email.');
+      } else if (existingUser.name === this.name) {
+        alert('This username is already registered, please use a different username.');
+      }
       return;
     }
 
