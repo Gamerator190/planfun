@@ -1,0 +1,165 @@
+<div class="seat-page">
+  <!-- HEADER -->
+  <div class="header">
+    <button class="back-btn" (click)="goBack()">«</button>
+    <div class="title">Select a Seat</div>
+    <div class="time-pill">{{ time }}</div>
+  </div>
+
+  <!-- FRAME BESAR -->
+  <div class="layout-frame">
+    <!-- STAGE -->
+    <div class="screen-box">
+      <div class="screen">STAGE</div>
+    </div>
+
+    <div class="auditorium">
+      <!-- LABEL ATAS -->
+      <div class="side-label side-label-upper">Lower Foyer</div>
+
+      <!-- LOWER FOYER (A–J, 10 kiri / 10 tengah / 10 kanan) -->
+      <div class="main-floor">
+        <div
+          class="seat-row"
+          *ngFor="let row of lowerFoyerSeats; let i = index"
+        >
+          <div class="row-label">{{ lowerRows[i] }}</div>
+
+          <!-- kiri -->
+          <div class="seat-block left">
+            <div
+              class="seat"
+              *ngFor="let seat of row | slice:0:10"
+              [class.booked]="seat.booked"
+              [class.selected]="selectedSeats.includes(seat.id)"
+              (click)="toggleSeat(seat)"
+            >
+              {{ seat.id }}
+            </div>
+          </div>
+
+          <!-- tengah -->
+          <div class="seat-block center">
+            <div
+              class="seat"
+              *ngFor="let seat of row | slice:10:20"
+              [class.booked]="seat.booked"
+              [class.selected]="selectedSeats.includes(seat.id)"
+              (click)="toggleSeat(seat)"
+            >
+              {{ seat.id }}
+            </div>
+          </div>
+
+          <!-- kanan -->
+          <div class="seat-block right">
+            <div
+              class="seat"
+              *ngFor="let seat of row | slice:20:30"
+              [class.booked]="seat.booked"
+              [class.selected]="selectedSeats.includes(seat.id)"
+              (click)="toggleSeat(seat)"
+            >
+              {{ seat.id }}
+            </div>
+          </div>
+
+          <div class="row-label">{{ lowerRows[i] }}</div>
+        </div>
+      </div>
+
+      <!-- BALCONY (AA–EE: kiri, gap, tengah, gap, kanan) -->
+      <div class="balcony">
+        <div
+          class="balcony-row"
+          *ngFor="let row of balconySeats; let i = index"
+        >
+          <div class="row-label">{{ balconyRows[i] }}</div>
+
+          <!-- kiri (10 kursi) -->
+          <div class="seat-block left">
+            <div
+              class="seat"
+              *ngFor="let seat of row | slice:0:10"
+              [class.booked]="seat.booked"
+              [class.selected]="selectedSeats.includes(seat.id)"
+              (click)="toggleSeat(seat)"
+            >
+              {{ seat.id }}
+            </div>
+          </div>
+
+          <!-- GAP 1 -->
+          <div class="balcony-gap"></div>
+
+          <!-- tengah (10 kursi) -->
+          <div class="seat-block middle">
+            <div
+              class="seat"
+              *ngFor="let seat of row | slice:10:20"
+              [class.booked]="seat.booked"
+              [class.selected]="selectedSeats.includes(seat.id)"
+              (click)="toggleSeat(seat)"
+            >
+              {{ seat.id }}
+            </div>
+          </div>
+
+          <!-- GAP 2 -->
+          <div class="balcony-gap"></div>
+
+          <!-- kanan (10 kursi) -->
+          <div class="seat-block right">
+            <div
+              class="seat"
+              *ngFor="let seat of row | slice:20:30"
+              [class.booked]="seat.booked"
+              [class.selected]="selectedSeats.includes(seat.id)"
+              (click)="toggleSeat(seat)"
+            >
+              {{ seat.id }}
+            </div>
+          </div>
+
+          <div class="row-label">{{ balconyRows[i] }}</div>
+        </div>
+      </div>
+
+      <!-- CONTROL ROOM -->
+      <div class="control-room-wrapper">
+        <div class="control-room">CONTROL ROOM</div>
+      </div>
+
+      <!-- LABEL BAWAH -->
+      <div class="side-label side-label-lower">BALCONY</div>
+    </div>
+  </div>
+
+
+  <!-- SUMMARY -->
+  <div class="summary-box" *ngIf="selectedSeatDetails.length">
+    <div class="summary-header">
+      <span>Kursi dipilih</span>
+      <span class="summary-count">{{ selectedSeatDetails.length }} tiket</span>
+    </div>
+
+    <div class="summary-list">
+      <div class="summary-row" *ngFor="let s of selectedSeatDetails">
+        <div class="s-seat">{{ s.id }}</div>
+        <div class="s-type">{{ s.type }}</div>
+        <div class="s-price">Rp {{ formatRupiah(s.price) }}</div>
+      </div>
+    </div>
+
+    <div class="summary-total">
+      <span>Temporary total</span>
+      <span>Rp {{ formatRupiah(totalPrice) }}</span>
+    </div>
+  </div>
+
+  <!-- BUTTON -->
+  <button class="next-btn" (click)="lanjut()">
+    Continue ({{ selectedSeatDetails.length }} tickets ·
+    Rp {{ formatRupiah(totalPrice) }})
+  </button>
+</div>

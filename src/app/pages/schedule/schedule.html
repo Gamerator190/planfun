@@ -1,0 +1,44 @@
+<div class="schedule-page" *ngIf="movie">
+
+  <!-- Header -->
+  <div class="header">
+    <button class="back-btn" (click)="goBack()">«</button>
+    <div class="title">{{ movie.title }}</div>
+  </div>
+
+  <!-- Date Selector -->
+  <div class="date-scroll">
+    <div
+      class="date-item"
+      *ngFor="let d of dates; let i = index"
+      [class.active]="i === selectedDateIndex"
+      (click)="selectDate(i)"
+    >
+      {{ d }}
+    </div>
+  </div>
+
+  <!-- Single Room / Auditorium -->
+  <div class="cinema-list">
+    <div class="cinema-card">
+      <div class="cinema-name">{{ roomName }}</div>
+
+      <div class="times" *ngIf="timesByDate[selectedDateIndex]?.length; else noTimes">
+        <div
+          class="time-box"
+          *ngFor="let t of timesByDate[selectedDateIndex]"
+          (click)="goSelectSeat(t)"
+        >
+          {{ t }}
+        </div>
+      </div>
+
+      <ng-template #noTimes>
+        <div class="no-times">
+          There is no schedule for this date yet. Please check back later.
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+</div>

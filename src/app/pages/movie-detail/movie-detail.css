@@ -1,0 +1,168 @@
+.movie-detail-page {
+  min-height: 100vh;
+  background: #ffffff;
+  color: #111827;
+  font-family: system-ui, sans-serif;
+}
+
+/* Poster Section */
+.poster-container {
+  position: relative;
+  height: 380px;
+  overflow: hidden;
+}
+
+.poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gradient-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60%;
+  background: linear-gradient(to top, #ffffff, transparent);
+}
+
+.back-btn {
+  position: absolute;
+  top: 18px;
+  left: 16px;
+
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(96, 74, 0, 0.08);
+  backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(96, 74, 0, 0.08);
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+.back-btn:hover {
+  background: rgba(188, 166, 0, 0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(96, 74, 0, 0.08);
+}
+
+.back-icon {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000000;
+}
+
+/* Badges */
+.badges {
+  position: absolute;
+  bottom: 18px;
+  left: 16px;
+  display: flex;
+  gap: 6px;
+}
+
+.badge {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.badge.imax {
+  background: rgba(59, 130, 246, 0.9);
+  color: #fff;
+}
+
+.badge.new {
+  background: rgba(34, 197, 94, 0.9);
+  color: #064e3b;
+}
+
+/* Content Section */
+.content {
+  padding: 20px 16px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0;
+  color: #111827;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dot {
+  opacity: 0.6;
+}
+
+.rating-box {
+  margin-top: 10px;
+  background: rgba(0, 0, 0, 0.06);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 10px;
+}
+
+.star {
+  color: #ff9900;
+  font-size: 14px;
+}
+
+.rating {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.subtitle {
+  margin-top: 22px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #E3AF64;
+}
+
+.synopsis {
+  margin-top: 6px;
+  line-height: 1.5;
+  font-size: 13px;
+  color: #374151;
+}
+
+/* Beli Tiket Button */
+.buy-btn {
+  margin-top: 26px;
+  width: 100%;
+  border: none;
+  background: linear-gradient(135deg, #FAEBD7, #E3AF64);
+  padding: 14px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  cursor: pointer;
+  box-shadow: 0 8px 26px rgba(249, 115, 22, 0.35);
+}
+
+.buy-btn:hover {
+  opacity: 0.9;
+}

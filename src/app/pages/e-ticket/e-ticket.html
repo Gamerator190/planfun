@@ -1,0 +1,70 @@
+<div class="eticket-page" *ngIf="ticket">
+  <!-- HEADER -->
+  <div class="header">
+    <button class="back-btn" (click)="goBack()">«</button>
+    <div class="title">E-Tiket</div>
+  </div>
+
+  <!-- KARTU TIKET -->
+  <div class="ticket-card">
+
+    <!-- Poster + Info -->
+    <div class="top">
+      <img class="poster" [src]="ticket.poster" [alt]="ticket.movie" />
+
+      <div class="info">
+        <div class="movie-title">{{ ticket.movie }}</div>
+        <div class="line">{{ ticket.date }}</div>
+        <div class="line">Jam: {{ ticket.time }}</div>
+        <div class="line">Kursi: {{ ticket.seats.join(', ') }}</div>
+        <div class="line total">
+          Total: Rp {{ formatRupiah(ticket.total) }}
+        </div>
+      </div>
+    </div>
+
+    <!-- 🔥 RINCIAN KURSI PER TIPE -->
+    <div
+      class="seat-detail-block"
+      *ngIf="ticket.seatDetails?.length"
+    >
+      <div class="seat-detail-title">Seat Details</div>
+
+      <div
+        class="seat-detail-row"
+        *ngFor="let s of ticket.seatDetails"
+      >
+        <span class="sd-seat">{{ s.seat }}</span>
+        <span class="sd-type">{{ getTypeLabel(s.typeCode) }}</span>
+        <span class="sd-price">
+          Rp {{ formatRupiah(getTypePrice(s.typeCode)) }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Garis Putus -->
+    <div class="cut-line">
+      <div class="circle left"></div>
+      <div class="dashed"></div>
+      <div class="circle right"></div>
+    </div>
+
+    <!-- QR PALSU -->
+    <div class="bottom">
+      <div class="qr-box">
+        <div class="qr-inner">
+          <div class="qr-row" *ngFor="let r of [1,2,3,4,5]">
+            <span *ngFor="let c of [1,2,3,4,5,6,7]"></span>
+          </div>
+        </div>
+      </div>
+      <div class="qr-text">
+        Show this E-Ticket to the cinema staff for scanning.
+      </div>
+    </div>
+  </div>
+
+  <div class="hint">
+    Screenshot this page to save the E-Ticket in your gallery 📱
+  </div>
+</div>

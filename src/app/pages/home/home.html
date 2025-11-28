@@ -1,0 +1,175 @@
+<div class="home-page">
+  <!-- TOP BAR -->
+  <header class="top-bar">
+    <div class="brand">
+      <div class="logo">PLAN<span>FUN</span></div>
+
+      <div class="location">
+        <span class="city">Jakarta</span>
+        <span class="change">Change</span>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <button
+        class="notif-btn"
+        type="button"
+        (click)="openNotifications()"
+        title="Notifikasi"
+      >
+        🔔
+      </button>
+
+      <div class="user-pill" (click)="toggleUserMenu()">
+        <div class="avatar-wrap">
+          <div class="avatar-glow"></div>
+          <div class="avatar">{{ userName?.[0] || 'U' }}</div>
+        </div>
+
+        <div class="user-meta">
+          <div class="hello">Hi 👋</div>
+          <div class="name">{{ userName }}</div>
+        </div>
+
+        <div class="icon">
+          <span>▾</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DROPDOWN USER MENU -->
+    <div class="user-menu" *ngIf="showMenu">
+      <div class="menu-item" (click)="logout()">Logout</div>
+    </div>
+  </header>
+
+  <main class="content">
+    <!-- HERO SECTION -->
+    <section class="hero-card" *ngIf="movies.length">
+      <div class="hero-text">
+        <p class="hero-label">Now Showing</p>
+        <h1 class="hero-title">{{ movies[0].title }}</h1>
+        <p class="hero-subtitle">
+          {{ movies[0].genre }} · Rating
+          {{ movies[0].rating | number : '1.1-1' }} ·
+          {{ movies[0].duration }}
+        </p>
+        <button
+          class="hero-btn"
+          type="button"
+          (click)="goMovie(movies[0].id)"
+        >
+          See today's schedule
+        </button>
+      </div>
+      <div class="hero-poster">
+        <img [src]="movies[0].poster" [alt]="movies[0].title" />
+        <div class="hero-badge">
+          Top Pick {{ movies[0].releaseDate ? '· ' + movies[0].releaseDate : '' }}
+        </div>
+      </div>
+    </section>
+
+    <!-- SEARCH & FILTER -->
+    <section class="tools">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Cari judul film..." />
+      </div>
+
+      <div class="chips">
+        <button class="chip chip-active" type="button">Now Showing</button>
+        <button class="chip" type="button">Coming Soon</button>
+        <button class="chip" type="button">IMAX</button>
+        <button class="chip" type="button">Family</button>
+      </div>
+    </section>
+
+    <!-- HORIZONTAL SCROLL LIST -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Recommended for you</h2>
+        <button class="see-all" type="button">See all</button>
+      </div>
+
+      <div class="movie-scroll">
+        <div
+          class="movie-tile"
+          *ngFor="let movie of movies"
+          (click)="goMovie(movie.id)"
+        >
+          <div class="tile-poster">
+            <img [src]="movie.poster" [alt]="movie.title" />
+            <div class="tile-rating">
+              ★ {{ movie.rating | number : '1.1-1' }}
+            </div>
+            <div class="tile-badge new" *ngIf="movie.isNew">NEW</div>
+            <div class="tile-badge imax" *ngIf="movie.isImax">IMAX</div>
+          </div>
+          <div class="tile-title">{{ movie.title }}</div>
+          <div class="tile-genre">
+            {{ movie.genre }}
+            <span *ngIf="movie.releaseDate"> · {{ movie.releaseDate }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GRID LIST -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">All Movies</h2>
+      </div>
+
+      <div class="movie-grid">
+        <div
+          class="movie-card"
+          *ngFor="let movie of movies"
+          (click)="goMovie(movie.id)"
+        >
+          <div class="poster-wrap">
+            <img [src]="movie.poster" [alt]="movie.title" />
+            <div class="age-badge">{{ movie.ageRating }}</div>
+            <div class="rating-badge">
+              ★ {{ movie.rating | number : '1.1-1' }}
+            </div>
+            <div class="corner-tag imax" *ngIf="movie.isImax">IMAX</div>
+            <div class="corner-tag new" *ngIf="movie.isNew">NEW</div>
+          </div>
+          <div class="movie-info">
+            <div class="title">{{ movie.title }}</div>
+            <div class="genre">
+              {{ movie.genre }}
+              <span *ngIf="movie.releaseDate"> · {{ movie.releaseDate }}</span>
+            </div>
+            <div class="meta">
+              <span>{{ movie.duration }}</span>
+              <span class="dot">•</span>
+              <span>{{ movie.ageRating }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- BOTTOM NAVBAR -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" type="button">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-label">Home</div>
+    </button>
+    <button
+      class="nav-item"
+      type="button"
+      (click)="router.navigate(['/tiket-saya'])"
+    >
+      <div class="nav-icon">🎟️</div>
+      <div class="nav-label">Tickets</div>
+    </button>
+    <button class="nav-item" type="button" (click)="toggleUserMenu()">
+      <div class="nav-icon">👤</div>
+      <div class="nav-label">Account</div>
+    </button>
+  </nav>
+</div>

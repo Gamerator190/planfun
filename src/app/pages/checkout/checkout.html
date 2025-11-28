@@ -1,0 +1,54 @@
+<div class="checkout-page" *ngIf="movie">
+  <!-- HEADER -->
+  <div class="header">
+    <button class="back-btn" (click)="goBack()">«</button>
+    <div class="title">Checkout</div>
+  </div>
+
+  <!-- INFO FILM -->
+  <div class="movie-box">
+    <img [src]="movie.poster" class="poster" [alt]="movie.title" />
+
+    <div class="movie-info">
+      <h2>{{ movie.title }}</h2>
+      <p class="genre">{{ movie.genre }}</p>
+      <p class="line">Jam: {{ time }}</p>
+      <p class="line">Kursi: {{ seatListLabel }}</p>
+    </div>
+  </div>
+
+  <!-- RINCIAN KURSI + KATEGORI -->
+  <div class="seat-type-box">
+    <h3>Seat Details</h3>
+
+    <div class="seat-type-row" *ngFor="let sel of seatSelections">
+      <div class="seat-name">{{ sel.seat }}</div>
+      <div class="seat-type">
+        {{ getTypeLabel(sel.typeCode) }}
+      </div>
+      <div class="seat-price">
+        Rp {{ formatRupiah(getTypePrice(sel.typeCode)) }}
+      </div>
+    </div>
+  </div>
+
+  <!-- TOTAL HARGA -->
+  <div class="price-box">
+    <div class="row">
+      <span>Number of seats</span>
+      <span>{{ seatSelections.length }}</span>
+    </div>
+
+    <hr />
+
+    <div class="row total">
+      <span>Total Payment</span>
+      <span>Rp {{ formatRupiah(total) }}</span>
+    </div>
+  </div>
+
+  <!-- BUTTON BAYAR -->
+  <button class="pay-btn" (click)="bayar()">
+    Pay Now
+  </button>
+</div>

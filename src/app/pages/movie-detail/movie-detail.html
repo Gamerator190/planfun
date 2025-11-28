@@ -1,0 +1,46 @@
+<div class="movie-detail-page" *ngIf="movie">
+  <!-- Poster -->
+  <div class="poster-container">
+    <img class="poster" [src]="movie.poster" [alt]="movie.title" />
+
+    <div class="gradient-overlay"></div>
+
+    <!-- Tombol Back -->
+    <button class="back-btn" (click)="goHome()">
+      <span class="back-icon">«</span>
+    </button>
+
+
+    <div class="badges">
+      <span class="badge imax" *ngIf="movie.isImax">IMAX</span>
+      <span class="badge new" *ngIf="movie.isNew">NEW</span>
+    </div>
+  </div>
+
+  <!-- Info Film -->
+  <div class="content">
+    <h1 class="title">{{ movie.title }}</h1>
+
+    <div class="meta">
+      <span>{{ movie.genre }}</span>
+      <span class="dot">•</span>
+      <span>{{ movie.duration }}</span>
+      <span class="dot">•</span>
+      <span>{{ movie.ageRating }}</span>
+    </div>
+
+    <div class="rating-box">
+      <span class="star">★</span>
+      <span class="rating">{{ movie.rating }}</span>
+    </div>
+
+<h3 class="subtitle">EVENT DESCRIPTION</h3>
+<p class="synopsis">
+  {{ movie.synopsis || 'There is no description for this event yet.' }}
+</p>
+
+<button class="buy-btn" (click)="beliTiket()">
+  View Schedule & Event List
+</button>
+  </div>
+</div>

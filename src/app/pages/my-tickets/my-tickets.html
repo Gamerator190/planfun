@@ -1,0 +1,62 @@
+<div class="tickets-page">
+  <!-- HEADER -->
+  <div class="header">
+    <button class="back-btn" (click)="goHome()">«</button>
+    <div class="title">My Ticket</div>
+  </div>
+
+  <!-- JIKA TIDAK ADA TIKET -->
+  <div class="empty" *ngIf="!tickets.length">
+    <div class="empty-icon">🎟️</div>
+    <div class="empty-title">No tickets yet</div>
+    <p class="empty-text">
+      The tickets you have purchased will appear here.
+    </p>
+    <button class="empty-btn" (click)="goHome()">Find Movies</button>
+  </div>
+
+  <!-- LIST TIKET -->
+  <div class="tickets-list" *ngIf="tickets.length">
+    <div
+      class="ticket-card"
+      *ngFor="let t of tickets; let i = index"
+      (click)="openTicket(i)"
+    >
+      <div class="poster-wrap">
+        <img [src]="t.poster" [alt]="t.movie" />
+      </div>
+
+      <div class="ticket-info">
+        <div class="movie-title">{{ t.movie }}</div>
+
+        <div class="row">
+          <span class="label">Tgl</span>
+          <span class="value">{{ t.date }}</span>
+        </div>
+
+        <div class="row">
+          <span class="label">Jam</span>
+          <span class="value">{{ t.time }}</span>
+        </div>
+
+        <div class="row">
+          <span class="label">Seats</span>
+          <span class="value">{{ t.seats.join(', ') }}</span>
+        </div>
+
+        <!-- 🔥 SEAT TYPE SUMMARY -->
+        <div class="row">
+          <span class="label">Type</span>
+          <span class="value">{{ getSeatTypeSummary(t) }}</span>
+        </div>
+
+        <div class="row total-row">
+          <span class="label">Total</span>
+          <span class="value">Rp {{ formatRupiah(t.total) }}</span>
+        </div>
+
+        <div class="status-pill">Active E-ticket</div>
+      </div>
+    </div>
+  </div>
+</div>
