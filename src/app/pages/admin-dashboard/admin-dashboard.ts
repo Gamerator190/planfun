@@ -95,8 +95,7 @@ export class AdminDashboard implements OnInit {
       !this.password ||
       !this.confirmPassword ||
       !this.role ||
-      !this.phone ||
-      !this.organization
+      !this.phone
     ) {
       alert('All fields are required!');
       return;
