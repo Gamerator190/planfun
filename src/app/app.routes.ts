@@ -3,7 +3,6 @@ import { LoginComponent } from './pages/login/login';
 import { RegisterComponent } from './pages/register/register';
 import { HomeComponent } from './pages/home/home'; // ⬅️ tambahkan ini
 import { EventDetailComponent } from './pages/event-detail/event-detail';
-import { ScheduleComponent } from './pages/schedule/schedule';
 import { SeatPickerComponent } from './pages/seat-picker/seat-picker';
 import { MyTicketsComponent } from './pages/my-tickets/my-tickets';
 import { CheckoutComponent } from './pages/checkout/checkout'; // ⬅️ tambahkan ini
