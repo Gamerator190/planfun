@@ -472,7 +472,7 @@
   color: #0f1939;
 }
 
-.tile-genre {
+.tile-location {
   font-size: 10px;
   color: #516ac8;
 }
@@ -569,7 +569,7 @@
   color: #0f1939;
 }
 
-.event-info .genre {
+.event-info .location {
   font-size: 10px;
   color: #516ac8;
   margin-bottom: 3px;

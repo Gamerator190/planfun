@@ -50,19 +50,12 @@
       <div class="hero-text">
         <p class="hero-label">Now Showing</p>
         <h1 class="hero-title">{{ events[0].title }}</h1>
-        <p class="hero-subtitle">
-          {{ events[0].genre }} · Rating {{ events[0].rating | number : '1.1-1' }} · {{
-          events[0].duration }}
-        </p>
-        <button class="hero-btn" type="button" (click)="goEvent(events[0].id)">
-          See today's schedule
-        </button>
+        <p class="hero-subtitle">{{ events[0].location }}</p>
+        <button class="hero-btn" type="button" (click)="goEvent(events[0].id)">See Details</button>
       </div>
       <div class="hero-poster">
         <img [src]="events[0].poster" [alt]="events[0].title" />
-        <div class="hero-badge">
-          Top Pick {{ events[0].releaseDate ? '· ' + events[0].releaseDate : '' }}
-        </div>
+        <div class="hero-badge">Top Pick</div>
       </div>
     </section>
 
@@ -70,14 +63,13 @@
     <section class="tools">
       <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input type="text" placeholder="Cari judul film..." />
+        <input type="text" placeholder="Search for events..." />
       </div>
 
       <div class="chips">
         <button class="chip chip-active" type="button">Now Showing</button>
         <button class="chip" type="button">Coming Soon</button>
         <button class="chip" type="button">SPECIAL</button>
-        <button class="chip" type="button">Family</button>
       </div>
     </section>
 
@@ -92,15 +84,11 @@
         <div class="event-tile" *ngFor="let event of events" (click)="goEvent(event.id)">
           <div class="tile-poster">
             <img [src]="event.poster" [alt]="event.title" />
-            <div class="tile-rating">★ {{ event.rating | number : '1.1-1' }}</div>
             <div class="tile-badge new" *ngIf="event.isNew">NEW</div>
             <div class="tile-badge special" *ngIf="event.isSpecial">SPECIAL</div>
           </div>
           <div class="tile-title">{{ event.title }}</div>
-          <div class="tile-genre">
-            {{ event.genre }}
-            <span *ngIf="event.releaseDate"> · {{ event.releaseDate }}</span>
-          </div>
+          <div class="tile-location">{{ event.location }}</div>
         </div>
       </div>
     </section>
@@ -115,21 +103,16 @@
         <div class="event-card" *ngFor="let event of events" (click)="goEvent(event.id)">
           <div class="poster-wrap">
             <img [src]="event.poster" [alt]="event.title" />
-            <div class="age-badge">{{ event.ageRating }}</div>
-            <div class="rating-badge">★ {{ event.rating | number : '1.1-1' }}</div>
             <div class="corner-tag special" *ngIf="event.isSpecial">SPECIAL</div>
             <div class="corner-tag new" *ngIf="event.isNew">NEW</div>
           </div>
           <div class="event-info">
             <div class="title">{{ event.title }}</div>
-            <div class="genre">
-              {{ event.genre }}
-              <span *ngIf="event.releaseDate"> · {{ event.releaseDate }}</span>
-            </div>
+            <div class="location">{{ event.location }}</div>
             <div class="meta">
-              <span>{{ event.duration }}</span>
+              <span>{{ event.date }}</span>
               <span class="dot">•</span>
-              <span>{{ event.ageRating }}</span>
+              <span>{{ event.time }}</span>
             </div>
           </div>
         </div>

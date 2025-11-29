@@ -69,7 +69,7 @@ export class CheckoutComponent implements OnInit {
         .filter((s) => !!s.seat);
     }
 
-    const eventsJson = localStorage.getItem('pf-event-list');
+    const eventsJson = localStorage.getItem('pf-events');
     if (eventsJson) {
       const events = JSON.parse(eventsJson);
       this.event = events.find((m: any) => m.id === eventId);

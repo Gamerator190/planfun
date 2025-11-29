@@ -20,7 +20,7 @@ export class EventDetailComponent implements OnInit {
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
-    const eventsJson = localStorage.getItem('pf-event-list');
+    const eventsJson = localStorage.getItem('pf-events');
     let events: any[] = [];
 
     if (eventsJson) {
