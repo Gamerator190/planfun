@@ -457,7 +457,7 @@
   color: #022c22;
 }
 
-.tile-badge.imax {
+.tile-badge.special {
   top: 6px;
   right: 6px;
   left: auto;
@@ -548,7 +548,7 @@
   text-transform: uppercase;
 }
 
-.corner-tag.imax {
+.corner-tag.special {
   background: rgba(111, 156, 227, 0.96);
   color: #eff6ff;
 }

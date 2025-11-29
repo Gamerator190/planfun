@@ -11,7 +11,7 @@ interface Event {
   ageRating: string;
   poster: string;
   isNew?: boolean;
-  isImax?: boolean;
+  isSpecial?: boolean;
   releaseDate?: string;
   synopsis?: string;
 }

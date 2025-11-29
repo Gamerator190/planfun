@@ -76,7 +76,7 @@
       <div class="chips">
         <button class="chip chip-active" type="button">Now Showing</button>
         <button class="chip" type="button">Coming Soon</button>
-        <button class="chip" type="button">IMAX</button>
+        <button class="chip" type="button">SPECIAL</button>
         <button class="chip" type="button">Family</button>
       </div>
     </section>
@@ -94,7 +94,7 @@
             <img [src]="event.poster" [alt]="event.title" />
             <div class="tile-rating">★ {{ event.rating | number : '1.1-1' }}</div>
             <div class="tile-badge new" *ngIf="event.isNew">NEW</div>
-            <div class="tile-badge imax" *ngIf="event.isImax">IMAX</div>
+            <div class="tile-badge special" *ngIf="event.isSpecial">SPECIAL</div>
           </div>
           <div class="tile-title">{{ event.title }}</div>
           <div class="tile-genre">
@@ -117,7 +117,7 @@
             <img [src]="event.poster" [alt]="event.title" />
             <div class="age-badge">{{ event.ageRating }}</div>
             <div class="rating-badge">★ {{ event.rating | number : '1.1-1' }}</div>
-            <div class="corner-tag imax" *ngIf="event.isImax">IMAX</div>
+            <div class="corner-tag special" *ngIf="event.isSpecial">SPECIAL</div>
             <div class="corner-tag new" *ngIf="event.isNew">NEW</div>
           </div>
           <div class="event-info">
