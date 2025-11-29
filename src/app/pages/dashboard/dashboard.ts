@@ -1,8 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { SeatPickerComponent } from '../seat-picker/seat-picker';
 
 import { Router } from '@angular/router';
+
+interface Promotion {
+  code: string;
+  discountPercent: number;
+  expiryDate: string;
+  applicableTicketTypes: { [key: string]: boolean };
+}
 
 interface Event {
   id: number;
@@ -15,15 +23,14 @@ interface Event {
   poster?: string;
   isNew?: boolean;
   isSpecial?: boolean;
-  promoCode?: string;
-  discount?: number;
+  promotions?: Promotion[];
   ticketCategories?: { name: string; shortName: string; price: number }[];
   seatConfiguration?: { row: string; category: string }[];
 }
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SeatPickerComponent],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
 })
@@ -39,6 +46,8 @@ export class Dashboard {
   showMenu = false;
   userEvents: Event[] = [];
   selectedEventId: number | null = null;
+  promotions: Promotion[] = [];
+
 
   ticketCategories = [{ name: 'General Admission', shortName: 'GEN', price: 25000 }];
   seatConfiguration = [
@@ -87,6 +96,9 @@ export class Dashboard {
               { row: 'DD', category: 'GEN' },
               { row: 'EE', category: 'GEN' },
             ];
+        this.promotions = selectedEvent.promotions
+          ? JSON.parse(JSON.stringify(selectedEvent.promotions))
+          : [];
       }
     } else {
       this.selectedEventId = null;
@@ -108,6 +120,7 @@ export class Dashboard {
         { row: 'DD', category: 'GEN' },
         { row: 'EE', category: 'GEN' },
       ];
+      this.promotions = [];
     }
   }
 
@@ -160,6 +173,24 @@ export class Dashboard {
     }
   }
 
+  addPromotion() {
+    const applicableTicketTypes = this.ticketCategories.reduce((acc, cat) => {
+      acc[cat.shortName] = false;
+      return acc;
+    }, {} as { [key: string]: boolean });
+
+    this.promotions.push({
+      code: '',
+      discountPercent: 0,
+      expiryDate: '',
+      applicableTicketTypes: applicableTicketTypes
+    });
+  }
+
+  removePromotion(index: number) {
+    this.promotions.splice(index, 1);
+  }
+
   submitForm() {
     if (this.activeChoice === 'create-event') {
       const title = (document.getElementById('event-title') as HTMLInputElement).value;
@@ -168,10 +199,6 @@ export class Dashboard {
       const time = (document.getElementById('event-time') as HTMLInputElement).value;
       const description = (document.getElementById('event-description') as HTMLTextAreaElement)
         .value;
-      const promoCode = (document.getElementById('event-promo-code') as HTMLInputElement).value;
-      const discount = parseFloat(
-        (document.getElementById('event-discount') as HTMLInputElement).value,
-      );
 
       let userEmail: string | undefined;
       const currentUserJson = localStorage.getItem('pf-current-user');
@@ -215,12 +242,11 @@ export class Dashboard {
           date,
           time,
           description,
-          promoCode,
-          discount,
           email: userEmail,
           poster: posterBase64,
           ticketCategories: this.ticketCategories,
           seatConfiguration: this.seatConfiguration,
+          promotions: this.promotions
         });
       };
 
@@ -233,11 +259,10 @@ export class Dashboard {
           date,
           time,
           description,
-          promoCode,
-          discount,
           email: userEmail,
           ticketCategories: this.ticketCategories,
           seatConfiguration: this.seatConfiguration,
+          promotions: this.promotions,
         }); // Save without poster
       };
 
@@ -250,11 +275,10 @@ export class Dashboard {
           date,
           time,
           description,
-          promoCode,
-          discount,
           email: userEmail,
           ticketCategories: this.ticketCategories,
           seatConfiguration: this.seatConfiguration,
+          promotions: this.promotions,
         });
       }
     } else if (this.activeChoice === 'edit-event') {
@@ -277,6 +301,7 @@ export class Dashboard {
       if (eventIndex !== -1) {
         events[eventIndex].ticketCategories = this.ticketCategories;
         events[eventIndex].seatConfiguration = this.seatConfiguration;
+        events[eventIndex].promotions = this.promotions;
         localStorage.setItem('pf-events', JSON.stringify(events));
         alert('Event updated successfully!');
       } else {
@@ -318,8 +343,6 @@ export class Dashboard {
     (document.getElementById('event-date') as HTMLInputElement).value = '';
     (document.getElementById('event-time') as HTMLInputElement).value = '';
     (document.getElementById('event-description') as HTMLTextAreaElement).value = '';
-    (document.getElementById('event-promo-code') as HTMLInputElement).value = '';
-    (document.getElementById('event-discount') as HTMLInputElement).value = '0';
     (document.getElementById('event-poster') as HTMLInputElement).value = ''; // Clear file input
   }
 

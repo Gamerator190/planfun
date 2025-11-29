@@ -91,32 +91,6 @@
           ></textarea>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="event-promo-code">Promo Code (Optional)</label>
-            <input
-              type="text"
-              id="event-promo-code"
-              name="event-promo-code"
-              placeholder="e.g., SUMMER20"
-            />
-          </div>
-          <div class="form-group">
-            <label for="event-discount">Discount Value % (Optional)</label>
-            <div class="discount-row">
-              <input
-                type="number"
-                id="event-discount"
-                name="event-discount"
-                placeholder="0"
-                min="0"
-                max="100"
-              />
-              <span>%</span>
-            </div>
-          </div>
-        </div>
-
         <div class="form-group">
           <label for="event-poster">Event Poster (Optional)</label>
           <input type="file" id="event-poster" name="event-poster" accept="image/*" />
@@ -211,6 +185,40 @@
             </select>
           </div>
         </div>
+
+        <!-- PROMOTIONS -->
+        <div class="card-subtitle">Promotions</div>
+        <div *ngFor="let promo of promotions; let i = index" class="promotion-form-row">
+          <div class="form-group">
+            <label>Promo Code</label>
+            <input type="text" [(ngModel)]="promo.code" name="promo-code-{{i}}" />
+          </div>
+          <div class="form-group">
+            <label>Discount %</label>
+            <input type="number" [(ngModel)]="promo.discountPercent" name="promo-discount-{{i}}" />
+          </div>
+          <div class="form-group">
+            <label>Expiry Date</label>
+            <input type="date" [(ngModel)]="promo.expiryDate" name="promo-expiry-{{i}}" />
+          </div>
+          <div class="form-group applicable-types">
+            <label>Applicable To</label>
+            <div *ngFor="let cat of ticketCategories" class="checkbox-group">
+              <input type="checkbox" [(ngModel)]="promo.applicableTicketTypes[cat.shortName]" name="promo-cat-{{i}}-{{cat.shortName}}" />
+              <span>{{cat.shortName}}</span>
+            </div>
+          </div>
+          <button type="button" (click)="removePromotion(i)" class="form-btn-remove">Remove</button>
+        </div>
+        <button type="button" (click)="addPromotion()" class="form-btn-add">+ Add Promotion</button>
+
+        <div class="card-subtitle">Seating Map</div>
+        <app-seat-picker
+          [ticketCategories]="ticketCategories"
+          [seatConfiguration]="seatConfiguration"
+          [showContinueButton]="false"
+        >
+        </app-seat-picker>
         }
 
         <div class="form-actions">

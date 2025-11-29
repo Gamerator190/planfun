@@ -39,7 +39,7 @@ export class EventDetailComponent implements OnInit {
     this.router.navigate(['/home']);
   }
 
-  beliTiket() {
-    this.router.navigate(['/event', this.event.id, 'seats']);
+  buyTicket() {
+    this.router.navigate(['/event', this.event.id, this.event.time, 'seats']);
   }
 }

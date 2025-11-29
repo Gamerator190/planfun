@@ -1,10 +1,10 @@
 <div class="seat-page">
   <!-- HEADER -->
-  <div class="header">
+  <!--<div class="header">
     <button class="back-btn" (click)="goBack()">«</button>
     <div class="title">Select a Seat</div>
     <div class="time-pill">{{ time }}</div>
-  </div>
+  </div>-->
 
   <!-- FRAME BESAR -->
   <div class="layout-frame">
@@ -19,10 +19,7 @@
 
       <!-- LOWER FOYER (A–J, 10 kiri / 10 tengah / 10 kanan) -->
       <div class="main-floor">
-        <div
-          class="seat-row"
-          *ngFor="let row of lowerFoyerSeats; let i = index"
-        >
+        <div class="seat-row" *ngFor="let row of lowerFoyerSeats; let i = index">
           <div class="row-label">{{ lowerRows[i] }}</div>
 
           <!-- kiri -->
@@ -70,10 +67,7 @@
 
       <!-- BALCONY (AA–EE: kiri, gap, tengah, gap, kanan) -->
       <div class="balcony">
-        <div
-          class="balcony-row"
-          *ngFor="let row of balconySeats; let i = index"
-        >
+        <div class="balcony-row" *ngFor="let row of balconySeats; let i = index">
           <div class="row-label">{{ balconyRows[i] }}</div>
 
           <!-- kiri (10 kursi) -->
@@ -135,31 +129,39 @@
     </div>
   </div>
 
+  <!-- SUMMARY & BUTTON -->
 
-  <!-- SUMMARY -->
   <div class="summary-box" *ngIf="selectedSeatDetails.length">
     <div class="summary-header">
-      <span>Kursi dipilih</span>
-      <span class="summary-count">{{ selectedSeatDetails.length }} tiket</span>
+      <span>Chosen seats</span>
+
+      <span class="summary-count">{{ selectedSeatDetails.length }} ticket(s)</span>
     </div>
 
     <div class="summary-list">
       <div class="summary-row" *ngFor="let s of selectedSeatDetails">
         <div class="s-seat">{{ s.id }}</div>
+
         <div class="s-type">{{ s.type }}</div>
+
         <div class="s-price">Rp {{ formatRupiah(s.price) }}</div>
       </div>
     </div>
 
     <div class="summary-total">
-      <span>Temporary total</span>
+      <span>Total</span>
+
       <span>Rp {{ formatRupiah(totalPrice) }}</span>
     </div>
   </div>
 
+  @if (showContinueButton) {
+
   <!-- BUTTON -->
+
   <button class="next-btn" (click)="lanjut()">
-    Continue ({{ selectedSeatDetails.length }} tickets ·
-    Rp {{ formatRupiah(totalPrice) }})
+    Continue ({{ selectedSeatDetails.length }} tickets · Rp {{ formatRupiah(totalPrice) }})
   </button>
+
+  }
 </div>

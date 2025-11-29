@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 interface Ticket {
@@ -26,7 +27,7 @@ interface SeatSelection {
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './checkout.html',
   styleUrl: './checkout.css',
 })
@@ -34,16 +35,12 @@ export class CheckoutComponent implements OnInit {
   event: any = null;
   time = '';
 
-  // daftar tipe + harga (kode harus sama dengan dari seat-picker: VIP/REG/SNR/CHD)
-  ticketTypes: TicketType[] = [
-    { code: 'REG', label: 'General Admission', price: 45000 },
-    { code: 'VIP', label: 'VIP', price: 65000 },
-    { code: 'SNR', label: 'Senior Citizens', price: 30000 },
-    { code: 'CHD', label: 'Children', price: 25000 },
-  ];
-
   seatSelections: SeatSelection[] = [];
-  total = 0;
+  subtotal = 0;
+  promoCodeInput = '';
+  appliedPromotion: any = null;
+  discountAmount = 0;
+  finalTotal = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -90,25 +87,79 @@ export class CheckoutComponent implements OnInit {
   }
 
   getTypePrice(code: string): number {
-    const t = this.ticketTypes.find((tt) => tt.code === code);
+    if (!this.event || !this.event.ticketCategories) {
+      return 0;
+    }
+    const t = this.event.ticketCategories.find((cat: any) => cat.shortName === code);
     return t ? t.price : 0;
   }
 
   getTypeLabel(code: string): string {
-    const t = this.ticketTypes.find((tt) => tt.code === code);
-    return t ? t.label : code;
+    if (!this.event || !this.event.ticketCategories) {
+      return code;
+    }
+    const t = this.event.ticketCategories.find((cat: any) => cat.shortName === code);
+    return t ? t.name : code;
   }
 
   updateTotal() {
-    this.total = this.seatSelections.reduce((sum, sel) => sum + this.getTypePrice(sel.typeCode), 0);
+    this.subtotal = this.seatSelections.reduce((sum, sel) => sum + this.getTypePrice(sel.typeCode), 0);
+
+    if (this.appliedPromotion) {
+      const today = new Date().setHours(0, 0, 0, 0);
+      const expiryDate = new Date(this.appliedPromotion.expiryDate).setHours(0, 0, 0, 0);
+
+      if (today > expiryDate) {
+        alert('The applied promo code has expired.');
+        this.appliedPromotion = null;
+        this.discountAmount = 0;
+      } else {
+        let discountableAmount = 0;
+        for (const seat of this.seatSelections) {
+          if (this.appliedPromotion.applicableTicketTypes[seat.typeCode]) {
+            discountableAmount += this.getTypePrice(seat.typeCode);
+          }
+        }
+        this.discountAmount = (discountableAmount * this.appliedPromotion.discountPercent) / 100;
+      }
+    } else {
+        this.discountAmount = 0;
+    }
+
+    this.finalTotal = this.subtotal - this.discountAmount;
   }
 
   formatRupiah(value: number): string {
     return value.toLocaleString('id-ID');
   }
 
+  applyPromo() {
+    if (!this.promoCodeInput) {
+      this.appliedPromotion = null;
+      this.updateTotal();
+      return;
+    }
+
+    if (!this.event.promotions || this.event.promotions.length === 0) {
+      alert('No promotions available for this event.');
+      return;
+    }
+
+    const promo = this.event.promotions.find((p: any) => p.code === this.promoCodeInput);
+
+    if (!promo) {
+      alert('Invalid promo code.');
+      this.appliedPromotion = null;
+      this.updateTotal();
+      return;
+    }
+
+    this.appliedPromotion = promo;
+    this.updateTotal();
+  }
+
   goBack() {
-    this.router.navigate(['/event', this.event.id, 'schedule']);
+    this.router.navigate(['/event', this.event.id]);
   }
 
   bayar() {
@@ -122,7 +173,7 @@ export class CheckoutComponent implements OnInit {
       poster: this.event.poster,
       time: this.time,
       seats: this.seatSelections.map((s) => s.seat),
-      total: this.total,
+      total: this.finalTotal,
       date: new Date().toLocaleString('id-ID'),
       seatDetails: this.seatSelections,
     };

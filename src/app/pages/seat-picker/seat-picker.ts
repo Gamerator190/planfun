@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
 
 type Seat = { id: string; booked: boolean; type: string };
 
@@ -11,9 +10,12 @@ type Seat = { id: string; booked: boolean; type: string };
   templateUrl: './seat-picker.html',
   styleUrl: './seat-picker.css',
 })
-export class SeatPickerComponent implements OnInit {
-  eventId!: number;
-  time!: string;
+export class SeatPickerComponent implements OnChanges {
+  @Input() ticketCategories: any[] = [];
+  @Input() seatConfiguration: any[] = [];
+  @Output() goBackEvent = new EventEmitter<void>();
+  @Output() lanjutEvent = new EventEmitter<string>();
+  @Input() showContinueButton: boolean = true;
 
   // LOWER FOYER: A–J (10 baris)
   lowerRows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
@@ -27,53 +29,35 @@ export class SeatPickerComponent implements OnInit {
 
   priceTable: Record<string, number> = {};
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-  ) {}
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['ticketCategories'] || changes['seatConfiguration']) {
+      let categories: Record<string, string> = {};
 
-  ngOnInit(): void {
-    this.eventId = Number(this.route.snapshot.paramMap.get('id'));
-    this.time = String(this.route.snapshot.paramMap.get('time'));
-
-    const eventsJson = localStorage.getItem('pf-events');
-    let categories: Record<string, string> = {};
-
-    if (eventsJson) {
-      const events = JSON.parse(eventsJson);
-      const currentEvent = events.find((event: any) => event.id === this.eventId);
-
-      if (currentEvent && currentEvent.ticketCategories && currentEvent.seatConfiguration) {
+      if (this.ticketCategories && this.seatConfiguration) {
         // Create price table from ticketCategories
-        this.priceTable = currentEvent.ticketCategories.reduce(
-          (acc: Record<string, number>, cat: any) => {
-            acc[cat.shortName] = cat.price;
-            return acc;
-          },
-          {},
-        );
+        this.priceTable = this.ticketCategories.reduce((acc: Record<string, number>, cat: any) => {
+          acc[cat.shortName] = cat.price;
+          return acc;
+        }, {});
 
         // Create categories map from seatConfiguration
-        categories = currentEvent.seatConfiguration.reduce(
-          (acc: Record<string, string>, config: any) => {
-            acc[config.row] = config.category;
-            return acc;
-          },
-          {},
-        );
+        categories = this.seatConfiguration.reduce((acc: Record<string, string>, config: any) => {
+          acc[config.row] = config.category;
+          return acc;
+        }, {});
       }
-    }
 
-    // Fallback to default if not configured
-    if (Object.keys(this.priceTable).length === 0) {
-      this.priceTable = { GEN: 25000 };
-    }
-    if (Object.keys(categories).length === 0) {
-      this.lowerRows.forEach((row) => (categories[row] = 'GEN'));
-      this.balconyRows.forEach((row) => (categories[row] = 'GEN'));
-    }
+      // Fallback to default if not configured
+      if (Object.keys(this.priceTable).length === 0) {
+        this.priceTable = { GEN: 25000 };
+      }
+      if (Object.keys(categories).length === 0) {
+        this.lowerRows.forEach((row) => (categories[row] = 'GEN'));
+        this.balconyRows.forEach((row) => (categories[row] = 'GEN'));
+      }
 
-    this.generateSeats(categories);
+      this.generateSeats(categories);
+    }
   }
 
   generateSeats(categories: Record<string, string>) {
@@ -127,7 +111,7 @@ export class SeatPickerComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/event', this.eventId]);
+    this.goBackEvent.emit();
   }
 
   get selectedSeatDetails() {
@@ -163,6 +147,6 @@ export class SeatPickerComponent implements OnInit {
       })
       .join(',');
 
-    this.router.navigate(['/checkout', this.eventId, this.time, seatData]);
+    this.lanjutEvent.emit(seatData);
   }
 }

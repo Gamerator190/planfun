@@ -3,7 +3,7 @@ import { LoginComponent } from './pages/login/login';
 import { RegisterComponent } from './pages/register/register';
 import { HomeComponent } from './pages/home/home'; // ⬅️ tambahkan ini
 import { EventDetailComponent } from './pages/event-detail/event-detail';
-import { SeatPickerComponent } from './pages/seat-picker/seat-picker';
+import { SeatPickerPageComponent } from './pages/seat-picker/seat-picker-page.component';
 import { MyTicketsComponent } from './pages/my-tickets/my-tickets';
 import { CheckoutComponent } from './pages/checkout/checkout'; // ⬅️ tambahkan ini
 import { ETicketComponent } from './pages/e-ticket/e-ticket';
@@ -23,7 +23,7 @@ export const routes: Routes = [
   { path: 'event/:id', component: EventDetailComponent },
 
   // ... route lain
-  { path: 'event/:id/seats', component: SeatPickerComponent }, // ⬅ ini
+  { path: 'event/:id/:time/seats', component: SeatPickerPageComponent }, // ⬅ ini
   { path: 'my-tickets', component: MyTicketsComponent }, // ⬅️ ini baru
   { path: 'checkout/:id/:time/:seats', component: CheckoutComponent },
 

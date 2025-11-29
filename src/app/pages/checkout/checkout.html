@@ -28,18 +28,31 @@
     </div>
   </div>
 
+  <!-- PROMO CODE -->
+  <div class="promo-box">
+    <input type="text" [(ngModel)]="promoCodeInput" placeholder="Enter promo code" />
+    <button (click)="applyPromo()">Apply</button>
+  </div>
+
   <!-- TOTAL HARGA -->
   <div class="price-box">
     <div class="row">
-      <span>Number of seats</span>
-      <span>{{ seatSelections.length }}</span>
+      <span>Subtotal</span>
+      <span>Rp {{ formatRupiah(subtotal) }}</span>
     </div>
+
+    @if (appliedPromotion) {
+    <div class="row discount">
+      <span>Discount ({{appliedPromotion.discountPercent}}%)</span>
+      <span>- Rp {{ formatRupiah(discountAmount) }}</span>
+    </div>
+    }
 
     <hr />
 
     <div class="row total">
       <span>Total Payment</span>
-      <span>Rp {{ formatRupiah(total) }}</span>
+      <span>Rp {{ formatRupiah(finalTotal) }}</span>
     </div>
   </div>
 

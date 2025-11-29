@@ -1,0 +1,13 @@
+<div class="seat-page">
+  <div class="header">
+    <button class="back-btn" (click)="handleGoBack()">«</button>
+    <div class="title">Select a Seat</div>
+    <div class="time-pill">{{ time }}</div>
+  </div>
+  <app-seat-picker
+    [ticketCategories]="ticketCategories"
+    [seatConfiguration]="seatConfiguration"
+    (goBackEvent)="handleGoBack()"
+    (lanjutEvent)="handleLanjut($event)"
+  ></app-seat-picker>
+</div>
