@@ -16,6 +16,8 @@ interface Ticket {
   date: string;
   seatDetails?: SeatSelection[];
   categoryTable?: Record<string, { name: string; price: number }>;
+  appliedPromo?: any;
+  discountAmount?: number;
 }
 
 @Component({

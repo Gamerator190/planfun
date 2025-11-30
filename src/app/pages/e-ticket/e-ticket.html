@@ -16,7 +16,15 @@
         <div class="line">{{ ticket.date }}</div>
         <div class="line">Jam: {{ ticket.time }}</div>
         <div class="line">Kursi: {{ ticket.seats.join(', ') }}</div>
-        <div class="line total">Total: Rp {{ formatRupiah(ticket.total) }}</div>
+        <div class="line subtotal" *ngIf="ticket.appliedPromo">
+          Subtotal: Rp {{ formatRupiah(ticket.total + (ticket.discountAmount || 0)) }}
+        </div>
+        @if (ticket.appliedPromo) {
+        <div class="line discount">
+          Discount ({{ticket.appliedPromo.discountPercent}}%): - Rp {{ formatRupiah(ticket.discountAmount || 0) }}
+        </div>
+        }
+        <div class="line final-total">Total: Rp {{ formatRupiah(ticket.total) }}</div>
       </div>
     </div>
 
