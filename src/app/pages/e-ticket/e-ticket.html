@@ -2,26 +2,32 @@
   <!-- HEADER -->
   <div class="header">
     <button class="back-btn" (click)="goBack()">«</button>
-    <div class="title">E-Tiket</div>
+    <div class="title">E-Ticket</div>
   </div>
 
   <!-- KARTU TIKET -->
   <div class="ticket-card">
     <!-- Poster + Info -->
     <div class="top">
-      <img class="poster" [src]="ticket.poster" [alt]="ticket.event" />
+      <img
+        class="poster"
+        [src]="ticket.event.poster || 'assets/placeholder.jpg'"
+        [alt]="ticket.event.title"
+      />
 
       <div class="info">
-        <div class="event-title">{{ ticket.event }}</div>
-        <div class="line">{{ ticket.date }}</div>
-        <div class="line">Jam: {{ ticket.time }}</div>
-        <div class="line">Kursi: {{ ticket.seats.join(', ') }}</div>
+        <div class="event-title">{{ ticket.event.title }}</div>
+        <div class="line">Event Date: {{ ticket.event.date }}</div>
+        <div class="line">Event Time: {{ ticket.event.time }}</div>
+        <div class="line">Purchase Date: {{ ticket.purchaseDate }}</div>
+        <div class="line">Seats: {{ ticket.seats.join(', ') }}</div>
         <div class="line subtotal" *ngIf="ticket.appliedPromo">
           Subtotal: Rp {{ formatRupiah(ticket.total + (ticket.discountAmount || 0)) }}
         </div>
         @if (ticket.appliedPromo) {
         <div class="line discount">
-          Discount ({{ticket.appliedPromo.discountPercent}}%): - Rp {{ formatRupiah(ticket.discountAmount || 0) }}
+          Discount ({{ticket.appliedPromo.discountPercent}}%): - Rp {{
+          formatRupiah(ticket.discountAmount || 0) }}
         </div>
         }
         <div class="line final-total">Total: Rp {{ formatRupiah(ticket.total) }}</div>

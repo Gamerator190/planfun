@@ -2,20 +2,39 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
+interface Event {
+  id: number | string;
+  title: string;
+  date: string;
+  time: string;
+  description: string;
+  location: string;
+  email?: string;
+  poster?: string;
+  isNew?: boolean;
+  isSpecial?: boolean;
+  promo?: any[];
+  ticketCategories?: any[];
+  seatConfiguration?: { row: string; category: string }[];
+  bookedSeats?: string[];
+}
+
 interface SeatSelection {
   seat: string;
   typeCode: string; // VIP | REG | SNR | CHD
 }
 
 interface Ticket {
-  event: string;
+  event: Event; // Now stores the full Event object
   poster: string;
-  time: string;
+  time: string; // This is event time, not ticket purchase time
   seats: string[];
   total: number;
-  date: string;
+  purchaseDate: string; // New property for purchase date
   seatDetails?: SeatSelection[];
   categoryTable?: Record<string, { name: string; price: number }>;
+  appliedPromo?: any;
+  discountAmount?: number;
 }
 
 @Component({

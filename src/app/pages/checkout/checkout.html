@@ -12,8 +12,8 @@
     <div class="event-info">
       <h2>{{ event.title }}</h2>
       <p class="location">{{ event.location }}</p>
-      <p class="line">Jam: {{ time }}</p>
-      <p class="line">Kursi: {{ seatListLabel }}</p>
+      <p class="line">Time: {{ time }}</p>
+      <p class="line">Seat(s): {{ seatListLabel }}</p>
     </div>
   </div>
 
@@ -30,7 +30,11 @@
 
   <!-- PROMO CODE -->
   <div class="promo-box">
-    <input type="text" [(ngModel)]="promoCodeInput" placeholder="Enter promo code" />
+    <input
+      type="text"
+      [(ngModel)]="promoCodeInput"
+      placeholder="Do you have a promotional code or discount coupon?"
+    />
     <button (click)="applyPromo()">Apply</button>
   </div>
 

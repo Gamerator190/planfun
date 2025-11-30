@@ -35,41 +35,6 @@ export class HomeComponent implements OnInit {
 
   events: Event[] = [];
 
-  private hardcodedEvents: Event[] = [
-    {
-      id: 1,
-      title: 'Digital Innovation Conference 2025',
-      location: 'Main Auditorium',
-      date: '2025-03-10',
-      time: '09:00',
-      description: 'A conference about the future of technology.',
-      isNew: true,
-      poster: 'https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg',
-      availableSeats: 300, // Default for hardcoded events
-    },
-    {
-      id: 2,
-      title: 'Creative Technology Workshop Series',
-      location: 'Main Auditorium',
-      date: '2025-04-05',
-      time: '13:00',
-      description: 'A workshop for creative minds.',
-      isNew: true,
-      poster: 'https://images.pexels.com/photos/1181675/pexels-photo-1181675.jpeg',
-      availableSeats: 300, // Default for hardcoded events
-    },
-    {
-      id: 3,
-      title: 'Leadership & Career Development Conference',
-      location: 'Main Auditorium',
-      date: '2025-05-20',
-      time: '10:00',
-      description: 'A conference for future leaders.',
-      poster: 'https://images.pexels.com/photos/1181395/pexels-photo-1181395.jpeg',
-      availableSeats: 300, // Default for hardcoded events
-    },
-  ];
-
   ngOnInit(): void {
     const userJson = localStorage.getItem('pf-current-user');
 
@@ -90,32 +55,22 @@ export class HomeComponent implements OnInit {
     if (eventsFromStorage) {
       try {
         const storedEvents: Event[] = JSON.parse(eventsFromStorage);
-        const storedEventIds = new Set(storedEvents.map((e) => e.id));
-        const filteredHardcodedEvents = this.hardcodedEvents.filter(
-          (e) => !storedEventIds.has(e.id),
-        );
-            this.events = [...storedEvents, ...filteredHardcodedEvents].map(event => {
-              const totalSeats = event.seatConfiguration ? event.seatConfiguration.length * 30 : 0; // Assuming 30 seats per row
-              const bookedSeatsCount = event.bookedSeats ? event.bookedSeats.length : 0;
-              return {
-                ...event,
-                availableSeats: totalSeats - bookedSeatsCount
-              };
-            });
-          } catch (e) {
-            console.error('Error parsing events from localStorage', e);
-            this.events = this.hardcodedEvents.map(event => ({
-              ...event,
-              availableSeats: (event.seatConfiguration ? event.seatConfiguration.length * 30 : 0) - (event.bookedSeats ? event.bookedSeats.length : 0)
-            }));
-          }
-        } else {
-          this.events = this.hardcodedEvents.map(event => ({
+        this.events = storedEvents.map(event => {
+          const totalSeats = event.seatConfiguration ? event.seatConfiguration.length * 30 : 0;
+          const bookedSeatsCount = event.bookedSeats ? event.bookedSeats.length : 0;
+          return {
             ...event,
-            availableSeats: (event.seatConfiguration ? event.seatConfiguration.length * 30 : 0) - (event.bookedSeats ? event.bookedSeats.length : 0)
-          }));
-        }
-        localStorage.setItem('pf-events', JSON.stringify(this.events));  }
+            availableSeats: totalSeats - bookedSeatsCount
+          };
+        });
+      } catch (e) {
+        console.error('Error parsing events from localStorage', e);
+        this.events = [];
+      }
+    } else {
+      this.events = [];
+    }
+  }
 
   toggleUserMenu() {
     this.showMenu = !this.showMenu;

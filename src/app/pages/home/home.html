@@ -52,7 +52,7 @@
         <h1 class="hero-title">{{ events[0].title }}</h1>
         <p class="hero-subtitle">{{ events[0].location }}</p>
         <p class="hero-availability">
-          @if (events[0].availableSeats > 0) { {{ events[0].availableSeats }} tickets left } @else {
+          @if (events[0].availableSeats > 0) { {{ events[0].availableSeats }} seats left } @else {
           Sold Out }
         </p>
         <button class="hero-btn" type="button" (click)="goEvent(events[0].id)">See Details</button>

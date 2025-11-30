@@ -3,17 +3,34 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-interface Ticket {
-  event: string;
-  poster: string;
+interface Event {
+  id: number | string;
+  title: string;
+  date: string;
   time: string;
+  description: string;
+  location: string;
+  email?: string;
+  poster?: string;
+  isNew?: boolean;
+  isSpecial?: boolean;
+  promo?: any[];
+  ticketCategories?: any[];
+  seatConfiguration?: { row: string; category: string }[];
+  bookedSeats?: string[];
+}
+
+interface Ticket {
+  event: Event; // Now stores the full Event object
+  poster: string;
+  time: string; // This is event time, not ticket purchase time
   seats: string[];
   total: number;
-  date: string;
+  purchaseDate: string; // New property for purchase date
   seatDetails?: SeatSelection[];
   categoryTable?: Record<string, { name: string; price: number }>;
-  appliedPromo?: any; // Added appliedPromo
-  discountAmount?: number; // Added discountAmount
+  appliedPromo?: any;
+  discountAmount?: number;
 }
 
 interface TicketType {
@@ -176,16 +193,16 @@ export class CheckoutComponent implements OnInit {
     }
 
     const ticket: Ticket = {
-      event: this.event.title,
-      poster: this.event.poster,
-      time: this.time,
+      event: this.event, // Store full event object
+      poster: this.event.poster, // Keep for backward compatibility/simplicity
+      time: this.time, // This is event time, so keep it for consistency
       seats: this.seatSelections.map((s) => s.seat),
       total: this.finalTotal,
-      date: new Date().toLocaleString('id-ID'),
+      purchaseDate: new Date().toLocaleString('id-ID'), // Store purchase date
       seatDetails: this.seatSelections,
       categoryTable: this.categoryTable,
-      appliedPromo: this.appliedPromo, // Added appliedPromo
-      discountAmount: this.discountAmount, // Added discountAmount
+      appliedPromo: this.appliedPromo,
+      discountAmount: this.discountAmount,
     };
 
     const existing: Ticket[] = JSON.parse(localStorage.getItem('pf-tickets') || '[]');

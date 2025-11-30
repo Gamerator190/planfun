@@ -17,20 +17,25 @@
   <div class="tickets-list" *ngIf="tickets.length">
     <div class="ticket-card" *ngFor="let t of tickets; let i = index" (click)="openTicket(i)">
       <div class="poster-wrap">
-        <img [src]="t.poster" [alt]="t.event" />
+        <img [src]="t.event.poster || 'assets/placeholder.jpg'" [alt]="t.event.title" />
       </div>
 
       <div class="ticket-info">
-        <div class="event-title">{{ t.event }}</div>
+        <div class="event-title">{{ t.event.title }}</div>
 
         <div class="row">
-          <span class="label">Tgl</span>
-          <span class="value">{{ t.date }}</span>
+          <span class="label">Event Date</span>
+          <span class="value">{{ t.event.date }}</span>
         </div>
 
         <div class="row">
-          <span class="label">Jam</span>
+          <span class="label">Time</span>
           <span class="value">{{ t.time }}</span>
+        </div>
+
+        <div class="row">
+          <span class="label">Purchase Date</span>
+          <span class="value">{{ t.purchaseDate }}</span>
         </div>
 
         <div class="row">
