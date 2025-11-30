@@ -51,7 +51,7 @@
         <p class="hero-label">Now Showing</p>
         <h1 class="hero-title">{{ events[0].title }}</h1>
         <p class="hero-subtitle">{{ events[0].location }}</p>
-        <p class="hero-availability">
+        <p class="hero-subtitle">
           @if (events[0].availableSeats > 0) { {{ events[0].availableSeats }} seats left } @else {
           Sold Out }
         </p>
