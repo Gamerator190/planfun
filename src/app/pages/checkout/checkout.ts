@@ -192,6 +192,23 @@ export class CheckoutComponent implements OnInit {
     existing.push(ticket);
     localStorage.setItem('pf-tickets', JSON.stringify(existing));
 
+    // Update booked seats for the event
+    const eventsJson = localStorage.getItem('pf-events');
+    if (eventsJson) {
+      const allEvents: any[] = JSON.parse(eventsJson);
+      const eventIndex = allEvents.findIndex((e) => e.id === this.event.id);
+
+      if (eventIndex !== -1) {
+        const updatedEvent = { ...allEvents[eventIndex] };
+        updatedEvent.bookedSeats = [
+          ...(updatedEvent.bookedSeats || []),
+          ...this.seatSelections.map((s) => s.seat),
+        ];
+        allEvents[eventIndex] = updatedEvent;
+        localStorage.setItem('pf-events', JSON.stringify(allEvents));
+      }
+    }
+
     alert('Payment successful! Ticket saved 🎉');
     this.router.navigate(['/my-tickets']);
   }

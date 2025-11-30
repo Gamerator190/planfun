@@ -13,6 +13,7 @@ type Seat = { id: string; booked: boolean; type: string };
 export class SeatPickerComponent implements OnChanges {
   @Input() ticketCategories: any[] = [];
   @Input() seatConfiguration: any[] = [];
+  @Input() bookedSeats: string[] = []; // Added bookedSeats input
   @Output() goBackEvent = new EventEmitter<void>();
   @Output() continueEvent = new EventEmitter<{ seatData: string; categoryTable: Record<string, { name: string; price: number }> }>();
   @Input() showContinueButton: boolean = true;
@@ -30,7 +31,7 @@ export class SeatPickerComponent implements OnChanges {
   categoryTable: Record<string, { name: string; price: number }> = {};
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['ticketCategories'] || changes['seatConfiguration']) {
+    if (changes['ticketCategories'] || changes['seatConfiguration'] || changes['bookedSeats']) { // Added bookedSeats to changes check
       let categories: Record<string, string> = {};
 
       if (this.ticketCategories && this.seatConfiguration) {
@@ -62,14 +63,16 @@ export class SeatPickerComponent implements OnChanges {
 
   generateSeats(categories: Record<string, string>) {
     this.seats = [];
+    const bookedSeatsSet = new Set(this.bookedSeats); // Convert to Set for efficient lookup
 
     // LOWER FOYER → 30 kursi per baris (10 kiri, 10 tengah, 10 kanan)
     for (const row of this.lowerRows) {
       const rowSeats: Seat[] = [];
       for (let i = 1; i <= 30; i++) {
+        const seatId = row + i;
         rowSeats.push({
-          id: row + i,
-          booked: Math.random() < 0.15,
+          id: seatId,
+          booked: bookedSeatsSet.has(seatId), // Use actual bookedSeats
           type: categories[row] || 'GEN',
         });
       }
@@ -80,9 +83,10 @@ export class SeatPickerComponent implements OnChanges {
     for (const row of this.balconyRows) {
       const rowSeats: Seat[] = [];
       for (let i = 1; i <= 30; i++) {
+        const seatId = row + i;
         rowSeats.push({
-          id: row + i,
-          booked: Math.random() < 0.15,
+          id: seatId,
+          booked: bookedSeatsSet.has(seatId), // Use actual bookedSeats
           type: categories[row] || 'GEN',
         });
       }

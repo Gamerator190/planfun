@@ -26,6 +26,7 @@ interface Event {
   promo?: Promo[];
   ticketCategories?: { name: string; shortName: string; price: number }[];
   seatConfiguration?: { row: string; category: string }[];
+  bookedSeats?: string[]; // Added bookedSeats
 }
 
 @Component({

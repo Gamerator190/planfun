@@ -15,6 +15,7 @@ export class SeatPickerPageComponent implements OnInit {
   time!: string;
   ticketCategories: any[] = [];
   seatConfiguration: any[] = [];
+  bookedSeats: string[] = []; // Added bookedSeats property
 
   constructor(
     private route: ActivatedRoute,
@@ -33,6 +34,7 @@ export class SeatPickerPageComponent implements OnInit {
       if (currentEvent) {
         this.ticketCategories = currentEvent.ticketCategories || [];
         this.seatConfiguration = currentEvent.seatConfiguration || [];
+        this.bookedSeats = currentEvent.bookedSeats || []; // Populate bookedSeats
       }
     }
   }
