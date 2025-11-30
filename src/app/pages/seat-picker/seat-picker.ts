@@ -14,7 +14,7 @@ export class SeatPickerComponent implements OnChanges {
   @Input() ticketCategories: any[] = [];
   @Input() seatConfiguration: any[] = [];
   @Output() goBackEvent = new EventEmitter<void>();
-  @Output() continueEvent = new EventEmitter<string>();
+  @Output() continueEvent = new EventEmitter<{ seatData: string; categoryTable: Record<string, { name: string; price: number }> }>();
   @Input() showContinueButton: boolean = true;
 
   // LOWER FOYER: A–J (10 baris)
@@ -27,16 +27,16 @@ export class SeatPickerComponent implements OnChanges {
   seats: Seat[][] = [];
   selectedSeats: string[] = [];
 
-  priceTable: Record<string, number> = {};
+  categoryTable: Record<string, { name: string; price: number }> = {};
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['ticketCategories'] || changes['seatConfiguration']) {
       let categories: Record<string, string> = {};
 
       if (this.ticketCategories && this.seatConfiguration) {
-        // Create price table from ticketCategories
-        this.priceTable = this.ticketCategories.reduce((acc: Record<string, number>, cat: any) => {
-          acc[cat.shortName] = cat.price;
+        // Create category table from ticketCategories
+        this.categoryTable = this.ticketCategories.reduce((acc: Record<string, { name: string; price: number }>, cat: any) => {
+          acc[cat.shortName] = { name: cat.name, price: cat.price };
           return acc;
         }, {});
 
@@ -48,8 +48,8 @@ export class SeatPickerComponent implements OnChanges {
       }
 
       // Fallback to default if not configured
-      if (Object.keys(this.priceTable).length === 0) {
-        this.priceTable = { GEN: 25000 };
+      if (Object.keys(this.categoryTable).length === 0) {
+        this.categoryTable = { GEN: { name: 'General', price: 25000 } };
       }
       if (Object.keys(categories).length === 0) {
         this.lowerRows.forEach((row) => (categories[row] = 'GEN'));
@@ -119,7 +119,7 @@ export class SeatPickerComponent implements OnChanges {
     return this.selectedSeats.map((id) => {
       const seat = flat.find((s) => s.id === id);
       const type = seat?.type ?? 'REG';
-      const price = this.priceTable[type] ?? 0;
+      const price = this.categoryTable[type]?.price ?? 0;
       return { id, type, price };
     });
   }
@@ -147,6 +147,6 @@ export class SeatPickerComponent implements OnChanges {
       })
       .join(',');
 
-    this.continueEvent.emit(seatData);
+    this.continueEvent.emit({ seatData, categoryTable: this.categoryTable });
   }
 }

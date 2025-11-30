@@ -23,8 +23,8 @@
 
     <div class="seat-type-row" *ngFor="let sel of seatSelections">
       <div class="seat-name">{{ sel.seat }}</div>
-      <div class="seat-type">{{ getTypeLabel(sel.typeCode) }}</div>
-      <div class="seat-price">Rp {{ formatRupiah(getTypePrice(sel.typeCode)) }}</div>
+      <div class="seat-type">{{ categoryTable[sel.typeCode]?.name || sel.typeCode }}</div>
+      <div class="seat-price">Rp {{ formatRupiah(categoryTable[sel.typeCode]?.price || 0) }}</div>
     </div>
   </div>
 
@@ -41,9 +41,9 @@
       <span>Rp {{ formatRupiah(subtotal) }}</span>
     </div>
 
-    @if (appliedPromotion) {
+    @if (appliedPromo) {
     <div class="row discount">
-      <span>Discount ({{appliedPromotion.discountPercent}}%)</span>
+      <span>Discount ({{appliedPromo.discountPercent}}%){{applicableCategoriesLabel}}</span>
       <span>- Rp {{ formatRupiah(discountAmount) }}</span>
     </div>
     }

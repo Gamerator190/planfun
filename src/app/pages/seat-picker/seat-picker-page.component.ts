@@ -41,7 +41,7 @@ export class SeatPickerPageComponent implements OnInit {
     this.router.navigate(['/event', this.eventId]);
   }
 
-  handleContinue(seatData: string) {
-    this.router.navigate(['/checkout', this.eventId, this.time, seatData]);
+  handleContinue({ seatData, categoryTable }: { seatData: string; categoryTable: any }) {
+    this.router.navigate(['/checkout', this.eventId, this.time, seatData, { categoryTable: JSON.stringify(categoryTable) }]);
   }
 }

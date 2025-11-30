@@ -5,7 +5,7 @@ import { SeatPickerComponent } from '../seat-picker/seat-picker';
 
 import { Router } from '@angular/router';
 
-interface Promotion {
+interface Promo {
   code: string;
   discountPercent: number;
   expiryDate: string;
@@ -23,7 +23,7 @@ interface Event {
   poster?: string;
   isNew?: boolean;
   isSpecial?: boolean;
-  promotions?: Promotion[];
+  promo?: Promo[];
   ticketCategories?: { name: string; shortName: string; price: number }[];
   seatConfiguration?: { row: string; category: string }[];
 }
@@ -46,8 +46,7 @@ export class Dashboard {
   showMenu = false;
   userEvents: Event[] = [];
   selectedEventId: number | null = null;
-  promotions: Promotion[] = [];
-
+  promo: Promo[] = [];
 
   ticketCategories = [{ name: 'General Admission', shortName: 'GEN', price: 25000 }];
   seatConfiguration = [
@@ -96,9 +95,7 @@ export class Dashboard {
               { row: 'DD', category: 'GEN' },
               { row: 'EE', category: 'GEN' },
             ];
-        this.promotions = selectedEvent.promotions
-          ? JSON.parse(JSON.stringify(selectedEvent.promotions))
-          : [];
+        this.promo = selectedEvent.promo ? JSON.parse(JSON.stringify(selectedEvent.promo)) : [];
       }
     } else {
       this.selectedEventId = null;
@@ -120,7 +117,7 @@ export class Dashboard {
         { row: 'DD', category: 'GEN' },
         { row: 'EE', category: 'GEN' },
       ];
-      this.promotions = [];
+      this.promo = [];
     }
   }
 
@@ -173,22 +170,27 @@ export class Dashboard {
     }
   }
 
-  addPromotion() {
-    const applicableTicketTypes = this.ticketCategories.reduce((acc, cat) => {
-      acc[cat.shortName] = false;
-      return acc;
-    }, {} as { [key: string]: boolean });
+  addPromo() {
+    console.log('addPromo() called');
+    const applicableTicketTypes = this.ticketCategories.reduce(
+      (acc, cat) => {
+        acc[cat.shortName] = false;
+        return acc;
+      },
+      {} as { [key: string]: boolean },
+    );
 
-    this.promotions.push({
+    this.promo.push({
       code: '',
       discountPercent: 0,
       expiryDate: '',
-      applicableTicketTypes: applicableTicketTypes
+      applicableTicketTypes: applicableTicketTypes,
     });
+    console.log('this.promo after add:', this.promo);
   }
 
-  removePromotion(index: number) {
-    this.promotions.splice(index, 1);
+  removePromo(index: number) {
+    this.promo.splice(index, 1);
   }
 
   submitForm() {
@@ -246,7 +248,7 @@ export class Dashboard {
           poster: posterBase64,
           ticketCategories: this.ticketCategories,
           seatConfiguration: this.seatConfiguration,
-          promotions: this.promotions
+          promo: this.promo,
         });
       };
 
@@ -262,7 +264,7 @@ export class Dashboard {
           email: userEmail,
           ticketCategories: this.ticketCategories,
           seatConfiguration: this.seatConfiguration,
-          promotions: this.promotions,
+          promo: this.promo,
         }); // Save without poster
       };
 
@@ -278,7 +280,7 @@ export class Dashboard {
           email: userEmail,
           ticketCategories: this.ticketCategories,
           seatConfiguration: this.seatConfiguration,
-          promotions: this.promotions,
+          promo: this.promo,
         });
       }
     } else if (this.activeChoice === 'edit-event') {
@@ -301,7 +303,7 @@ export class Dashboard {
       if (eventIndex !== -1) {
         events[eventIndex].ticketCategories = this.ticketCategories;
         events[eventIndex].seatConfiguration = this.seatConfiguration;
-        events[eventIndex].promotions = this.promotions;
+        events[eventIndex].promo = this.promo;
         localStorage.setItem('pf-events', JSON.stringify(events));
         alert('Event updated successfully!');
       } else {

@@ -38,9 +38,11 @@ export class CheckoutComponent implements OnInit {
   seatSelections: SeatSelection[] = [];
   subtotal = 0;
   promoCodeInput = '';
-  appliedPromotion: any = null;
+  appliedPromo: any = null;
   discountAmount = 0;
   finalTotal = 0;
+
+  categoryTable: Record<string, { name: string; price: number }> = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -51,6 +53,11 @@ export class CheckoutComponent implements OnInit {
     const eventId = Number(this.route.snapshot.paramMap.get('id'));
     this.time = String(this.route.snapshot.paramMap.get('time'));
     const seatsParam = this.route.snapshot.paramMap.get('seats') || '';
+    const categoryTableString = this.route.snapshot.paramMap.get('categoryTable');
+
+    if (categoryTableString) {
+      this.categoryTable = JSON.parse(categoryTableString);
+    }
 
     // seatsParam bentuknya: "A1:VIP,B3:VIP,C4:REG,E2:SNR"
     if (seatsParam) {
@@ -86,44 +93,41 @@ export class CheckoutComponent implements OnInit {
     return this.seatSelections.map((s) => s.seat).join(', ');
   }
 
-  getTypePrice(code: string): number {
-    if (!this.event || !this.event.ticketCategories) {
-      return 0;
+  get applicableCategoriesLabel(): string {
+    if (!this.appliedPromo || !this.appliedPromo.applicableTicketTypes) {
+      return '';
     }
-    const t = this.event.ticketCategories.find((cat: any) => cat.shortName === code);
-    return t ? t.price : 0;
-  }
-
-  getTypeLabel(code: string): string {
-    if (!this.event || !this.event.ticketCategories) {
-      return code;
-    }
-    const t = this.event.ticketCategories.find((cat: any) => cat.shortName === code);
-    return t ? t.name : code;
+    const applicableTypes = Object.keys(this.appliedPromo.applicableTicketTypes)
+      .filter(typeCode => this.appliedPromo.applicableTicketTypes[typeCode])
+      .join(', ');
+    return applicableTypes ? ` for ${applicableTypes}` : '';
   }
 
   updateTotal() {
-    this.subtotal = this.seatSelections.reduce((sum, sel) => sum + this.getTypePrice(sel.typeCode), 0);
+    this.subtotal = this.seatSelections.reduce(
+      (sum, sel) => sum + (this.categoryTable[sel.typeCode]?.price || 0),
+      0,
+    );
 
-    if (this.appliedPromotion) {
+    if (this.appliedPromo) {
       const today = new Date().setHours(0, 0, 0, 0);
-      const expiryDate = new Date(this.appliedPromotion.expiryDate).setHours(0, 0, 0, 0);
+      const expiryDate = new Date(this.appliedPromo.expiryDate).setHours(0, 0, 0, 0);
 
       if (today > expiryDate) {
         alert('The applied promo code has expired.');
-        this.appliedPromotion = null;
+        this.appliedPromo = null;
         this.discountAmount = 0;
       } else {
         let discountableAmount = 0;
         for (const seat of this.seatSelections) {
-          if (this.appliedPromotion.applicableTicketTypes[seat.typeCode]) {
-            discountableAmount += this.getTypePrice(seat.typeCode);
+          if (this.appliedPromo.applicableTicketTypes[seat.typeCode]) {
+            discountableAmount += this.categoryTable[seat.typeCode]?.price || 0;
           }
         }
-        this.discountAmount = (discountableAmount * this.appliedPromotion.discountPercent) / 100;
+        this.discountAmount = (discountableAmount * this.appliedPromo.discountPercent) / 100;
       }
     } else {
-        this.discountAmount = 0;
+      this.discountAmount = 0;
     }
 
     this.finalTotal = this.subtotal - this.discountAmount;
@@ -135,26 +139,26 @@ export class CheckoutComponent implements OnInit {
 
   applyPromo() {
     if (!this.promoCodeInput) {
-      this.appliedPromotion = null;
+      this.appliedPromo = null;
       this.updateTotal();
       return;
     }
 
-    if (!this.event.promotions || this.event.promotions.length === 0) {
-      alert('No promotions available for this event.');
-      return;
-    }
+    // if (!Array.isArray(this.event.promo) || this.event.promo.length === 0) {
+    //   alert('No promo available for this event.');
+    //   return;
+    // }
 
-    const promo = this.event.promotions.find((p: any) => p.code === this.promoCodeInput);
+    const promo = this.event.promo.find((p: any) => p.code === this.promoCodeInput);
 
     if (!promo) {
       alert('Invalid promo code.');
-      this.appliedPromotion = null;
+      this.appliedPromo = null;
       this.updateTotal();
       return;
     }
 
-    this.appliedPromotion = promo;
+    this.appliedPromo = promo;
     this.updateTotal();
   }
 

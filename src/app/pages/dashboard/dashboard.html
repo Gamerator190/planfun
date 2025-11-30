@@ -187,8 +187,8 @@
         </div>
 
         <!-- PROMOTIONS -->
-        <div class="card-subtitle">Promotions</div>
-        <div *ngFor="let promo of promotions; let i = index" class="promotion-form-row">
+        <div class="card-subtitle">Promos</div>
+        <div *ngFor="let promo of promo; let i = index" class="promo-form-row">
           <div class="form-group">
             <label>Promo Code</label>
             <input type="text" [(ngModel)]="promo.code" name="promo-code-{{i}}" />
@@ -204,13 +204,17 @@
           <div class="form-group applicable-types">
             <label>Applicable To</label>
             <div *ngFor="let cat of ticketCategories" class="checkbox-group">
-              <input type="checkbox" [(ngModel)]="promo.applicableTicketTypes[cat.shortName]" name="promo-cat-{{i}}-{{cat.shortName}}" />
+              <input
+                type="checkbox"
+                [(ngModel)]="promo.applicableTicketTypes[cat.shortName]"
+                name="promo-cat-{{i}}-{{cat.shortName}}"
+              />
               <span>{{cat.shortName}}</span>
             </div>
           </div>
-          <button type="button" (click)="removePromotion(i)" class="form-btn-remove">Remove</button>
+          <button type="button" (click)="removePromo(i)" class="form-btn-remove">Remove</button>
         </div>
-        <button type="button" (click)="addPromotion()" class="form-btn-add">+ Add Promotion</button>
+        <button type="button" (click)="addPromo()" class="form-btn-add">+ Add Promo</button>
 
         <div class="card-subtitle">Seating Map</div>
         <app-seat-picker
