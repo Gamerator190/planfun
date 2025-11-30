@@ -1,0 +1,167 @@
+.payment-page {
+  min-height: 100vh;
+  background: #ffffff;
+  color: #0f1939;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(209, 213, 219, 0.7);
+  background: #faebd7;
+  color: #0f1939;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f1939;
+  flex: 1; /* Allow title to take up available space */
+  text-align: center; /* Center the title */
+}
+
+/* Card styles similar to dashboard/checkout */
+.card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
+  border: 1px solid rgba(209, 213, 219, 0.8);
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f1939;
+  margin: 0;
+}
+
+.card-subtitle {
+  font-size: 14px;
+  color: #516ac8;
+  margin: 0;
+}
+
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.payment-options h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f1939;
+  margin: 0;
+}
+
+.option-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.option-group:hover {
+  background: #f3f4f6;
+}
+
+.option-group input[type="radio"] {
+  /* Hide default radio button */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #a0aec0;
+  background-color: #ffffff;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.option-group input[type="radio"]:checked {
+  border-color: #e3af64;
+}
+
+.option-group input[type="radio"]:checked::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background-color: #e3af64;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.option-group label {
+  font-size: 14px;
+  color: #0f1939;
+  flex: 1;
+  cursor: pointer;
+}
+
+/* Pay Now Button (similar to form-btn-submit) */
+.pay-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #e3af64, #faebd7);
+  color: #0f1939;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.15);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+  margin-top: 20px;
+}
+
+.pay-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
+}
+
+.pay-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

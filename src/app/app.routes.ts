@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login';
+import { PaymentComponent } from './pages/payment/payment';
 import { RegisterComponent } from './pages/register/register';
 import { HomeComponent } from './pages/home/home'; // ⬅️ tambahkan ini
 import { EventDetailComponent } from './pages/event-detail/event-detail';
@@ -29,4 +30,5 @@ export const routes: Routes = [
 
   // ⬇ route baru untuk detail tiket (E-Ticket)
   { path: 'my-tickets/:index', component: ETicketComponent },
+  { path: 'payment', component: PaymentComponent }, // New payment route
 ];

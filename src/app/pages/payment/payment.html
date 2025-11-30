@@ -1,0 +1,31 @@
+<div class="payment-page">
+  <div class="header">
+    <button class="back-btn" (click)="goBack()">«</button>
+    <div class="title">Payment</div>
+  </div>
+
+  <div class="card" *ngIf="ticket">
+    <div class="card-body">
+      <h2 class="card-title">Event: {{ ticket.event.title }}</h2>
+      <p class="card-subtitle">Total to pay: <strong>Rp {{ formatRupiah(ticket.total) }}</strong></p>
+
+      <div class="payment-options">
+        <h3>Choose Payment Method</h3>
+        <div class="option-group">
+          <input type="radio" id="creditCard" name="paymentOption" value="creditCard" [(ngModel)]="paymentOption">
+          <label for="creditCard">Credit Card</label>
+        </div>
+        <div class="option-group">
+          <input type="radio" id="eWallet" name="paymentOption" value="eWallet" [(ngModel)]="paymentOption">
+          <label for="eWallet">E-Wallet</label>
+        </div>
+        <div class="option-group">
+          <input type="radio" id="bankTransfer" name="paymentOption" value="bankTransfer" [(ngModel)]="paymentOption">
+          <label for="bankTransfer">Bank Transfer</label>
+        </div>
+      </div>
+
+      <button class="pay-btn" (click)="processPayment()">Pay Now</button>
+    </div>
+  </div>
+</div>
