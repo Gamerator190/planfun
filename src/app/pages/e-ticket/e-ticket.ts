@@ -15,6 +15,7 @@ interface Ticket {
   total: number;
   date: string;
   seatDetails?: SeatSelection[];
+  categoryTable?: Record<string, { name: string; price: number }>;
 }
 
 @Component({
@@ -27,21 +28,6 @@ interface Ticket {
 export class ETicketComponent implements OnInit {
   ticket: Ticket | null = null;
   index = 0;
-
-  // tabel label + harga sesuai kategori
-  typeLabels: Record<string, string> = {
-    VIP: 'VIP',
-    REG: 'General Admission',
-    SNR: 'Senior Citizens',
-    CHD: 'Children',
-  };
-
-  priceTable: Record<string, number> = {
-    VIP: 65000,
-    REG: 45000,
-    SNR: 30000,
-    CHD: 25000,
-  };
 
   constructor(
     private route: ActivatedRoute,
@@ -80,12 +66,12 @@ export class ETicketComponent implements OnInit {
 
   // label "VIP", "Anak-anak", dll.
   getTypeLabel(code: string): string {
-    return this.typeLabels[code] || code;
+    return this.ticket?.categoryTable?.[code]?.name || code;
   }
 
   // harga per kategori
   getTypePrice(code: string): number {
-    return this.priceTable[code] ?? 0;
+    return this.ticket?.categoryTable?.[code]?.price ?? 0;
   }
 
   // formatting

@@ -11,6 +11,7 @@ interface Ticket {
   total: number;
   date: string;
   seatDetails?: SeatSelection[];
+  categoryTable?: Record<string, { name: string; price: number }>; // Added categoryTable
 }
 
 interface TicketType {
@@ -180,6 +181,7 @@ export class CheckoutComponent implements OnInit {
       total: this.finalTotal,
       date: new Date().toLocaleString('id-ID'),
       seatDetails: this.seatSelections,
+      categoryTable: this.categoryTable, // Added categoryTable
     };
 
     const existing: Ticket[] = JSON.parse(localStorage.getItem('pf-tickets') || '[]');

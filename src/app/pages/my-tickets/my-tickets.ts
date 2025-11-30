@@ -15,6 +15,7 @@ interface Ticket {
   total: number;
   date: string;
   seatDetails?: SeatSelection[];
+  categoryTable?: Record<string, { name: string; price: number }>;
 }
 
 @Component({
@@ -26,14 +27,6 @@ interface Ticket {
 })
 export class MyTicketsComponent implements OnInit {
   tickets: Ticket[] = [];
-
-  // label tipe tiket
-  typeLabels: Record<string, string> = {
-    VIP: 'VIP',
-    REG: 'General Admission',
-    SNR: 'Senior Citizens',
-    CHD: 'Children',
-  };
 
   constructor(private router: Router) {}
 
@@ -69,7 +62,7 @@ export class MyTicketsComponent implements OnInit {
 
   // Ringkasan: "VIP x 2, Anak-anak x 1"
   getSeatTypeSummary(ticket: Ticket): string {
-    if (!ticket.seatDetails) return '';
+    if (!ticket.seatDetails || !ticket.categoryTable) return '';
 
     const counter: Record<string, number> = {};
 
@@ -78,7 +71,7 @@ export class MyTicketsComponent implements OnInit {
     }
 
     return Object.keys(counter)
-      .map((code) => `${this.typeLabels[code]} x ${counter[code]}`)
+      .map((code) => `${ticket.categoryTable?.[code]?.name || code} x ${counter[code]}`)
       .join(', ');
   }
 
