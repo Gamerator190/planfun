@@ -194,7 +194,7 @@ export class CheckoutComponent implements OnInit {
     const ticket: Ticket = {
       event: this.event,
       poster: this.event.poster,
-      time: this.time, ncy
+      time: this.time,
       seats: this.seatSelections.map((s) => s.seat),
       total: this.finalTotal,
       purchaseDate: new Date().toISOString(),

@@ -49,15 +49,14 @@
     <div class="bottom">
       <div class="qr-box">
         <div class="qr-inner" #qrcodeCanvas></div>
-        </div>
       </div>
-      <div class="qr-text">Show this E-Ticket to the event staff for scanning.</div>
     </div>
+    <div class="qr-text">Show this E-Ticket to the event staff for scanning.</div>
   </div>
-
-  <button class="cancel-btn" (click)="cancelBooking()" [disabled]="isCancelDisabled">
-    Cancel Booking
-  </button>
-
-  <div class="hint">Screenshot this page to save the E-Ticket in your gallery 📱</div>
 </div>
+
+<button class="cancel-btn" (click)="cancelBooking()" [disabled]="isCancelDisabled">
+  Cancel Booking
+</button>
+
+<div class="hint">Screenshot this page to save the E-Ticket in your gallery 📱</div>
