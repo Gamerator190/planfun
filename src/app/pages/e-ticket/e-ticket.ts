@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+declare const QRCode: any;
+
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -26,6 +28,7 @@ interface SeatSelection {
 }
 
 interface Ticket {
+  id: string; // Assuming ticket has an ID
   event: Event; // Now stores the full Event object
   poster: string;
   time: string; // This is event time, not ticket purchase time
@@ -46,9 +49,11 @@ interface Ticket {
   templateUrl: './e-ticket.html',
   styleUrl: './e-ticket.css',
 })
-export class ETicketComponent implements OnInit {
+export class ETicketComponent implements OnInit, AfterViewInit {
   ticket: Ticket | null = null;
   index = 0;
+
+  @ViewChild('qrcodeCanvas', { static: false }) qrcodeCanvas!: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -82,6 +87,32 @@ export class ETicketComponent implements OnInit {
       }
     } catch (err) {
       this.router.navigate(['/notifications']);
+    }
+  }
+
+  ngAfterViewInit(): void {
+    if (this.ticket && this.qrcodeCanvas) {
+      this.generateQRCode();
+    }
+  }
+
+  generateQRCode(): void {
+    if (this.ticket) {
+      const qrData = JSON.stringify({
+        ticketId: this.ticket.id,
+        eventName: this.ticket.event.title,
+        purchaseDate: this.ticket.purchaseDate,
+        // Add more relevant data if needed for verification
+      });
+
+      new QRCode(this.qrcodeCanvas.nativeElement, {
+        text: qrData,
+        width: 128,
+        height: 128,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H, // High error correction
+      });
     }
   }
 

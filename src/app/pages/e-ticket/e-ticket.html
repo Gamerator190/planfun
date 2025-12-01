@@ -52,13 +52,11 @@
       <div class="circle right"></div>
     </div>
 
-    <!-- QR PALSU -->
+    <!-- QR CODE -->
     <div class="bottom">
       <div class="qr-box">
-        <div class="qr-inner">
-          <div class="qr-row" *ngFor="let r of [1,2,3,4,5]">
-            <span *ngFor="let c of [1,2,3,4,5,6,7]"></span>
-          </div>
+        <div class="qr-inner" #qrcodeCanvas>
+          <!-- QR code will be rendered here -->
         </div>
       </div>
       <div class="qr-text">Show this E-Ticket to the event staff for scanning.</div>
