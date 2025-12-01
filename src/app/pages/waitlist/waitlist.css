@@ -1,6 +1,6 @@
 .waitlist-page {
   min-height: 100vh;
-  background: #ffffff; /* putih */
+  background: #ffffff;
   color: #0f1939;
   font-family:
     system-ui,
@@ -44,24 +44,29 @@
   max-width: 600px;
   margin: 50px auto;
   padding: 30px;
-  background: linear-gradient(135deg, #faebd7, #ffffff); /* Adapted from ticket-card */
-  border-radius: 20px; /* Adapted from ticket-card */
-  box-shadow: 0 12px 30px rgba(15, 25, 57, 0.15); /* Adapted from ticket-card */
-  border: 1px solid rgba(209, 213, 219, 0.8); /* Adapted from ticket-card */
+  background: linear-gradient(135deg, #faebd7, #ffffff);
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(15, 25, 57, 0.15);
+  border: 1px solid rgba(209, 213, 219, 0.8);
   text-align: center;
-  color: #0f1939; /* Adapted from e-ticket body font color */
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; /* Adapted from e-ticket body font */
+  color: #0f1939;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
 }
 
 .waitlist-container h2 {
-  color: #0f1939; /* Adapted from e-ticket title */
+  color: #0f1939;
   margin-bottom: 15px;
-  font-size: 24px; /* Slightly larger for main title */
+  font-size: 24px;
   font-weight: 700;
 }
 
 .waitlist-container p {
-  color: #0f1939; /* General text color */
+  color: #0f1939;
   margin-bottom: 25px;
   line-height: 1.5;
 }
@@ -74,48 +79,52 @@
 .form-group label {
   display: block;
   margin-bottom: 8px;
-  color: #0f1939; /* Label color */
-  font-weight: 600; /* Slightly less bold than h2 */
+  color: #0f1939;
+  font-weight: 600;
 }
 
-.form-group input[type="email"],
-.form-group input[type="tel"] {
+.form-group input[type='email'],
+.form-group input[type='tel'] {
   width: 100%;
   padding: 12px;
-  border: 1px solid rgba(209, 213, 219, 0.8); /* Adapted from e-ticket borders */
-  border-radius: 10px; /* Slightly more rounded */
+  border: 1px solid rgba(209, 213, 219, 0.8);
+  border-radius: 10px;
   box-sizing: border-box;
   font-size: 16px;
-  background-color: #ffffff; /* White background for input */
+  background-color: #ffffff;
   color: #0f1939;
 }
 
-.form-group input[type="email"]:focus,
-.form-group input[type="tel"]:focus {
-  border-color: #516ac8; /* Focus color from e-ticket links */
+.form-group input[type='email']:focus,
+.form-group input[type='tel']:focus {
+  border-color: #516ac8;
   outline: none;
-  box-shadow: 0 0 0 0.2rem rgba(81, 106, 200, 0.25); /* Subtle focus shadow */
+  box-shadow: 0 0 0 0.2rem rgba(81, 106, 200, 0.25);
 }
 
 .error-message {
-  color: #ef4444; /* Error color from e-ticket cancel button */
+  color: #ef4444;
   font-size: 14px;
   margin-top: 10px;
   text-align: center;
 }
 
+/* Primary Button Styling (adapted from login.css) */
 .waitlist-primary-btn {
   width: 100%;
   padding: 10px;
   border-radius: 999px;
   border: none;
-  background: linear-gradient(135deg, #E3AF64, #F8F7F5);
-  color: #0F1939;
+  background: linear-gradient(135deg, #e3af64, #f8f7f5);
+  color: #0f1939;
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
-  margin-top: 20px;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+  margin-top: 20px; /* Adjusted from 6px for spacing in waitlist form */
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    opacity 0.12s ease;
 }
 
 .waitlist-primary-btn:hover:enabled {
@@ -127,29 +136,34 @@
 .waitlist-primary-btn:disabled {
   opacity: 0.7;
   cursor: default;
+  /* Lighter gradient for disabled, adapting colors from login.css theme */
   background: linear-gradient(135deg, #e3af6480, #f8f7f580);
   color: #0f193980;
 }
 
+/* Leave Waitlist Button Styling (adapted from primary button) */
 .waitlist-leave-btn {
-  background-color: #516AC8;
-  color: white;
-  padding: 10px 25px;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 700;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
-  margin-top: 20px;
   width: 100%;
+  padding: 10px;
+  border-radius: 999px;
+  border: none;
+  background-color: #da012d; /* A strong secondary color from the theme */
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    opacity 0.12s ease;
 }
 
 .waitlist-leave-btn:hover:enabled {
   transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(15, 25, 57, 0.25);
+  box-shadow: 0 10px 22px rgba(15, 25, 57, 0.25); /* Slightly less intense shadow */
   opacity: 0.96;
-  background-color: #3a4e9b;
+  background-color: #9b111e; /* Darker shade on hover */
 }
 
 .waitlist-leave-btn:disabled {
