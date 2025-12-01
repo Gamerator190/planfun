@@ -1,11 +1,9 @@
 <div class="checkout-page" *ngIf="event">
-  <!-- HEADER -->
   <div class="header">
     <button class="back-btn" (click)="goBack()">«</button>
     <div class="title">Checkout</div>
   </div>
 
-  <!-- INFO FILM -->
   <div class="event-box">
     <img [src]="event.poster" class="poster" [alt]="event.title" />
 
@@ -17,7 +15,6 @@
     </div>
   </div>
 
-  <!-- RINCIAN KURSI + KATEGORI -->
   <div class="seat-type-box">
     <h3>Seat Details</h3>
 
@@ -28,7 +25,6 @@
     </div>
   </div>
 
-  <!-- PROMO CODE -->
   <div class="promo-box">
     <input
       type="text"
@@ -38,7 +34,6 @@
     <button (click)="applyPromo()">Apply</button>
   </div>
 
-  <!-- TOTAL HARGA -->
   <div class="price-box">
     <div class="row">
       <span>Subtotal</span>
@@ -60,6 +55,5 @@
     </div>
   </div>
 
-  <!-- BUTTON BAYAR -->
   <button class="pay-btn" (click)="pay()">Pay Now</button>
 </div>

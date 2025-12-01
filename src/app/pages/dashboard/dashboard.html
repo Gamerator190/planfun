@@ -1,5 +1,4 @@
 <div class="dashboard">
-  <!-- TOP BAR HEADER -->
   <header class="top-bar">
     <div class="brand">
       <div class="logo">PLAN<span>FUN</span></div>
@@ -29,29 +28,24 @@
       </div>
     </div>
 
-    <!-- DROPDOWN USER MENU -->
     <div class="user-menu" *ngIf="showMenu">
       <div class="menu-item" (click)="goHome()">Homepage</div>
       <div class="menu-item" (click)="logout()">Logout</div>
     </div>
   </header>
 
-  <!-- MAIN CONTENT -->
   <main class="dashboard-content">
-    <!-- HEADER -->
     <div class="dashboard-header">
       <h1 class="content-title">Event Organizer Dashboard</h1>
       <p class="content-subtitle">Manage events and system analytics</p>
     </div>
 
-    <!-- ACTION BUTTONS -->
     <div class="action-buttons">
       <button class="btn" (click)="showChoice('analytics-reports')">📊 Analytics Reports</button>
       <button class="btn" (click)="showChoice('create-event')">➕ Create Event</button>
       <button class="btn" (click)="showChoice('edit-event')">✏️ Edit Event</button>
     </div>
 
-    <!-- CREATE EVENT SECTION -->
     @if(activeChoice === 'create-event') {
     <div class="card">
       <div class="card-body">
@@ -110,7 +104,6 @@
     </div>
     }
 
-    <!-- EDIT EVENT SECTION -->
     @else if(activeChoice === 'edit-event') {
     <div class="card">
       <div class="card-body">
@@ -175,7 +168,6 @@
         </div>
         <button type="button" (click)="addCategory()" class="form-btn-add">+ Add Category</button>
 
-        <!-- SEAT ROW CONFIGURATION -->
         <div class="card-subtitle">Seat Row Configuration</div>
         <div class="seat-config-grid">
           <div *ngFor="let config of seatConfiguration" class="form-group">
@@ -192,7 +184,6 @@
           </div>
         </div>
 
-        <!-- PROMOTIONS -->
         <div class="card-subtitle">Promos</div>
         <div *ngFor="let promo of promo; let i = index" class="promo-form-row">
           <div class="form-group">
@@ -243,14 +234,12 @@
       </div>
     </div>
     }
-
-    <!-- ANALYTICS & REPORTS SECTION -->
+    
     @else if(activeChoice === 'analytics-reports') {
     <div class="card">
       <div class="card-body">
         <h2 class="card-title">Analytics & Reports</h2>
 
-        <!-- Report Type Selection -->
         <div class="form-group">
           <label for="report-type">Report Type</label>
           <select id="report-type" [(ngModel)]="reportType" name="reportType">
@@ -260,7 +249,6 @@
           </select>
         </div>
 
-        <!-- Reporting Period Selection -->
         <div class="form-group">
           <label for="reporting-period">Reporting Period</label>
           <select id="reporting-period" [(ngModel)]="reportingPeriod" name="reportingPeriod">
@@ -287,7 +275,6 @@
           </button>
         </div>
 
-        <!-- Report Display Area -->
         @if (insufficientDataMessage) {
         <div class="report-message error">{{ insufficientDataMessage }}</div>
         }
@@ -297,7 +284,6 @@
             titlecase }})
           </h3>
 
-          <!-- Table Display -->
           <div class="report-table">
             <table>
               <thead>
@@ -315,7 +301,6 @@
             </table>
           </div>
 
-                    <!-- Chart Display -->
 
                     <div class="report-chart">
 

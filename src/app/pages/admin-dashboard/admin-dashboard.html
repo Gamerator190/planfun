@@ -1,5 +1,4 @@
 <div class="admin-dashboard">
-  <!-- TOP BAR HEADER -->
   <header class="top-bar">
     <div class="brand">
       <div class="logo">PLAN<span>FUN</span></div>
@@ -7,9 +6,8 @@
 
     <div class="top-actions">
       <button class="notif-btn" type="button" (click)="openNotifications()" title="Notifikasi">
-        🔔
-        @if (unreadCount > 0) {
-          <span class="notification-badge">{{ unreadCount }}</span>
+        🔔 @if (unreadCount > 0) {
+        <span class="notification-badge">{{ unreadCount }}</span>
         }
       </button>
 
@@ -30,62 +28,53 @@
       </div>
     </div>
 
-    <!-- DROPDOWN USER MENU -->
     <div class="user-menu" *ngIf="showMenu">
       <div class="menu-item" (click)="goHome()">Homepage</div>
       <div class="menu-item" (click)="logout()">Logout</div>
     </div>
   </header>
 
-  <!-- MAIN CONTENT -->
   <main class="dashboard-content">
-    <!-- HEADER -->
     <div class="dashboard-header">
       <h1 class="content-title">Admin Dashboard</h1>
       <p class="content-subtitle">Manage events, organizers, and system analytics</p>
     </div>
 
-    <!-- ACTION BUTTONS -->
     <div class="action-buttons">
       <button class="btn" (click)="showChoice('analytics-reports')">📊 Analytics Reports</button>
       <button class="btn" (click)="showChoice('register')">✅ Register a New User</button>
     </div>
 
-    <!-- ANALYTICS & REPORTS SECTION -->
     @if(activeChoice === 'analytics-reports') {
     <div class="card">
       <div class="card-body">
         <h2 class="card-title">Analytics & Reports</h2>
 
-        <!-- Report Type Selection -->
         <div class="form-group">
           <label for="report-type">Report Type</label>
           <select id="report-type" [(ngModel)]="reportType" name="reportType">
             @if (isAdmin) {
-              <option value="auditoriumBookings">Auditorium Bookings</option>
-              <option value="eventsHosted">Events Hosted</option>
-              <option value="utilizationStatistics">Utilization Statistics</option>
+            <option value="auditoriumBookings">Auditorium Bookings</option>
+            <option value="eventsHosted">Events Hosted</option>
+            <option value="utilizationStatistics">Utilization Statistics</option>
             } @else {
-              <option value="ticketSales">Ticket Sales</option>
-              <option value="revenue">Revenue</option>
-              <option value="seatOccupancy">Seat Occupancy</option>
+            <option value="ticketSales">Ticket Sales</option>
+            <option value="revenue">Revenue</option>
+            <option value="seatOccupancy">Seat Occupancy</option>
             }
           </select>
         </div>
 
-        <!-- Reporting Period Selection -->
         <div class="form-group">
           <label for="reporting-period">Reporting Period</label>
           <select id="reporting-period" [(ngModel)]="reportingPeriod" name="reportingPeriod">
             <option value="daily">Daily</option>
             <option value="weekly">Weekly</option>
             <option value="monthly">Monthly</option>
-            <!-- Auditorium Admin specific: Custom range -->
             <option value="custom">Custom Range</option>
           </select>
         </div>
 
-        <!-- Custom Date Range (Conditional Display) -->
         @if (reportingPeriod === 'custom') {
         <div class="form-row">
           <div class="form-group">
@@ -116,14 +105,15 @@
           </button>
         </div>
 
-        <!-- Report Display Area -->
         @if (insufficientDataMessage) {
-          <div class="report-message error">{{ insufficientDataMessage }}</div>
+        <div class="report-message error">{{ insufficientDataMessage }}</div>
         }
         <div class="report-display" [hidden]="!generatedReportData">
-          <h3>{{ generatedReportData?.type | titlecase }} Report ({{ generatedReportData?.period | titlecase }})</h3>
+          <h3>
+            {{ generatedReportData?.type | titlecase }} Report ({{ generatedReportData?.period |
+            titlecase }})
+          </h3>
 
-          <!-- Table Display -->
           <div class="report-table">
             <table>
               <thead>
@@ -141,17 +131,13 @@
             </table>
           </div>
 
-          <!-- Chart Display -->
           <div class="report-chart">
             <canvas #reportChart></canvas>
           </div>
         </div>
       </div>
     </div>
-    }
-
-    <!-- REGISTER SECTION -->
-    @else if(activeChoice === 'register') {
+    } @else if(activeChoice === 'register') {
     <div class="card">
       <div class="card-body">
         <h2 class="card-title">Register a New User</h2>

@@ -37,10 +37,9 @@
   font-size: 18px;
   font-weight: 700;
   color: #0f1939;
-  flex: 1; /* Allow title to take up available space */
+  flex: 1;
 }
 
-/* Card styles similar to dashboard/checkout */
 .card {
   background: #ffffff;
   border-radius: 18px;
@@ -100,7 +99,6 @@
 }
 
 .option-group input[type='radio'] {
-  /* Hide default radio button */
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -137,7 +135,6 @@
   cursor: pointer;
 }
 
-/* Pay Now Button (similar to form-btn-submit) */
 .pay-btn {
   width: 100%;
   padding: 12px;

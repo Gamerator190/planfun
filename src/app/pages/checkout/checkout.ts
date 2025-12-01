@@ -21,17 +21,17 @@ interface Event {
 }
 
 interface Ticket {
-  event: Event; // Now stores the full Event object
+  event: Event;
   poster: string;
-  time: string; // This is event time, not ticket purchase time
+  time: string;
   seats: string[];
   total: number;
-  purchaseDate: string; // New property for purchase date
+  purchaseDate: string;
   seatDetails?: SeatSelection[];
   categoryTable?: Record<string, { name: string; price: number }>;
   appliedPromo?: any;
   discountAmount?: number;
-  isRead: boolean; // Added isRead flag
+  isRead: boolean;
 }
 
 interface TicketType {
@@ -42,7 +42,7 @@ interface TicketType {
 
 interface SeatSelection {
   seat: string;
-  typeCode: string; // REG, VIP, SNR, CHD
+  typeCode: string;
 }
 
 @Component({
@@ -80,7 +80,6 @@ export class CheckoutComponent implements OnInit {
       this.categoryTable = JSON.parse(categoryTableString);
     }
 
-    // seatsParam bentuknya: "A1:VIP,B3:VIP,C4:REG,E2:SNR"
     if (seatsParam) {
       this.seatSelections = seatsParam
         .split(',')
@@ -109,7 +108,6 @@ export class CheckoutComponent implements OnInit {
     this.updateTotal();
   }
 
-  // daftar kursi saja, untuk tampilan ringkas
   get seatListLabel(): string {
     return this.seatSelections.map((s) => s.seat).join(', ');
   }
@@ -194,20 +192,19 @@ export class CheckoutComponent implements OnInit {
     }
 
     const ticket: Ticket = {
-      event: this.event, // Store full event object
-      poster: this.event.poster, // Keep for backward compatibility/simplicity
-      time: this.time, // This is event time, so keep it for consistency
+      event: this.event,
+      poster: this.event.poster,
+      time: this.time, ncy
       seats: this.seatSelections.map((s) => s.seat),
       total: this.finalTotal,
-      purchaseDate: new Date().toISOString(), // Store purchase date
+      purchaseDate: new Date().toISOString(),
       seatDetails: this.seatSelections,
       categoryTable: this.categoryTable,
       appliedPromo: this.appliedPromo,
       discountAmount: this.discountAmount,
-      isRead: false, // Mark as unread by default
+      isRead: false,
     };
 
-    // Serialize the ticket object and navigate to payment page
     const ticketDataString = JSON.stringify(ticket);
     this.router.navigate(['/payment', { ticketData: ticketDataString }]);
   }

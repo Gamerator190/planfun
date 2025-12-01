@@ -1,13 +1,7 @@
 <div class="home-page">
-  <!-- TOP BAR -->
   <header class="top-bar">
     <div class="brand">
       <div class="logo">PLAN<span>FUN</span></div>
-
-      <!--<div class="location">
-        <span class="city">Bali</span>
-        <span class="change">Change</span>
-      </div>-->
     </div>
 
     <div class="top-actions">
@@ -34,7 +28,6 @@
       </div>
     </div>
 
-    <!-- DROPDOWN USER MENU -->
     <div class="user-menu" *ngIf="showMenu">
       <div class="menu-item" *ngIf="userRole === 'auditorium_admin'" (click)="goAdmin()">
         Admin Dashboard
@@ -47,7 +40,6 @@
   </header>
 
   <main class="content">
-    <!-- HERO SECTION -->
     <section class="hero-card" *ngIf="events.length">
       <div class="hero-text">
         <p class="hero-label">Now Showing</p>
@@ -67,7 +59,6 @@
       </div>
     </section>
 
-    <!-- SEARCH & FILTER -->
     <section class="tools">
       <div class="search-box">
         <span class="search-icon">🔍</span>
@@ -81,7 +72,6 @@
       </div>
     </section>
 
-    <!-- HORIZONTAL SCROLL LIST -->
     <section class="section">
       <div class="section-header">
         <h2 class="section-title">Recommended for you</h2>
@@ -101,7 +91,6 @@
       </div>
     </section>
 
-    <!-- GRID LIST -->
     <section class="section">
       <div class="section-header">
         <h2 class="section-title">All Events</h2>
@@ -124,6 +113,7 @@
               <div class="availability">{{ event.availableSeats }} seats left</div>
               } @else {
               <div class="availability sold-out">Sold Out</div>
+
               }
             </div>
           </div>
@@ -131,20 +121,4 @@
       </div>
     </section>
   </main>
-
-  <!-- BOTTOM NAVBAR -->
-  <!--<nav class="bottom-nav">
-    <button class="nav-item active" type="button">
-      <div class="nav-icon">🏠</div>
-      <div class="nav-label">Home</div>
-    </button>
-    <button class="nav-item" type="button" (click)="router.navigate(['/notifications'])">
-      <div class="nav-icon">🎟️</div>
-      <div class="nav-label">Tickets</div>
-    </button>
-    <button class="nav-item" type="button" (click)="toggleUserMenu()">
-      <div class="nav-icon">👤</div>
-      <div class="nav-label">Account</div>
-    </button>
-  </nav>-->
 </div>

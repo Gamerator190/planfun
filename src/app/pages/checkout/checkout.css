@@ -1,6 +1,6 @@
 .checkout-page {
   padding: 16px;
-  background: #ffffff; /* putih */
+  background: #ffffff;
   min-height: 100vh;
   color: #0f1939;
   font-family:
@@ -11,8 +11,6 @@
     sans-serif;
   box-sizing: border-box;
 }
-
-/* HEADER */
 
 .header {
   display: flex;
@@ -40,8 +38,6 @@
   font-weight: 700;
   color: #0f1939;
 }
-
-/* MOVIE BOX */
 
 .event-box {
   display: flex;
@@ -80,8 +76,6 @@
   color: #0f1939;
 }
 
-/* PRICE BOX */
-
 .price-box {
   background: #ffffff;
   padding: 14px;
@@ -111,14 +105,12 @@ hr {
   color: #0f1939;
 }
 
-/* BUTTON */
-
 .pay-btn {
   width: 100%;
   padding: 14px;
   border-radius: 14px;
   border: none;
-  background: #e3af64; /* gold utama */
+  background: #e3af64;
   color: #0f1939;
   font-weight: 700;
   font-size: 15px;
@@ -129,8 +121,6 @@ hr {
 .pay-btn:hover {
   opacity: 0.95;
 }
-
-/* SEAT TYPE BOX */
 
 .seat-type-box {
   background: #ffffff;
@@ -197,6 +187,6 @@ hr {
 }
 
 .discount {
-  color: #16a34a; /* green */
+  color: #16a34a;
   font-weight: 600;
 }

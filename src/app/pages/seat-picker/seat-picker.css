@@ -1,4 +1,3 @@
-/* LAYOUT UMUM */
 .seat-page {
   min-height: 100vh;
   padding: 16px;
@@ -16,7 +15,6 @@
     sans-serif;
 }
 
-/* HEADER */
 .header {
   width: 100%;
   max-width: 1300px;
@@ -51,7 +49,6 @@
   font-size: 12px;
 }
 
-/* FRAME BESAR (DENAH) */
 .layout-frame {
   width: 100%;
   max-width: 1300px;
@@ -61,7 +58,6 @@
   box-sizing: border-box;
 }
 
-/* SCREEN */
 .screen-box {
   width: 100%;
   max-width: 800px;
@@ -78,7 +74,6 @@
   letter-spacing: 3px;
 }
 
-/* AREA AUDITORIUM */
 .auditorium {
   position: relative;
   display: flex;
@@ -86,7 +81,6 @@
   gap: 16px;
 }
 
-/* ============ KURSI ============ */
 .seat {
   width: 30px;
   height: 26px;
@@ -112,7 +106,6 @@
   border-color: #e3af64;
 }
 
-/* LABEL BARIS (A, B, C...) */
 .row-label {
   width: 20px;
   font-size: 11px;
@@ -120,7 +113,6 @@
   text-align: center;
 }
 
-/* ============ MAIN FLOOR (A–J) ============ */
 .main-floor {
   display: flex;
   flex-direction: column;
@@ -143,7 +135,6 @@
   padding: 0 16px;
 }
 
-/* Lengkungan kiri/kanan – 10 baris */
 .main-floor .seat-row .row-label:first-child {
   transform-origin: center center;
 }
@@ -280,7 +271,6 @@
   transform: rotate(-1deg) translateX(-8px) translateY(-3px);
 }
 
-/* ============ CONTROL ROOM ============ */
 .control-room-wrapper {
   display: flex;
   justify-content: center;
@@ -293,7 +283,6 @@
   font-weight: 600;
 }
 
-/* ============ BALCONY (LEFT – GAP – MIDDLE – GAP – RIGHT) ============ */
 .balcony {
   display: flex;
   flex-direction: column;
@@ -313,12 +302,10 @@
   gap: 4px;
 }
 
-/* GAP kiri & kanan middle → bisa kamu adjust */
 .balcony-gap {
-  width: 60px; /* EDIT SESUAI KEBUTUHAN */
+  width: 60px;
 }
 
-/* LABEL SAMPING */
 .side-label {
   position: absolute;
   right: -120px;
@@ -337,7 +324,6 @@
   bottom: 20%;
 }
 
-/* SUMMARY */
 .summary-box {
   width: 100%;
   max-width: 960px;
@@ -368,7 +354,6 @@
   margin-top: 8px;
 }
 
-/* BUTTON */
 .next-btn {
   width: 100%;
   max-width: 960px;

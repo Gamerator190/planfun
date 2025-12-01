@@ -1,22 +1,22 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Import CommonModule for @if, @else
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-waitlist',
-  standalone: true, // Mark as standalone
-  imports: [CommonModule, FormsModule], // Import CommonModule and FormsModule
+  standalone: true,
+  imports: [CommonModule, FormsModule], 
   templateUrl: './waitlist.html',
   styleUrl: './waitlist.css',
 })
-export class WaitlistComponent { // Changed class name to WaitlistComponent
+export class WaitlistComponent { 
   email: string = '';
   phoneNumber: string = '';
   
-  waitlistCapacity: number = 5; // Example capacity
-  currentWaitlistCount: number = 0; // Mock current count
-  isUserOnWaitlist: boolean = false; // Mock user's status
+  waitlistCapacity: number = 5; 
+  currentWaitlistCount: number = 0;
+  isUserOnWaitlist: boolean = false; 
 
   constructor(private router: Router) { }
 
@@ -39,22 +39,17 @@ export class WaitlistComponent { // Changed class name to WaitlistComponent
       return;
     }
 
-    // Simulate adding to waitlist
     this.currentWaitlistCount++;
     this.isUserOnWaitlist = true;
     
-    // In a real application, you would send this data to a backend service.
     alert('Thank you for joining the waitlist! We will notify you if tickets become available.');
-    // Optionally clear form or redirect, but for demonstration, keep form to show "Leave Waitlist"
-    // this.router.navigate(['/home']);
   }
 
   leaveWaitlist() {
     if (confirm('Are you sure you want to leave the waitlist?')) {
-      // Simulate leaving waitlist
       this.currentWaitlistCount--;
       this.isUserOnWaitlist = false;
-      this.email = ''; // Clear contact details
+      this.email = ''; 
       this.phoneNumber = '';
       alert('You have successfully left the waitlist.');
     }

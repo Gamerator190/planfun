@@ -56,10 +56,7 @@ export class LoginComponent {
         return;
       }
 
-      // Save info of the currently logged-in user (optional)
       localStorage.setItem('pf-current-user', JSON.stringify(found));
-
-      // alert(`Welcome, ${found.name}! (we will redirect to the Home page later)`);
 
       const role = found.role || 'attendee';
       if (role === 'organizer') {
@@ -67,13 +64,11 @@ export class LoginComponent {
       } else if (role === 'auditorium_admin') {
         this.router.navigate(['/admin-dashboard']);
       } else {
-        // later if the home page is ready, you can:
         this.router.navigate(['/home']);
       }
     }, 600);
   }
 
-  // Login by phone number
   login2() {
     if (!this.phone || !this.password) {
       alert('Phone number and password are required!');
@@ -94,8 +89,6 @@ export class LoginComponent {
       }
 
       localStorage.setItem('pf-current-user', JSON.stringify(found));
-
-      // alert(`Welcome, ${found.name}!`);
 
       const role = found.role || 'attendee';
       if (role === 'organizer') {

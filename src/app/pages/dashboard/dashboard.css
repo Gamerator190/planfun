@@ -11,8 +11,6 @@
   box-sizing: border-box;
 }
 
-/* TOP BAR */
-
 .top-bar {
   display: flex;
   align-items: center;
@@ -41,8 +39,6 @@
   color: #e3af64;
 }
 
-/* TOP ACTIONS: notif + user pill */
-
 .top-actions {
   display: flex;
   align-items: center;
@@ -65,7 +61,7 @@
   transition:
     background 0.15s ease,
     transform 0.12s ease;
-  position: relative; /* Added for badge positioning */
+  position: relative;
 }
 
 .notification-badge {
@@ -87,8 +83,6 @@
   background: #faebd7;
   transform: translateY(-1px);
 }
-
-/* USER PILL */
 
 .user-pill {
   display: flex;
@@ -167,8 +161,6 @@
   opacity: 0.7;
 }
 
-/* DROPDOWN USER MENU */
-
 .user-menu {
   position: absolute;
   right: 14px;
@@ -195,13 +187,9 @@
   background: rgba(249, 250, 251, 0.9);
 }
 
-/* DASHBOARD CONTENT */
-
 .dashboard-content {
   padding: 16px;
 }
-
-/* DASHBOARD HEADER */
 
 .dashboard-header {
   display: flex;
@@ -222,8 +210,6 @@
   color: #516ac8;
   margin: 0;
 }
-
-/* ACTION BUTTONS */
 
 .action-buttons {
   display: flex;
@@ -270,8 +256,6 @@
   background: #1a2a4a;
 }
 
-/* CARDS */
-
 .card {
   background: #ffffff;
   border-radius: 18px;
@@ -296,8 +280,6 @@
   align-items: center;
   gap: 8px;
 }
-
-/* FORM GROUPS */
 
 .form-group {
   display: flex;
@@ -347,8 +329,6 @@
   min-height: 100px;
 }
 
-/* FORM ROWS */
-
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -360,8 +340,6 @@
     grid-template-columns: 1fr;
   }
 }
-
-/* DISCOUNT ROW */
 
 .discount-row {
   display: flex;
@@ -383,8 +361,6 @@
   color: #0f1939;
   padding: 10px 8px;
 }
-
-/* FORM ACTIONS */
 
 .form-actions {
   display: flex;
@@ -436,8 +412,6 @@ form .form-btn-submit {
   cursor: not-allowed;
 }
 
-/* PLACEHOLDER CONTENT */
-
 .placeholder-content {
   padding: 40px 20px;
   text-align: center;
@@ -454,8 +428,6 @@ form .form-btn-submit {
   color: #6b7280;
   margin: 0;
 }
-
-/* RESPONSIVE */
 
 @media (max-width: 480px) {
   .admin-dashboard {
@@ -485,21 +457,19 @@ form .form-btn-submit {
 }
 
 .form-btn-add {
-  /* Inherit common form button styles */
-  padding: 8px 12px; /* Slightly smaller padding */
-  border-radius: 8px; /* Slightly smaller radius */
+  padding: 8px 12px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.12s ease;
 
-  /* Specific styles for add button, similar to form-btn-submit */
   background: linear-gradient(135deg, #e3af64, #faebd7);
   color: #0f1939;
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
-  border: none; /* No border for add button */
-  align-self: flex-start; /* Align to the start of the flex container */
-  margin-top: 10px; /* Some spacing from form rows */
+  border: none;
+  align-self: flex-start;
+  margin-top: 10px;
 }
 
 .form-btn-add:hover:not(:disabled) {
@@ -513,9 +483,9 @@ form .form-btn-submit {
 }
 
 .form-btn-remove {
-  padding: 12px; /* Make it same size as other form buttons */
-  border-radius: 10px; /* Make it same size as other form buttons */
-  font-size: 13px; /* Make it same size as other form buttons */
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.12s ease;

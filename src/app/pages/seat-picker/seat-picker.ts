@@ -13,42 +13,42 @@ type Seat = { id: string; booked: boolean; type: string };
 export class SeatPickerComponent implements OnChanges {
   @Input() ticketCategories: any[] = [];
   @Input() seatConfiguration: any[] = [];
-  @Input() bookedSeats: string[] = []; // Added bookedSeats input
+  @Input() bookedSeats: string[] = [];
   @Output() goBackEvent = new EventEmitter<void>();
-  @Output() continueEvent = new EventEmitter<{ seatData: string; categoryTable: Record<string, { name: string; price: number }> }>();
+  @Output() continueEvent = new EventEmitter<{
+    seatData: string;
+    categoryTable: Record<string, { name: string; price: number }>;
+  }>();
   @Input() showContinueButton: boolean = true;
 
-  // LOWER FOYER: A–J (10 baris)
   lowerRows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
-  // BALCONY: AA–EE (5 baris)
   balconyRows = ['AA', 'BB', 'CC', 'DD', 'EE'];
 
-  // semua kursi (lower + balcony)
   seats: Seat[][] = [];
   selectedSeats: string[] = [];
 
   categoryTable: Record<string, { name: string; price: number }> = {};
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['ticketCategories'] || changes['seatConfiguration'] || changes['bookedSeats']) { // Added bookedSeats to changes check
+    if (changes['ticketCategories'] || changes['seatConfiguration'] || changes['bookedSeats']) {
       let categories: Record<string, string> = {};
 
       if (this.ticketCategories && this.seatConfiguration) {
-        // Create category table from ticketCategories
-        this.categoryTable = this.ticketCategories.reduce((acc: Record<string, { name: string; price: number }>, cat: any) => {
-          acc[cat.shortName] = { name: cat.name, price: cat.price };
-          return acc;
-        }, {});
+        this.categoryTable = this.ticketCategories.reduce(
+          (acc: Record<string, { name: string; price: number }>, cat: any) => {
+            acc[cat.shortName] = { name: cat.name, price: cat.price };
+            return acc;
+          },
+          {},
+        );
 
-        // Create categories map from seatConfiguration
         categories = this.seatConfiguration.reduce((acc: Record<string, string>, config: any) => {
           acc[config.row] = config.category;
           return acc;
         }, {});
       }
 
-      // Fallback to default if not configured
       if (Object.keys(this.categoryTable).length === 0) {
         this.categoryTable = { GEN: { name: 'General', price: 25000 } };
       }
@@ -63,30 +63,28 @@ export class SeatPickerComponent implements OnChanges {
 
   generateSeats(categories: Record<string, string>) {
     this.seats = [];
-    const bookedSeatsSet = new Set(this.bookedSeats); // Convert to Set for efficient lookup
+    const bookedSeatsSet = new Set(this.bookedSeats);
 
-    // LOWER FOYER → 30 kursi per baris (10 kiri, 10 tengah, 10 kanan)
     for (const row of this.lowerRows) {
       const rowSeats: Seat[] = [];
       for (let i = 1; i <= 30; i++) {
         const seatId = row + i;
         rowSeats.push({
           id: seatId,
-          booked: bookedSeatsSet.has(seatId), // Use actual bookedSeats
+          booked: bookedSeatsSet.has(seatId),
           type: categories[row] || 'GEN',
         });
       }
       this.seats.push(rowSeats);
     }
 
-    // BALCONY → 30 kursi per baris juga (10 kiri, 10 tengah, 10 kanan)
     for (const row of this.balconyRows) {
       const rowSeats: Seat[] = [];
       for (let i = 1; i <= 30; i++) {
         const seatId = row + i;
         rowSeats.push({
           id: seatId,
-          booked: bookedSeatsSet.has(seatId), // Use actual bookedSeats
+          booked: bookedSeatsSet.has(seatId),
           type: categories[row] || 'GEN',
         });
       }

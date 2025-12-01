@@ -24,22 +24,22 @@ interface Event {
 
 interface SeatSelection {
   seat: string;
-  typeCode: string; // VIP / REG / SNR / CHD
+  typeCode: string;
 }
 
 interface Ticket {
-  id: string; // Assuming ticket has an ID
-  event: Event; // Now stores the full Event object
+  id: string;
+  event: Event;
   poster: string;
-  time: string; // This is event time, not ticket purchase time
+  time: string;
   seats: string[];
   total: number;
-  purchaseDate: string; // New property for purchase date
+  purchaseDate: string;
   seatDetails?: SeatSelection[];
   categoryTable?: Record<string, { name: string; price: number }>;
   appliedPromo?: any;
   discountAmount?: number;
-  isRead: boolean; // Added isRead flag
+  isRead: boolean;
 }
 
 @Component({
@@ -78,7 +78,6 @@ export class ETicketComponent implements OnInit, AfterViewInit {
         return;
       }
 
-      // fallback: kalau tiket lama tidak punya seatDetails
       if (!this.ticket.seatDetails) {
         this.ticket.seatDetails = this.ticket.seats.map((s) => ({
           seat: s,
@@ -102,7 +101,6 @@ export class ETicketComponent implements OnInit, AfterViewInit {
         ticketId: this.ticket.id,
         eventName: this.ticket.event.title,
         purchaseDate: this.ticket.purchaseDate,
-        // Add more relevant data if needed for verification
       });
 
       new QRCode(this.qrcodeCanvas.nativeElement, {
@@ -111,22 +109,19 @@ export class ETicketComponent implements OnInit, AfterViewInit {
         height: 128,
         colorDark: '#000000',
         colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H, // High error correction
+        correctLevel: QRCode.CorrectLevel.H,
       });
     }
   }
 
-  // label "VIP", "Anak-anak", dll.
   getTypeLabel(code: string): string {
     return this.ticket?.categoryTable?.[code]?.name || code;
   }
 
-  // harga per kategori
   getTypePrice(code: string): number {
     return this.ticket?.categoryTable?.[code]?.price ?? 0;
   }
 
-  // formatting
   formatRupiah(value: number): string {
     return value.toLocaleString('id-ID');
   }
@@ -157,7 +152,6 @@ export class ETicketComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    // 1. Remove ticket from 'pf-tickets'
     const rawTickets = localStorage.getItem('pf-tickets');
     if (rawTickets) {
       const tickets: Ticket[] = JSON.parse(rawTickets);
@@ -165,7 +159,6 @@ export class ETicketComponent implements OnInit, AfterViewInit {
       localStorage.setItem('pf-tickets', JSON.stringify(updatedTickets));
     }
 
-    // 2. Update 'bookedSeats' for the event in 'pf-events'
     const rawEvents = localStorage.getItem('pf-events');
     if (rawEvents) {
       const events: Event[] = JSON.parse(rawEvents);
@@ -173,10 +166,9 @@ export class ETicketComponent implements OnInit, AfterViewInit {
 
       if (eventIndex !== -1) {
         const updatedEvent = { ...events[eventIndex] };
-        const cancelledSeatIds = this.ticket.seats; // Get seats from the cancelled ticket
+        const cancelledSeatIds = this.ticket.seats;
         updatedEvent.bookedSeats =
           updatedEvent.bookedSeats?.filter((seatId) => !cancelledSeatIds.includes(seatId)) || [];
-        // Recalculate availableSeats for consistency
         const totalSeats = updatedEvent.seatConfiguration
           ? updatedEvent.seatConfiguration.length * 30
           : 0;

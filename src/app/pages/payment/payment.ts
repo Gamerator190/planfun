@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { NotificationService } from '../../services/notification.service'; // Import NotificationService
+import { NotificationService } from '../../services/notification.service';
 
 interface Event {
   id: number | string;
@@ -24,7 +24,7 @@ interface Event {
 
 interface SeatSelection {
   seat: string;
-  typeCode: string; // REG, VIP, SNR, CHD
+  typeCode: string;
 }
 
 interface Ticket {
@@ -50,12 +50,12 @@ interface Ticket {
 })
 export class PaymentComponent implements OnInit {
   ticket: Ticket | null = null;
-  paymentOption: 'creditCard' | 'eWallet' | 'bankTransfer' = 'creditCard'; // Default payment option
+  paymentOption: 'creditCard' | 'eWallet' | 'bankTransfer' = 'creditCard';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private notificationService: NotificationService, // Inject service
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -63,7 +63,6 @@ export class PaymentComponent implements OnInit {
     if (ticketDataString) {
       try {
         this.ticket = JSON.parse(ticketDataString);
-        // Ensure availableSeats is calculated for the event if not present (for old event data)
         if (
           this.ticket &&
           this.ticket.event &&
@@ -79,27 +78,23 @@ export class PaymentComponent implements OnInit {
         }
       } catch (e) {
         console.error('Error parsing ticket data from route:', e);
-        this.router.navigate(['/home']); // Redirect home if data is invalid
+        this.router.navigate(['/home']);
       }
     } else {
-      this.router.navigate(['/home']); // Redirect home if no ticket data
+      this.router.navigate(['/home']);
     }
   }
 
   processPayment() {
     if (!this.ticket) return;
 
-    // Simulate payment success
     alert(`Payment successful via ${this.paymentOption}!`);
 
-    // Perform localStorage operations (copied from CheckoutComponent's bayar method)
-    // 1. Save the ticket to 'pf-tickets'
     const existingTicketsRaw = localStorage.getItem('pf-tickets');
     const existingTickets: Ticket[] = existingTicketsRaw ? JSON.parse(existingTicketsRaw) : [];
     existingTickets.push(this.ticket);
     localStorage.setItem('pf-tickets', JSON.stringify(existingTickets));
 
-    // 2. Update booked seats for the event in 'pf-events'
     const eventsJson = localStorage.getItem('pf-events');
     if (eventsJson) {
       const allEvents: any[] = JSON.parse(eventsJson);
@@ -109,7 +104,6 @@ export class PaymentComponent implements OnInit {
         const updatedEvent = { ...allEvents[eventIndex] };
         const bookedSeatsToAdd = this.ticket.seats;
         updatedEvent.bookedSeats = [...(updatedEvent.bookedSeats || []), ...bookedSeatsToAdd];
-        // Recalculate availableSeats for consistency
         const totalSeats = updatedEvent.seatConfiguration
           ? updatedEvent.seatConfiguration.length * 30
           : 0;
@@ -119,14 +113,11 @@ export class PaymentComponent implements OnInit {
         localStorage.setItem('pf-events', JSON.stringify(allEvents));
       }
     }
-
-    // Update unread count via service
     this.notificationService.updateUnreadCount();
 
     this.router.navigate(['/home']);
   }
 
-  // Helper for displaying currency
   formatRupiah(value: number): string {
     return value.toLocaleString('id-ID');
   }

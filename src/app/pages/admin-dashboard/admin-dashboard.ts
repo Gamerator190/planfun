@@ -50,7 +50,6 @@ interface Ticket {
   isRead: boolean;
 }
 
-// ReportData interface (copied from ReportService for consistency)
 interface ReportData {
   type:
     | 'ticketSales'
@@ -60,10 +59,10 @@ interface ReportData {
     | 'eventsHosted'
     | 'utilizationStatistics';
   period: string;
-  labels: string[]; // For chart X-axis (e.g., dates, months)
-  series: number[]; // For chart Y-axis (e.g., counts, amounts)
-  tableData: { label: string; value: any }[]; // For detailed table display
-  message?: string; // For insufficient data
+  labels: string[];
+  series: number[];
+  tableData: { label: string; value: any }[];
+  message?: string;
   chartType?: ChartType;
 }
 
@@ -74,20 +73,17 @@ interface ReportData {
   styleUrl: './admin-dashboard.css',
 })
 export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
-  // Import and implement AfterViewInit
   @ViewChild('reportChart') reportChart: ElementRef<HTMLCanvasElement> | undefined;
   private chart: Chart | undefined;
 
   activeChoice: 'analytics-reports' | 'register' | '' = 'analytics-reports';
-  isAdmin: boolean = false; // New property to determine if the user is an admin
+  isAdmin: boolean = false;
 
-  // User properties
   userName = 'Admin';
   showMenu = false;
   unreadCount: number = 0;
   private notificationSubscription: Subscription | undefined;
 
-  // Register form properties
   name = '';
   email = '';
   password = '';
@@ -97,7 +93,6 @@ export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
   organization = '';
   isLoading = false;
 
-  // Report properties
   reportType:
     | 'ticketSales'
     | 'revenue'
@@ -105,16 +100,16 @@ export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
     | 'auditoriumBookings'
     | 'eventsHosted'
     | 'utilizationStatistics' = 'auditoriumBookings';
-  reportingPeriod: 'daily' | 'weekly' | 'monthly' | 'custom' = 'daily'; // Added 'custom'
-  startDate: string = ''; // For custom range
-  endDate: string = ''; // For custom range
+  reportingPeriod: 'daily' | 'weekly' | 'monthly' | 'custom' = 'daily';
+  startDate: string = '';
+  endDate: string = '';
   generatedReportData: ReportData | null = null;
   insufficientDataMessage: string | null = null;
 
   constructor(
     private router: Router,
     private notificationService: NotificationService,
-    private reportService: ReportService, // Inject ReportService
+    private reportService: ReportService,
   ) {}
 
   ngOnInit(): void {
@@ -134,15 +129,12 @@ export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
       this.isAdmin = false;
     }
 
-    // Subscribe to unread count
     this.notificationSubscription = this.notificationService.unreadCount$.subscribe((count) => {
       this.unreadCount = count;
     });
 
-    // Initial update of the count
     this.notificationService.updateUnreadCount();
 
-    // Default report for admin
     if (this.isAdmin) {
       this.reportType = 'auditoriumBookings';
     }
@@ -150,7 +142,6 @@ export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Call createChart here if data is already available from ngOnInit
     if (this.generatedReportData) {
       this.createChart();
     }
@@ -264,7 +255,6 @@ export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
       this.isLoading = false;
       alert('Registration successful!');
 
-      // Reset form
       this.name = '';
       this.email = '';
       this.password = '';
@@ -276,7 +266,6 @@ export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
     }, 600);
   }
 
-  // New methods for report generation
   generateReport() {
     this.insufficientDataMessage = null;
     this.generatedReportData = null;
@@ -284,17 +273,17 @@ export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
     let result: ReportData;
     switch (this.reportType) {
       case 'ticketSales':
-      case 'auditoriumBookings': // Map auditoriumBookings to ticketSales
+      case 'auditoriumBookings':
         result = this.reportService.generateTicketSales(this.reportingPeriod);
         break;
       case 'revenue':
         result = this.reportService.generateRevenue(this.reportingPeriod);
         break;
       case 'seatOccupancy':
-      case 'utilizationStatistics': // Map utilizationStatistics to seatOccupancy
+      case 'utilizationStatistics':
         result = this.reportService.generateSeatOccupancy(this.reportingPeriod);
         break;
-      case 'eventsHosted': // New report type
+      case 'eventsHosted':
         result = this.reportService.generateEventsHosted(this.reportingPeriod);
         break;
       default:
@@ -305,7 +294,6 @@ export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
       this.insufficientDataMessage = result.message;
     } else {
       this.generatedReportData = result;
-      // Call createChart directly if ViewChild is resolved, otherwise ngAfterViewInit will handle it
       if (this.reportChart) {
         this.createChart();
       }

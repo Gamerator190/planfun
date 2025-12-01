@@ -1,6 +1,6 @@
 .eticket-page {
   min-height: 100vh;
-  background: #ffffff; /* putih */
+  background: #ffffff;
   color: #0f1939;
   font-family:
     system-ui,
@@ -12,7 +12,6 @@
   box-sizing: border-box;
 }
 
-/* HEADER */
 .header {
   display: flex;
   align-items: center;
@@ -40,7 +39,6 @@
   color: #0f1939;
 }
 
-/* TICKET CARD */
 .ticket-card {
   background: linear-gradient(135deg, #faebd7, #ffffff);
   border-radius: 20px;
@@ -49,7 +47,6 @@
   border: 1px solid rgba(209, 213, 219, 0.8);
 }
 
-/* TOP PART */
 .top {
   display: flex;
   gap: 12px;
@@ -86,7 +83,6 @@
   color: #e3af64;
 }
 
-/* RINCIAN KURSI */
 .seat-detail-block {
   margin-top: 10px;
   background: #faebd7;
@@ -124,7 +120,6 @@
   color: #0f1939;
 }
 
-/* CUT LINE */
 .cut-line {
   position: relative;
   margin: 14px 0 10px;
@@ -155,7 +150,6 @@
   border-top: 1px dashed rgba(209, 213, 219, 0.9);
 }
 
-/* BOTTOM + QR */
 .bottom {
   display: flex;
   flex-direction: column;
@@ -173,12 +167,7 @@
 .qr-inner {
   width: 120px;
   height: 120px;
-  /* Removed: display: flex, flex-direction: column, padding from here */
-  /* This container will be populated by qrcodejs */
 }
-
-/* Removed: .qr-row and .qr-row span styles as they are no longer needed */
-
 
 .qr-text {
   font-size: 11px;
@@ -187,7 +176,6 @@
   max-width: 220px;
 }
 
-/* HINT */
 .hint {
   margin-top: 14px;
   font-size: 12px;
@@ -195,19 +183,18 @@
   text-align: center;
 }
 
-/* CANCEL BUTTON */
 .cancel-btn {
-  width: 100%; /* Make it full width */
-  margin-top: 14px; /* Spacing from ticket card */
+  width: 100%;
+  margin-top: 14px;
   padding: 12px;
   border-radius: 10px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.12s ease;
-  background: #fef2f2; /* Light red background */
-  color: #ef4444;    /* Red text color */
-  border: 1px solid #fca5a5; /* Light red border */
+  background: #fef2f2;
+  color: #ef4444;
+  border: 1px solid #fca5a5;
 }
 
 .cancel-btn:hover:not(:disabled) {

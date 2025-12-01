@@ -56,7 +56,7 @@ interface Ticket {
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
 })
-export class Dashboard implements OnInit, OnDestroy, AfterViewInit { // Import and implement AfterViewInit
+export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('reportChart') reportChart: ElementRef<HTMLCanvasElement> | undefined;
   private chart: Chart | undefined;
 
@@ -66,19 +66,18 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit { // Import a
     this.activeChoice = choice;
   }
 
-  // User properties
   userName = 'Organizer';
   showMenu = false;
   userEvents: Event[] = [];
   selectedEventId: number | null = null;
   promo: Promo[] = [];
-  bookedSeats: string[] = []; // Added bookedSeats property
-  unreadCount: number = 0; // Property to hold the unread count
-  private notificationSubscription: Subscription | undefined; // To manage subscription
+  bookedSeats: string[] = [];
+  unreadCount: number = 0;
+  private notificationSubscription: Subscription | undefined;
 
   // Report properties
-  reportType: 'ticketSales' | 'revenue' | 'seatOccupancy' = 'ticketSales'; // Default report type
-  reportingPeriod: 'daily' | 'weekly' | 'monthly' = 'daily'; // Default period
+  reportType: 'ticketSales' | 'revenue' | 'seatOccupancy' = 'ticketSales';
+  reportingPeriod: 'daily' | 'weekly' | 'monthly' = 'daily';
   generatedReportData: ReportData | null = null;
   insufficientDataMessage: string | null = null;
 
@@ -127,10 +126,10 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit { // Import a
               { row: 'BB', category: 'GEN' },
               { row: 'CC', category: 'GEN' },
               { row: 'DD', category: 'GEN' },
-              { row: 'EE', 'category': 'GEN' },
+              { row: 'EE', category: 'GEN' },
             ];
         this.promo = selectedEvent.promo ? JSON.parse(JSON.stringify(selectedEvent.promo)) : [];
-        this.bookedSeats = selectedEvent.bookedSeats || []; // Populate bookedSeats
+        this.bookedSeats = selectedEvent.bookedSeats || [];
       }
     } else {
       this.selectedEventId = null;
@@ -153,14 +152,14 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit { // Import a
         { row: 'EE', category: 'GEN' },
       ];
       this.promo = [];
-      this.bookedSeats = []; // Clear bookedSeats when no event is selected
+      this.bookedSeats = [];
     }
   }
 
   constructor(
     private router: Router,
     private notificationService: NotificationService,
-    private reportService: ReportService // Inject ReportService
+    private reportService: ReportService,
   ) {}
 
   ngOnInit(): void {
@@ -184,19 +183,16 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit { // Import a
       this.userName = 'Organizer';
     }
 
-    // Subscribe to unread count
-    this.notificationSubscription = this.notificationService.unreadCount$.subscribe(count => {
+    this.notificationSubscription = this.notificationService.unreadCount$.subscribe((count) => {
       this.unreadCount = count;
     });
 
-    // Initial update of the count
     this.notificationService.updateUnreadCount();
 
     this.generateReport();
   }
 
   ngAfterViewInit(): void {
-    // Call createChart here if data is already available from ngOnInit
     if (this.generatedReportData) {
       this.createChart();
     }
@@ -237,7 +233,6 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit { // Import a
   }
 
   addPromo() {
-    console.log('addPromo() called');
     const applicableTicketTypes = this.ticketCategories.reduce(
       (acc, cat) => {
         acc[cat.shortName] = false;
@@ -252,14 +247,12 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit { // Import a
       expiryDate: '',
       applicableTicketTypes: applicableTicketTypes,
     });
-    console.log('this.promo after add:', this.promo);
   }
 
   removePromo(index: number) {
     this.promo.splice(index, 1);
   }
 
-  // Trigger change detection for seatConfiguration input in app-seat-picker
   updateSeatConfiguration() {
     this.seatConfiguration = [...this.seatConfiguration];
   }
@@ -304,7 +297,6 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit { // Import a
         }
       }
 
-      // Calculate availableSeats before calling saveEvent
       const totalSeats = this.seatConfiguration ? this.seatConfiguration.length * 30 : 0;
       const bookedSeatsCount = this.bookedSeats ? this.bookedSeats.length : 0;
       const calculatedAvailableSeats = totalSeats - bookedSeatsCount;
@@ -315,9 +307,17 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit { // Import a
       reader.onload = () => {
         posterBase64 = reader.result as string;
         this.saveEvent({
-          title, location, date, time, description, email: userEmail, poster: posterBase64,
-          ticketCategories: this.ticketCategories, seatConfiguration: this.seatConfiguration, promo: this.promo,
-          availableSeats: calculatedAvailableSeats, // Add availableSeats here
+          title,
+          location,
+          date,
+          time,
+          description,
+          email: userEmail,
+          poster: posterBase64,
+          ticketCategories: this.ticketCategories,
+          seatConfiguration: this.seatConfiguration,
+          promo: this.promo,
+          availableSeats: calculatedAvailableSeats,
         });
       };
 
@@ -325,19 +325,33 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit { // Import a
         console.error('Error reading file:', error);
         alert('Could not read event poster file.');
         this.saveEvent({
-          title, location, date, time, description, email: userEmail,
-          ticketCategories: this.ticketCategories, seatConfiguration: this.seatConfiguration, promo: this.promo,
-          availableSeats: calculatedAvailableSeats, // Add availableSeats here
-        }); // Save without poster
+          title,
+          location,
+          date,
+          time,
+          description,
+          email: userEmail,
+          ticketCategories: this.ticketCategories,
+          seatConfiguration: this.seatConfiguration,
+          promo: this.promo,
+          availableSeats: calculatedAvailableSeats,
+        });
       };
 
       if (posterFile) {
         reader.readAsDataURL(posterFile);
       } else {
         this.saveEvent({
-          title, location, date, time, description, email: userEmail,
-          ticketCategories: this.ticketCategories, seatConfiguration: this.seatConfiguration, promo: this.promo,
-          availableSeats: calculatedAvailableSeats, // Add availableSeats here
+          title,
+          location,
+          date,
+          time,
+          description,
+          email: userEmail,
+          ticketCategories: this.ticketCategories,
+          seatConfiguration: this.seatConfiguration,
+          promo: this.promo,
+          availableSeats: calculatedAvailableSeats,
         });
       }
     } else if (this.activeChoice === 'edit-event') {
@@ -384,7 +398,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit { // Import a
       id:
         events.length > 0
           ? Math.max(...events.map((e) => (typeof e.id === 'number' ? e.id : 0))) + 1
-          : 1, // Generate ID based on existing events, defaulting to 1
+          : 1,
       ...eventData,
       isNew: true,
     };
@@ -402,7 +416,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit { // Import a
     (document.getElementById('event-date') as HTMLInputElement).value = '';
     (document.getElementById('event-time') as HTMLInputElement).value = '';
     (document.getElementById('event-description') as HTMLTextAreaElement).value = '';
-    (document.getElementById('event-poster') as HTMLInputElement).value = ''; // Clear file input
+    (document.getElementById('event-poster') as HTMLInputElement).value = '';
   }
 
   openNotifications() {
@@ -432,7 +446,6 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit { // Import a
       this.insufficientDataMessage = result.message;
     } else {
       this.generatedReportData = result;
-      // Call createChart directly if ViewChild is resolved, otherwise ngAfterViewInit will handle it
       if (this.reportChart) {
         this.createChart();
       }
@@ -470,9 +483,9 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit { // Import a
         responsive: true,
         scales: {
           y: {
-            beginAtZero: true
-          }
-        }
+            beginAtZero: true,
+          },
+        },
       },
     });
   }
@@ -480,11 +493,11 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit { // Import a
   downloadReportAsPdf() {
     const data = document.querySelector('.report-display');
     if (data) {
-      html2canvas(data as HTMLElement).then(canvas => {
+      html2canvas(data as HTMLElement).then((canvas) => {
         const contentDataURL = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4');
         const width = pdf.internal.pageSize.getWidth();
-        const height = canvas.height * width / canvas.width;
+        const height = (canvas.height * width) / canvas.width;
         pdf.addImage(contentDataURL, 'PNG', 0, 0, width, height);
         pdf.save('report.pdf');
       });

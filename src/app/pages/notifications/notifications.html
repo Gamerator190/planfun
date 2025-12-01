@@ -1,11 +1,9 @@
 <div class="tickets-page">
-  <!-- HEADER -->
   <div class="header">
     <button class="back-btn" (click)="goHome()">«</button>
     <div class="title">Notifications</div>
   </div>
 
-  <!-- JIKA TIDAK ADA TIKET -->
   <div class="empty" *ngIf="!tickets.length">
     <div class="empty-icon">🎟️</div>
     <div class="empty-title">No tickets yet</div>
@@ -13,7 +11,6 @@
     <button class="empty-btn" (click)="goHome()">Find Events</button>
   </div>
 
-  <!-- LIST TIKET -->
   <div class="tickets-list" *ngIf="tickets.length">
     <div class="ticket-card" *ngFor="let t of tickets; let i = index" (click)="openTicket(i)">
       <div class="poster-wrap">
@@ -43,7 +40,6 @@
           <span class="value">{{ t.seats.join(', ') }}</span>
         </div>
 
-        <!-- 🔥 SEAT TYPE SUMMARY -->
         <div class="row">
           <span class="label">Type</span>
           <span class="value">{{ getSeatTypeSummary(t) }}</span>

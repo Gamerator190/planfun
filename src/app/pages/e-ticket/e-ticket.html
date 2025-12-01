@@ -1,20 +1,16 @@
 <div class="eticket-page" *ngIf="ticket">
-  <!-- HEADER -->
   <div class="header">
     <button class="back-btn" (click)="goBack()">«</button>
     <div class="title">E-Ticket</div>
   </div>
 
-  <!-- KARTU TIKET -->
   <div class="ticket-card">
-    <!-- Poster + Info -->
     <div class="top">
       <img
         class="poster"
         [src]="ticket.event.poster || 'assets/placeholder.jpg'"
         [alt]="ticket.event.title"
       />
-
       <div class="info">
         <div class="event-title">{{ ticket.event.title }}</div>
         <div class="line">Event Date: {{ ticket.event.date }}</div>
@@ -34,7 +30,6 @@
       </div>
     </div>
 
-    <!-- 🔥 RINCIAN KURSI PER TIPE -->
     <div class="seat-detail-block" *ngIf="ticket.seatDetails?.length">
       <div class="seat-detail-title">Seat Details</div>
 
@@ -45,18 +40,15 @@
       </div>
     </div>
 
-    <!-- Garis Putus -->
     <div class="cut-line">
       <div class="circle left"></div>
       <div class="dashed"></div>
       <div class="circle right"></div>
     </div>
 
-    <!-- QR CODE -->
     <div class="bottom">
       <div class="qr-box">
-        <div class="qr-inner" #qrcodeCanvas>
-          <!-- QR code will be rendered here -->
+        <div class="qr-inner" #qrcodeCanvas></div>
         </div>
       </div>
       <div class="qr-text">Show this E-Ticket to the event staff for scanning.</div>

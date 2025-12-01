@@ -1,9 +1,7 @@
-// src/app/services/report.service.ts
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ChartType } from 'chart.js';
 
-// Copied Event and Ticket interfaces from home.ts (for consistency)
 interface Event {
   id: number | string;
   title: string;
@@ -39,10 +37,10 @@ interface Ticket {
 export interface ReportData {
   type: 'ticketSales' | 'revenue' | 'seatOccupancy' | 'auditoriumBookings' | 'eventsHosted' | 'utilizationStatistics';
   period: string;
-  labels: string[]; // For chart X-axis (e.g., dates, months)
-  series: number[]; // For chart Y-axis (e.g., counts, amounts)
-  tableData: { label: string, value: any }[]; // For detailed table display
-  message?: string; // For insufficient data
+  labels: string[]; 
+  series: number[]; 
+  tableData: { label: string, value: any }[]; 
+  message?: string; 
   chartType?: ChartType;
 }
 
@@ -95,7 +93,7 @@ export class ReportService {
       const currentUserRole = this._getCurrentUserRole();
 
       if (currentUserRole === 'auditorium_admin') {
-        return allTickets; // Admins see all tickets
+        return allTickets; 
       } else if (currentUserEmail) {
         return allTickets.filter(ticket => ticket.event?.email === currentUserEmail);
       }
@@ -115,7 +113,7 @@ export class ReportService {
       const currentUserRole = this._getCurrentUserRole();
 
       if (currentUserRole === 'auditorium_admin') {
-        return allEvents; // Admins see all events
+        return allEvents; 
       } else if (currentUserEmail) {
         return allEvents.filter(event => event.email === currentUserEmail);
       }
@@ -225,7 +223,7 @@ export class ReportService {
           }
         }
       });
-    } else { // monthly
+    } else { 
       const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
       for (let i = 1; i <= daysInMonth; i++) {
         const dayLabel = i.toString();
@@ -243,7 +241,6 @@ export class ReportService {
       });
     }
 
-    // Populate series array from aggregated salesByTime
     for (const label of labels) {
       series.push(salesByTime[label] || 0);
     }
@@ -311,7 +308,7 @@ export class ReportService {
           }
         }
       });
-    } else { // monthly
+    } else { 
       const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
       for (let i = 1; i <= daysInMonth; i++) {
         const dayLabel = i.toString();
@@ -330,7 +327,6 @@ export class ReportService {
       });
     }
 
-    // Populate series array from aggregated revenueByTime
     for (const label of labels) {
       series.push(revenueByTime[label] || 0);
     }
@@ -390,7 +386,7 @@ export class ReportService {
     const oneDay = 24 * 60 * 60 * 1000;
 
     return events.filter(event => {
-      const eventDate = new Date(event.date); // Assuming event.date is parsable
+      const eventDate = new Date(event.date);
       if (isNaN(eventDate.getTime())) return false;
 
       const diffDays = Math.floor(Math.abs((now.getTime() - eventDate.getTime()) / oneDay));
@@ -454,7 +450,7 @@ export class ReportService {
                 eventsByTime[dayLabel]++;
             }
         });
-    } else { // monthly
+    } else { 
         const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
         for (let i = 1; i <= daysInMonth; i++) {
             const dayLabel = i.toString();

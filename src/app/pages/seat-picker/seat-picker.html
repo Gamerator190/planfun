@@ -1,28 +1,17 @@
 <div class="seat-page">
-  <!-- HEADER -->
-  <!--<div class="header">
-    <button class="back-btn" (click)="goBack()">«</button>
-    <div class="title">Select a Seat</div>
-    <div class="time-pill">{{ time }}</div>
-  </div>-->
 
-  <!-- FRAME BESAR -->
   <div class="layout-frame">
-    <!-- STAGE -->
     <div class="screen-box">
       <div class="screen">STAGE</div>
     </div>
 
     <div class="auditorium">
-      <!-- LABEL ATAS -->
       <div class="side-label side-label-upper">Lower Foyer</div>
 
-      <!-- LOWER FOYER (A–J, 10 kiri / 10 tengah / 10 kanan) -->
       <div class="main-floor">
         <div class="seat-row" *ngFor="let row of lowerFoyerSeats; let i = index">
           <div class="row-label">{{ lowerRows[i] }}</div>
 
-          <!-- kiri -->
           <div class="seat-block left">
             <div
               class="seat"
@@ -35,7 +24,6 @@
             </div>
           </div>
 
-          <!-- tengah -->
           <div class="seat-block center">
             <div
               class="seat"
@@ -48,7 +36,6 @@
             </div>
           </div>
 
-          <!-- kanan -->
           <div class="seat-block right">
             <div
               class="seat"
@@ -65,12 +52,10 @@
         </div>
       </div>
 
-      <!-- BALCONY (AA–EE: kiri, gap, tengah, gap, kanan) -->
       <div class="balcony">
         <div class="balcony-row" *ngFor="let row of balconySeats; let i = index">
           <div class="row-label">{{ balconyRows[i] }}</div>
 
-          <!-- kiri (10 kursi) -->
           <div class="seat-block left">
             <div
               class="seat"
@@ -83,10 +68,8 @@
             </div>
           </div>
 
-          <!-- GAP 1 -->
           <div class="balcony-gap"></div>
 
-          <!-- tengah (10 kursi) -->
           <div class="seat-block middle">
             <div
               class="seat"
@@ -99,10 +82,8 @@
             </div>
           </div>
 
-          <!-- GAP 2 -->
           <div class="balcony-gap"></div>
 
-          <!-- kanan (10 kursi) -->
           <div class="seat-block right">
             <div
               class="seat"
@@ -119,17 +100,13 @@
         </div>
       </div>
 
-      <!-- CONTROL ROOM -->
       <div class="control-room-wrapper">
         <div class="control-room">CONTROL ROOM</div>
       </div>
 
-      <!-- LABEL BAWAH -->
       <div class="side-label side-label-lower">BALCONY</div>
     </div>
   </div>
-
-  <!-- SUMMARY & BUTTON -->
 
   <div class="summary-box" *ngIf="selectedSeatDetails.length">
     <div class="summary-header">
@@ -156,8 +133,6 @@
   </div>
 
   @if (showContinueButton) {
-
-  <!-- BUTTON -->
 
   <button class="next-btn" (click)="continue()">
     Continue ({{ selectedSeatDetails.length }} tickets · Rp {{ formatRupiah(totalPrice) }})

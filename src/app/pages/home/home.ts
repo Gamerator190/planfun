@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { NotificationService } from '../../services/notification.service'; // Import NotificationService
-import { Subscription } from 'rxjs'; // Import Subscription
+import { NotificationService } from '../../services/notification.service';
+import { Subscription } from 'rxjs';
 
 interface Event {
   id: number | string;
@@ -16,9 +16,9 @@ interface Event {
   isSpecial?: boolean;
   promoCode?: string;
   discount?: number;
-  bookedSeats?: string[]; // Added bookedSeats
-  seatConfiguration?: { row: string; category: string }[]; // Added seatConfiguration
-  availableSeats: number; // Made availableSeats required
+  bookedSeats?: string[];
+  seatConfiguration?: { row: string; category: string }[];
+  availableSeats: number;
 }
 
 interface Ticket {
@@ -32,7 +32,7 @@ interface Ticket {
   categoryTable?: Record<string, { name: string; price: number }>;
   appliedPromo?: any;
   discountAmount?: number;
-  isRead: boolean; // Added isRead flag
+  isRead: boolean;
 }
 
 @Component({
@@ -42,16 +42,16 @@ interface Ticket {
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class HomeComponent implements OnInit, OnDestroy { // Implement OnDestroy
+export class HomeComponent implements OnInit, OnDestroy {
   userName = 'Guest';
   showMenu = false;
   userRole = '';
-  unreadCount: number = 0; // Property to hold the unread count
-  private notificationSubscription: Subscription | undefined; // To manage subscription
+  unreadCount: number = 0;
+  private notificationSubscription: Subscription | undefined;
 
   constructor(
     public router: Router,
-    private notificationService: NotificationService // Inject service
+    private notificationService: NotificationService,
   ) {}
 
   events: Event[] = [];
@@ -92,16 +92,14 @@ export class HomeComponent implements OnInit, OnDestroy { // Implement OnDestroy
       this.events = [];
     }
 
-    // Subscribe to unread count
-    this.notificationSubscription = this.notificationService.unreadCount$.subscribe(count => {
+    this.notificationSubscription = this.notificationService.unreadCount$.subscribe((count) => {
       this.unreadCount = count;
     });
 
-    // Initial update of the count
     this.notificationService.updateUnreadCount();
   }
 
-  ngOnDestroy(): void { // Lifecycle hook to unsubscribe
+  ngOnDestroy(): void {
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
     }

@@ -1,4 +1,3 @@
-// Copied Event and Ticket interfaces from home.ts
 interface Event {
   id: number | string;
   title: string;
@@ -30,9 +29,9 @@ interface Ticket {
   isRead: boolean;
 }
 
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core'; // Add Inject, PLATFORM_ID
-import { isPlatformBrowser } from '@angular/common'; // Add isPlatformBrowser
-import { BehaviorSubject, Observable } from 'rxjs'; // Import BehaviorSubject and Observable
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core'; 
+import { isPlatformBrowser } from '@angular/common'; 
+import { BehaviorSubject, Observable } from 'rxjs'; 
 
 @Injectable({
   providedIn: 'root',
@@ -41,14 +40,14 @@ export class NotificationService {
   private _unreadCount = new BehaviorSubject<number>(0);
   public readonly unreadCount$: Observable<number> = this._unreadCount.asObservable();
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) { // Inject PLATFORM_ID
-    if (isPlatformBrowser(this.platformId)) { // Only update if in browser
-      this.updateUnreadCount(); // Initial update when service is created
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) { 
+    if (isPlatformBrowser(this.platformId)) { 
+      this.updateUnreadCount(); 
     }
   }
 
   updateUnreadCount(): void {
-    if (isPlatformBrowser(this.platformId)) { // Only access localStorage if in browser
+    if (isPlatformBrowser(this.platformId)) { 
       const rawTickets = localStorage.getItem('pf-tickets');
       if (rawTickets) {
         try {
@@ -63,7 +62,6 @@ export class NotificationService {
         this._unreadCount.next(0);
       }
     } else {
-      // If not in browser, set count to 0 or handle server-side specific logic
       this._unreadCount.next(0);
     }
   }
