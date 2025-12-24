@@ -7,48 +7,10 @@ import { Router } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
 import { Subscription } from 'rxjs';
 import { ReportService, ReportData } from '../../services/report.service';
-import { Chart, ChartConfiguration, ChartOptions, ChartType } from 'chart.js';
+import { Chart, ChartType } from 'chart.js';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-
-interface Promo {
-  code: string;
-  discountPercent: number;
-  expiryDate: string;
-  applicableTicketTypes: { [key: string]: boolean };
-}
-
-interface Event {
-  id: number | string;
-  title: string;
-  date: string;
-  time: string;
-  description: string;
-  location: string;
-  email?: string;
-  poster?: string;
-  isNew?: boolean;
-  isSpecial?: boolean;
-  promo?: Promo[];
-  ticketCategories?: { name: string; shortName: string; price: number }[];
-  seatConfiguration?: { row: string; category: string }[];
-  bookedSeats?: string[];
-  availableSeats: number;
-}
-
-interface Ticket {
-  event: Event;
-  poster: string;
-  time: string;
-  seats: string[];
-  total: number;
-  purchaseDate: string;
-  seatDetails?: any[];
-  categoryTable?: Record<string, { name: string; price: number }>;
-  appliedPromo?: any;
-  discountAmount?: number;
-  isRead: boolean;
-}
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -68,9 +30,9 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   userName = 'Organizer';
   showMenu = false;
-  userEvents: Event[] = [];
-  selectedEventId: number | null = null;
-  promo: Promo[] = [];
+  userEvents: any[] = [];
+  selectedEventId: string | null = null;
+  promo: any[] = [];
   bookedSeats: string[] = [];
   unreadCount: number = 0;
   private notificationSubscription: Subscription | undefined;
@@ -101,10 +63,10 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   ];
 
   onEventSelect(event: any) {
-    const eventId = Number(event.target.value);
+    const eventId = event.target.value;
     if (eventId) {
       this.selectedEventId = eventId;
-      const selectedEvent = this.userEvents.find((e) => e.id === eventId);
+      const selectedEvent = this.userEvents.find((e) => e._id === eventId);
       if (selectedEvent) {
         this.ticketCategories = selectedEvent.ticketCategories
           ? JSON.parse(JSON.stringify(selectedEvent.ticketCategories))
@@ -160,6 +122,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
     private notificationService: NotificationService,
     private reportService: ReportService,
+    private apiService: ApiService,
   ) {}
 
   ngOnInit(): void {
@@ -174,11 +137,17 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       const user = JSON.parse(userJson);
       this.userName = user.name || 'Organizer';
 
-      const eventsJson = localStorage.getItem('pf-events');
-      if (eventsJson) {
-        const allEvents: Event[] = JSON.parse(eventsJson);
-        this.userEvents = allEvents.filter((event) => event.email === user.email);
-      }
+      this.apiService.getEvents().subscribe({
+        next: (res) => {
+          if(res.success){
+            this.userEvents = res.events.filter((event: any) => event.email === user.email);
+          }
+        },
+        error: (err) => {
+          console.error('Failed to fetch events', err);
+        }
+      })
+
     } catch {
       this.userName = 'Organizer';
     }
@@ -212,8 +181,16 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   }
 
   logout() {
-    localStorage.removeItem('pf-current-user');
-    this.router.navigate(['/login']);
+    this.apiService.logout().subscribe({
+      next: () => {
+        localStorage.removeItem('pf-current-user');
+        this.router.navigate(['/login']);
+      },
+      error: () => {
+        localStorage.removeItem('pf-current-user');
+        this.router.navigate(['/login']);
+      }
+    });
   }
 
   goHome() {
@@ -283,131 +260,79 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         alert('Please fill in all required fields: Title, Location, Date, Time, and Description.');
         return;
       }
-
-      const eventsJson = localStorage.getItem('pf-events');
-      if (eventsJson) {
-        try {
-          const events: Event[] = JSON.parse(eventsJson);
-          if (events.some((event) => event.date === date)) {
-            alert('There is already an ongoing event on that date.');
-            return;
-          }
-        } catch (e) {
-          console.error('Error parsing events from localStorage', e);
-        }
-      }
-
-      const totalSeats = this.seatConfiguration ? this.seatConfiguration.length * 30 : 0;
-      const bookedSeatsCount = this.bookedSeats ? this.bookedSeats.length : 0;
-      const calculatedAvailableSeats = totalSeats - bookedSeatsCount;
-
-      let posterBase64: string | undefined = undefined;
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        posterBase64 = reader.result as string;
-        this.saveEvent({
-          title,
-          location,
-          date,
-          time,
-          description,
-          email: userEmail,
-          poster: posterBase64,
-          ticketCategories: this.ticketCategories,
-          seatConfiguration: this.seatConfiguration,
-          promo: this.promo,
-          availableSeats: calculatedAvailableSeats,
-        });
+      
+      const eventData = {
+        title,
+        location,
+        date,
+        time,
+        description,
+        email: userEmail,
+        ticketCategories: this.ticketCategories,
+        seatConfiguration: this.seatConfiguration,
+        promo: this.promo,
+        isNew: true,
       };
 
-      reader.onerror = (error) => {
-        console.error('Error reading file:', error);
-        alert('Could not read event poster file.');
-        this.saveEvent({
-          title,
-          location,
-          date,
-          time,
-          description,
-          email: userEmail,
-          ticketCategories: this.ticketCategories,
-          seatConfiguration: this.seatConfiguration,
-          promo: this.promo,
-          availableSeats: calculatedAvailableSeats,
-        });
-      };
-
-      if (posterFile) {
+      if(posterFile) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.saveEvent({ ...eventData, poster: reader.result as string });
+        };
         reader.readAsDataURL(posterFile);
       } else {
-        this.saveEvent({
-          title,
-          location,
-          date,
-          time,
-          description,
-          email: userEmail,
-          ticketCategories: this.ticketCategories,
-          seatConfiguration: this.seatConfiguration,
-          promo: this.promo,
-          availableSeats: calculatedAvailableSeats,
-        });
+        this.saveEvent(eventData);
       }
+
     } else if (this.activeChoice === 'edit-event') {
       if (this.selectedEventId === null) {
         alert('Please select an event to edit.');
         return;
       }
+      
+      const eventData = {
+        ticketCategories: this.ticketCategories,
+        seatConfiguration: this.seatConfiguration,
+        promo: this.promo,
+      };
 
-      const eventsJson = localStorage.getItem('pf-events');
-      let events: Event[] = [];
-      if (eventsJson) {
-        try {
-          events = JSON.parse(eventsJson);
-        } catch (e) {
-          console.error('Error parsing events from localStorage', e);
+      this.apiService.updateEvent(this.selectedEventId, eventData).subscribe({
+        next: (res) => {
+          if (res.success) {
+            alert('Event updated successfully!');
+            this.showChoice('');
+            this.ngOnInit(); // refresh data
+          } else {
+            alert('Failed to update event');
+          }
+        },
+        error: (err) => {
+          alert('An error occurred while updating the event.');
         }
-      }
-
-      const eventIndex = events.findIndex((e) => e.id === this.selectedEventId);
-      if (eventIndex !== -1) {
-        events[eventIndex].ticketCategories = this.ticketCategories;
-        events[eventIndex].seatConfiguration = this.seatConfiguration;
-        events[eventIndex].promo = this.promo;
-        localStorage.setItem('pf-events', JSON.stringify(events));
-        alert('Event updated successfully!');
-      } else {
-        alert('Selected event not found.');
-      }
+      })
     }
   }
 
-  private saveEvent(eventData: Omit<Event, 'id'>) {
-    const eventsJson = localStorage.getItem('pf-events');
-    let events: Event[] = [];
-    if (eventsJson) {
-      try {
-        events = JSON.parse(eventsJson);
-      } catch (e) {
-        console.error('Error parsing events from localStorage', e);
+  private saveEvent(eventData: any) {
+    this.apiService.createEvent(eventData).subscribe({
+      next: (res) => {
+        if(res.success) {
+          alert('Event created successfully!');
+          this.clearCreateEventForm();
+          this.showChoice('');
+          this.ngOnInit(); // refresh data
+        } else {
+          alert('Failed to create event');
+        }
+      },
+      error: (err) => {
+        if(err.error.message.includes('E11000 duplicate key error')){
+          alert('There is already an ongoing event on that date.');
+        } else {
+          alert('An error occurred while creating the event.');
+        }
       }
-    }
-
-    const newEvent: Event = {
-      id:
-        events.length > 0
-          ? Math.max(...events.map((e) => (typeof e.id === 'number' ? e.id : 0))) + 1
-          : 1,
-      ...eventData,
-      isNew: true,
-    };
-
-    events.push(newEvent);
-    localStorage.setItem('pf-events', JSON.stringify(events));
-
-    alert('Event created successfully!');
-    this.clearCreateEventForm();
+    });
   }
 
   private clearCreateEventForm() {
@@ -416,7 +341,10 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     (document.getElementById('event-date') as HTMLInputElement).value = '';
     (document.getElementById('event-time') as HTMLInputElement).value = '';
     (document.getElementById('event-description') as HTMLTextAreaElement).value = '';
-    (document.getElementById('event-poster') as HTMLInputElement).value = '';
+    const posterInput = document.getElementById('event-poster') as HTMLInputElement;
+    if (posterInput) {
+      posterInput.value = '';
+    }
   }
 
   openNotifications() {

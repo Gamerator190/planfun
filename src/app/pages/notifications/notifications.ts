@@ -2,42 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
-
-interface Event {
-  id: number | string;
-  title: string;
-  date: string;
-  time: string;
-  description: string;
-  location: string;
-  email?: string;
-  poster?: string;
-  isNew?: boolean;
-  isSpecial?: boolean;
-  promo?: any[];
-  ticketCategories?: any[];
-  seatConfiguration?: { row: string; category: string }[];
-  bookedSeats?: string[];
-}
-
-interface SeatSelection {
-  seat: string;
-  typeCode: string;
-}
-
-interface Ticket {
-  event: Event;
-  poster: string;
-  time: string;
-  seats: string[];
-  total: number;
-  purchaseDate: string;
-  seatDetails?: SeatSelection[];
-  categoryTable?: Record<string, { name: string; price: number }>;
-  appliedPromo?: any;
-  discountAmount?: number;
-  isRead: boolean;
-}
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-notifications',
@@ -47,37 +12,36 @@ interface Ticket {
   styleUrl: './notifications.css',
 })
 export class NotificationsComponent implements OnInit {
-  tickets: Ticket[] = [];
+  tickets: any[] = [];
 
   constructor(
     private router: Router,
     private notificationService: NotificationService,
+    private apiService: ApiService,
   ) {}
 
   ngOnInit(): void {
-    const raw = localStorage.getItem('pf-tickets');
-    if (raw) {
-      try {
-        let list: Ticket[] = JSON.parse(raw);
-
-        this.tickets = list.map((t) => {
-          if (!t.seatDetails) {
-            t.seatDetails = t.seats.map((s) => ({
-              seat: s,
-              typeCode: 'REG',
-            }));
-          }
-          if (typeof t.isRead === 'undefined' || t.isRead === false) {
-            t.isRead = true;
-          }
-          return t;
-        });
-        localStorage.setItem('pf-tickets', JSON.stringify(this.tickets));
-        this.notificationService.updateUnreadCount();
-      } catch {
-        this.tickets = [];
+    this.apiService.getUserTickets().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.tickets = res.tickets.map((t: any) => {
+            if (!t.seatDetails) {
+              t.seatDetails = t.seats.map((s: any) => ({
+                seat: s,
+                typeCode: 'REG',
+              }));
+            }
+            // The isRead logic should ideally be handled by the backend
+            // For now, we will just display the tickets
+            return t;
+          });
+          this.notificationService.updateUnreadCount();
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching tickets', err);
       }
-    }
+    });
   }
 
   goHome() {
@@ -88,7 +52,7 @@ export class NotificationsComponent implements OnInit {
     return value.toLocaleString('id-ID');
   }
 
-  getSeatTypeSummary(ticket: Ticket): string {
+  getSeatTypeSummary(ticket: any): string {
     if (!ticket.seatDetails || !ticket.categoryTable) return '';
 
     const counter: Record<string, number> = {};
@@ -103,6 +67,7 @@ export class NotificationsComponent implements OnInit {
   }
 
   openTicket(i: number) {
+    // This will need to be changed to pass ticket ID if we want to fetch ticket details on the e-ticket page
     this.router.navigate(['/notifications', i]);
   }
 }

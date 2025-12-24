@@ -1,23 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-
-interface Event {
-  id: number | string;
-  title: string;
-  date: string;
-  time: string;
-  description: string;
-  location: string;
-  poster?: string;
-  isNew?: boolean;
-  isSpecial?: boolean;
-  promo?: any[];
-  ticketCategories?: any[];
-  seatConfiguration?: { row: string; category: string }[];
-  bookedSeats?: string[];
-  availableSeats: number;
-}
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-event-detail',
@@ -27,38 +11,44 @@ interface Event {
   styleUrl: './event-detail.css',
 })
 export class EventDetailComponent implements OnInit {
-  event: Event | null = null;
+  event: any = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private apiService: ApiService,
   ) {}
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-
-    const eventsJson = localStorage.getItem('pf-events');
-    let events: any[] = [];
-
-    if (eventsJson) {
-      events = JSON.parse(eventsJson);
-    }
-
-    const foundEvent = events.find((m: any) => m.id === id);
-
-    if (!foundEvent) {
-      alert('Event not found');
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
       this.router.navigate(['/home']);
       return;
     }
 
-    const totalSeats = foundEvent.seatConfiguration ? foundEvent.seatConfiguration.length * 30 : 0;
-    const bookedSeatsCount = foundEvent.bookedSeats ? foundEvent.bookedSeats.length : 0;
+    this.apiService.getEventById(id).subscribe({
+      next: (res) => {
+        if (res.success) {
+          const foundEvent = res.event;
+          const totalSeats = foundEvent.seatConfiguration ? foundEvent.seatConfiguration.length * 30 : 0;
+          const bookedSeatsCount = foundEvent.bookedSeats ? foundEvent.bookedSeats.length : 0;
 
-    this.event = {
-      ...foundEvent,
-      availableSeats: totalSeats - bookedSeatsCount,
-    };
+          this.event = {
+            ...foundEvent,
+            id: foundEvent._id,
+            availableSeats: totalSeats - bookedSeatsCount,
+          };
+        } else {
+          alert('Event not found');
+          this.router.navigate(['/home']);
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching event', err);
+        alert('Error fetching event');
+        this.router.navigate(['/home']);
+      }
+    });
   }
 
   goHome() {

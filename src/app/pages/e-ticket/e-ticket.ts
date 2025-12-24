@@ -3,44 +3,7 @@ declare const QRCode: any;
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-
-interface Event {
-  id: number | string;
-  title: string;
-  date: string;
-  time: string;
-  description: string;
-  location: string;
-  email?: string;
-  poster?: string;
-  isNew?: boolean;
-  isSpecial?: boolean;
-  promo?: any[];
-  ticketCategories?: any[];
-  seatConfiguration?: { row: string; category: string }[];
-  bookedSeats?: string[];
-  availableSeats: number;
-}
-
-interface SeatSelection {
-  seat: string;
-  typeCode: string;
-}
-
-interface Ticket {
-  id: string;
-  event: Event;
-  poster: string;
-  time: string;
-  seats: string[];
-  total: number;
-  purchaseDate: string;
-  seatDetails?: SeatSelection[];
-  categoryTable?: Record<string, { name: string; price: number }>;
-  appliedPromo?: any;
-  discountAmount?: number;
-  isRead: boolean;
-}
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-e-ticket',
@@ -50,7 +13,7 @@ interface Ticket {
   styleUrl: './e-ticket.css',
 })
 export class ETicketComponent implements OnInit, AfterViewInit {
-  ticket: Ticket | null = null;
+  ticket: any | null = null;
   index = 0;
 
   @ViewChild('qrcodeCanvas', { static: false }) qrcodeCanvas!: ElementRef;
@@ -58,35 +21,32 @@ export class ETicketComponent implements OnInit, AfterViewInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private apiService: ApiService,
   ) {}
 
   ngOnInit(): void {
     this.index = Number(this.route.snapshot.paramMap.get('index') || 0);
 
-    const raw = localStorage.getItem('pf-tickets');
-    if (!raw) {
-      this.router.navigate(['/notifications']);
-      return;
-    }
-
-    try {
-      const list: Ticket[] = JSON.parse(raw);
-      this.ticket = list[this.index];
-
-      if (!this.ticket) {
+    this.apiService.getUserTickets().subscribe({
+      next: (res) => {
+        if (res.success && res.tickets.length > this.index) {
+          this.ticket = res.tickets[this.index];
+          if (!this.ticket.seatDetails) {
+            this.ticket.seatDetails = this.ticket.seats.map((s: any) => ({
+              seat: s,
+              typeCode: 'REG',
+            }));
+          }
+          this.generateQRCode();
+        } else {
+          this.router.navigate(['/notifications']);
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching tickets', err);
         this.router.navigate(['/notifications']);
-        return;
       }
-
-      if (!this.ticket.seatDetails) {
-        this.ticket.seatDetails = this.ticket.seats.map((s) => ({
-          seat: s,
-          typeCode: 'REG',
-        }));
-      }
-    } catch (err) {
-      this.router.navigate(['/notifications']);
-    }
+    });
   }
 
   ngAfterViewInit(): void {
@@ -96,9 +56,10 @@ export class ETicketComponent implements OnInit, AfterViewInit {
   }
 
   generateQRCode(): void {
-    if (this.ticket) {
+    if (this.ticket && this.qrcodeCanvas && this.qrcodeCanvas.nativeElement) {
+      this.qrcodeCanvas.nativeElement.innerHTML = ''; // Clear previous QR code
       const qrData = JSON.stringify({
-        ticketId: this.ticket.id,
+        ticketId: this.ticket._id,
         eventName: this.ticket.event.title,
         purchaseDate: this.ticket.purchaseDate,
       });
@@ -142,44 +103,26 @@ export class ETicketComponent implements OnInit, AfterViewInit {
   cancelBooking() {
     if (!this.ticket) return;
 
-    const eventDate = new Date(this.ticket.event.date);
-    const today = new Date();
-    const diffTime = eventDate.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays < 7) {
+    if (this.isCancelDisabled) {
       alert('Booking can only be cancelled 7 days or more prior to the event.');
       return;
     }
-
-    const rawTickets = localStorage.getItem('pf-tickets');
-    if (rawTickets) {
-      const tickets: Ticket[] = JSON.parse(rawTickets);
-      const updatedTickets = tickets.filter((_, i) => i !== this.index); // Filter out the current ticket
-      localStorage.setItem('pf-tickets', JSON.stringify(updatedTickets));
+    
+    if (confirm('Are you sure you want to cancel this booking?')) {
+      // this.apiService.deleteTicket(this.ticket._id).subscribe({
+      //   next: (res) => {
+      //     if(res.success){
+      //       alert('Booking cancelled successfully!');
+      //       this.router.navigate(['/notifications']);
+      //     } else {
+      //       alert('Failed to cancel booking.');
+      //     }
+      //   },
+      //   error: (err) => {
+      //     alert('An error occurred while cancelling booking.');
+      //   }
+      // });
+      alert('Booking cancellation is not yet implemented in the backend.');
     }
-
-    const rawEvents = localStorage.getItem('pf-events');
-    if (rawEvents) {
-      const events: Event[] = JSON.parse(rawEvents);
-      const eventIndex = events.findIndex((e) => e.id === this.ticket?.event.id);
-
-      if (eventIndex !== -1) {
-        const updatedEvent = { ...events[eventIndex] };
-        const cancelledSeatIds = this.ticket.seats;
-        updatedEvent.bookedSeats =
-          updatedEvent.bookedSeats?.filter((seatId) => !cancelledSeatIds.includes(seatId)) || [];
-        const totalSeats = updatedEvent.seatConfiguration
-          ? updatedEvent.seatConfiguration.length * 30
-          : 0;
-        updatedEvent.availableSeats = totalSeats - updatedEvent.bookedSeats.length;
-
-        events[eventIndex] = updatedEvent;
-        localStorage.setItem('pf-events', JSON.stringify(events));
-      }
-    }
-
-    alert('Booking cancelled successfully!');
-    this.router.navigate(['/notifications']);
   }
 }

@@ -4,67 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
 import { Subscription } from 'rxjs';
-import { ReportService } from '../../services/report.service';
-import { Chart, ChartConfiguration, ChartOptions, ChartType } from 'chart.js';
+import { ReportService, ReportData } from '../../services/report.service';
+import { Chart, ChartType } from 'chart.js';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-
-interface User {
-  name: string;
-  email: string;
-  password: string;
-  role?: string;
-  phone?: string;
-  organization?: string;
-}
-
-interface Event {
-  id: number | string;
-  title: string;
-  date: string;
-  time: string;
-  description: string;
-  location: string;
-  email?: string;
-  poster?: string;
-  isNew?: boolean;
-  isSpecial?: boolean;
-  promoCode?: string;
-  discount?: number;
-  bookedSeats?: string[];
-  seatConfiguration?: { row: string; category: string }[];
-  availableSeats: number;
-}
-
-interface Ticket {
-  event: Event;
-  poster: string;
-  time: string;
-  seats: string[];
-  total: number;
-  purchaseDate: string;
-  seatDetails?: any[];
-  categoryTable?: Record<string, { name: string; price: number }>;
-  appliedPromo?: any;
-  discountAmount?: number;
-  isRead: boolean;
-}
-
-interface ReportData {
-  type:
-    | 'ticketSales'
-    | 'revenue'
-    | 'seatOccupancy'
-    | 'auditoriumBookings'
-    | 'eventsHosted'
-    | 'utilizationStatistics';
-  period: string;
-  labels: string[];
-  series: number[];
-  tableData: { label: string; value: any }[];
-  message?: string;
-  chartType?: ChartType;
-}
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -110,6 +54,7 @@ export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
     private notificationService: NotificationService,
     private reportService: ReportService,
+    private apiService: ApiService,
   ) {}
 
   ngOnInit(): void {
@@ -165,8 +110,16 @@ export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
   }
 
   logout() {
-    localStorage.removeItem('pf-current-user');
-    this.router.navigate(['/login']);
+    this.apiService.logout().subscribe({
+      next: () => {
+        localStorage.removeItem('pf-current-user');
+        this.router.navigate(['/login']);
+      },
+      error: () => {
+        localStorage.removeItem('pf-current-user');
+        this.router.navigate(['/login']);
+      }
+    });
   }
 
   goHome() {
@@ -175,20 +128,6 @@ export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
 
   openNotifications() {
     this.router.navigate(['/notifications']);
-  }
-
-  private getUsersFromStorage(): User[] {
-    const usersJson = localStorage.getItem('pf-users');
-    if (!usersJson) return [];
-    try {
-      return JSON.parse(usersJson) as User[];
-    } catch {
-      return [];
-    }
-  }
-
-  private saveUsersToStorage(users: User[]) {
-    localStorage.setItem('pf-users', JSON.stringify(users));
   }
 
   register() {
@@ -224,20 +163,8 @@ export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
       alert('Password confirmation does not match.');
       return;
     }
-
-    const users = this.getUsersFromStorage();
-    const existingUser = users.find((u) => u.email === this.email || u.name === this.name);
-
-    if (existingUser) {
-      if (existingUser.email === this.email) {
-        alert('This email is already registered, please use a different email.');
-      } else if (existingUser.name === this.name) {
-        alert('This username is already registered, please use a different username.');
-      }
-      return;
-    }
-
-    const newUser: User = {
+    
+    const newUser = {
       name: this.name,
       email: this.email,
       password: this.password,
@@ -248,22 +175,28 @@ export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
 
     this.isLoading = true;
 
-    setTimeout(() => {
-      users.push(newUser);
-      this.saveUsersToStorage(users);
-
-      this.isLoading = false;
-      alert('Registration successful!');
-
-      this.name = '';
-      this.email = '';
-      this.password = '';
-      this.confirmPassword = '';
-      this.role = 'organizer';
-      this.phone = '';
-      this.organization = '';
-      this.showChoice('');
-    }, 600);
+    this.apiService.signup(newUser).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        if (res.success) {
+          alert('Registration successful!');
+          this.name = '';
+          this.email = '';
+          this.password = '';
+          this.confirmPassword = '';
+          this.role = 'organizer';
+          this.phone = '';
+          this.organization = '';
+          this.showChoice('');
+        } else {
+          alert(`Registration failed: ${res.message}`);
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        alert(`An error occurred: ${err.error?.message || err.message}`);
+      }
+    });
   }
 
   generateReport() {

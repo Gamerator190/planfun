@@ -2,15 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-
-interface User {
-  name: string;
-  email: string;
-  password: string;
-  role?: string;
-  phone?: string;
-  organization?: string;
-}
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-register',
@@ -29,21 +21,7 @@ export class RegisterComponent {
   organization = '';
   isLoading = false;
 
-  constructor(private router: Router) {}
-
-  private getUsersFromStorage(): User[] {
-    const usersJson = localStorage.getItem('pf-users');
-    if (!usersJson) return [];
-    try {
-      return JSON.parse(usersJson) as User[];
-    } catch {
-      return [];
-    }
-  }
-
-  private saveUsersToStorage(users: User[]) {
-    localStorage.setItem('pf-users', JSON.stringify(users));
-  }
+  constructor(private router: Router, private apiService: ApiService) {}
 
   register() {
     if (!this.name || !this.email || !this.password || !this.confirmPassword) {
@@ -61,15 +39,9 @@ export class RegisterComponent {
       return;
     }
 
-    const users = this.getUsersFromStorage();
-    const already = users.find((u) => u.email === this.email);
+    this.isLoading = true;
 
-    if (already) {
-      alert('This email is already registered, please use a different email.');
-      return;
-    }
-
-    const newUser: User = {
+    const newUser = {
       name: this.name,
       email: this.email,
       password: this.password,
@@ -78,17 +50,21 @@ export class RegisterComponent {
       organization: this.organization,
     };
 
-    this.isLoading = true;
-
-    setTimeout(() => {
-      users.push(newUser);
-      this.saveUsersToStorage(users);
-
-      this.isLoading = false;
-      alert('Registration successful! Please login.');
-
-      this.router.navigate(['/login']);
-    }, 600);
+    this.apiService.signup(newUser).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        if (res.success) {
+          alert('Registration successful! Please login.');
+          this.router.navigate(['/login']);
+        } else {
+          alert(`Registration failed: ${res.message}`);
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        alert(`An error occurred: ${err.error?.message || err.message}`);
+      }
+    });
   }
 
   goToLogin() {

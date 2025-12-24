@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
 import { Subscription } from 'rxjs';
+import { ApiService } from '../../services/api.service';
 
 interface Event {
   id: number | string;
@@ -19,20 +20,6 @@ interface Event {
   bookedSeats?: string[];
   seatConfiguration?: { row: string; category: string }[];
   availableSeats: number;
-}
-
-interface Ticket {
-  event: Event;
-  poster: string;
-  time: string;
-  seats: string[];
-  total: number;
-  purchaseDate: string;
-  seatDetails?: any[];
-  categoryTable?: Record<string, { name: string; price: number }>;
-  appliedPromo?: any;
-  discountAmount?: number;
-  isRead: boolean;
 }
 
 @Component({
@@ -52,6 +39,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     public router: Router,
     private notificationService: NotificationService,
+    private apiService: ApiService
   ) {}
 
   events: Event[] = [];
@@ -72,25 +60,24 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.userName = 'Event Lover';
     }
 
-    const eventsFromStorage = localStorage.getItem('pf-events');
-    if (eventsFromStorage) {
-      try {
-        const storedEvents: Event[] = JSON.parse(eventsFromStorage);
-        this.events = storedEvents.map((event) => {
-          const totalSeats = event.seatConfiguration ? event.seatConfiguration.length * 30 : 0;
-          const bookedSeatsCount = event.bookedSeats ? event.bookedSeats.length : 0;
-          return {
-            ...event,
-            availableSeats: totalSeats - bookedSeatsCount,
-          };
-        });
-      } catch (e) {
-        console.error('Error parsing events from localStorage', e);
-        this.events = [];
+    this.apiService.getEvents().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.events = res.events.map((event: any) => {
+            const totalSeats = event.seatConfiguration ? event.seatConfiguration.length * 30 : 0;
+            const bookedSeatsCount = event.bookedSeats ? event.bookedSeats.length : 0;
+            return {
+              ...event,
+              id: event._id, // map _id to id
+              availableSeats: totalSeats - bookedSeatsCount,
+            };
+          });
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching events', err);
       }
-    } else {
-      this.events = [];
-    }
+    });
 
     this.notificationSubscription = this.notificationService.unreadCount$.subscribe((count) => {
       this.unreadCount = count;
@@ -126,7 +113,21 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   logout() {
-    localStorage.removeItem('pf-current-user');
-    this.router.navigate(['/login']);
+    this.apiService.logout().subscribe({
+      next: (res) => {
+        if (res.success) {
+          localStorage.removeItem('pf-current-user');
+          this.router.navigate(['/login']);
+        } else {
+          alert('Logout failed');
+        }
+      },
+      error: (err) => {
+        console.error('Logout error', err);
+        // still remove user and navigate
+        localStorage.removeItem('pf-current-user');
+        this.router.navigate(['/login']);
+      }
+    });
   }
 }

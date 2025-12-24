@@ -2,43 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-
-interface Event {
-  id: number | string;
-  title: string;
-  date: string;
-  time: string;
-  description: string;
-  location: string;
-  email?: string;
-  poster?: string;
-  isNew?: boolean;
-  isSpecial?: boolean;
-  promo?: any[];
-  ticketCategories?: any[];
-  seatConfiguration?: { row: string; category: string }[];
-  bookedSeats?: string[];
-}
-
-interface Ticket {
-  event: Event;
-  poster: string;
-  time: string;
-  seats: string[];
-  total: number;
-  purchaseDate: string;
-  seatDetails?: SeatSelection[];
-  categoryTable?: Record<string, { name: string; price: number }>;
-  appliedPromo?: any;
-  discountAmount?: number;
-  isRead: boolean;
-}
-
-interface TicketType {
-  code: string;
-  label: string;
-  price: number;
-}
+import { ApiService } from '../../services/api.service';
 
 interface SeatSelection {
   seat: string;
@@ -68,10 +32,11 @@ export class CheckoutComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private apiService: ApiService,
   ) {}
 
   ngOnInit(): void {
-    const eventId = Number(this.route.snapshot.paramMap.get('id'));
+    const eventId = this.route.snapshot.paramMap.get('id');
     this.time = String(this.route.snapshot.paramMap.get('time'));
     const seatsParam = this.route.snapshot.paramMap.get('seats') || '';
     const categoryTableString = this.route.snapshot.paramMap.get('categoryTable');
@@ -93,19 +58,27 @@ export class CheckoutComponent implements OnInit {
         .filter((s) => !!s.seat);
     }
 
-    const eventsJson = localStorage.getItem('pf-events');
-    if (eventsJson) {
-      const events = JSON.parse(eventsJson);
-      this.event = events.find((m: any) => m.id === eventId);
-    }
-
-    if (!this.event) {
-      alert('Event data not found');
+    if (!eventId) {
+      alert('Event ID not found');
       this.router.navigate(['/home']);
       return;
     }
 
-    this.updateTotal();
+    this.apiService.getEventById(eventId).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.event = res.event;
+          this.updateTotal();
+        } else {
+          alert('Event data not found');
+          this.router.navigate(['/home']);
+        }
+      },
+      error: (err) => {
+        alert('Error fetching event data');
+        this.router.navigate(['/home']);
+      }
+    });
   }
 
   get seatListLabel(): string {
@@ -182,7 +155,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/event', this.event.id]);
+    this.router.navigate(['/event', this.event._id]);
   }
 
   pay() {
@@ -191,7 +164,7 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
-    const ticket: Ticket = {
+    const ticket = {
       event: this.event,
       poster: this.event.poster,
       time: this.time,
