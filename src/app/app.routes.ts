@@ -3,7 +3,6 @@ import { LoginComponent } from './pages/login/login';
 import { PaymentComponent } from './pages/payment/payment';
 import { RegisterComponent } from './pages/register/register';
 import { HomeComponent } from './pages/home/home';
-import { Verification } from './pages/verification/verification'; 
 import { EventDetailComponent } from './pages/event-detail/event-detail';
 import { SeatPickerPageComponent } from './pages/seat-picker/seat-picker-page.component';
 import { NotificationsComponent } from './pages/notifications/notifications';
@@ -17,7 +16,6 @@ export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'verification', component: Verification },
   { path: 'home', component: HomeComponent },
 
   { path: 'admin-dashboard', component: AdminDashboard },

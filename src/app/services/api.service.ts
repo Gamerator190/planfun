@@ -26,14 +26,6 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/auth/signup`, userData, this.getHeaders());
   }
 
-  verify(email: string, verificationCode: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/auth/verify-email`, { email, verificationCode }, this.getHeaders());
-  }
-
-  resendVerification(email: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/auth/resend-verification`, { email }, this.getHeaders());
-  }
-
   logout(): Observable<any> {
     return this.http.post(`${this.baseUrl}/auth/logout`, {}, this.getHeaders());
   }

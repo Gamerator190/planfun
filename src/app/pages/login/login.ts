@@ -58,13 +58,7 @@ export class LoginComponent {
       },
       error: (err) => {
         this.isLoading = false;
-        // Check for the specific error code from the backend
-        if (err.error?.errorCode === 'USER_NOT_VERIFIED') {
-          // Redirect to verification page, passing the email
-          this.router.navigate(['/verification'], { queryParams: { email: this.email } });
-        } else {
-          alert(`An error occurred: ${err.error?.message || err.message}`);
-        }
+        alert(`An error occurred: ${err.error?.message || err.message}`);
       }
     });
   }
