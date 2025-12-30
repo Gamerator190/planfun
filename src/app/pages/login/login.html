@@ -10,7 +10,7 @@
     <h2 class="title">Login</h2>
     <p class="subtitle">Use your account to continue</p>
 
-    <form (ngSubmit)="usePhoneLogin ? login2() : login()">
+    <form (ngSubmit)="login()">
       <div *ngIf="!usePhoneLogin">
         <div class="form-group">
           <label for="email">Email</label>

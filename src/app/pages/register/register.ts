@@ -54,8 +54,8 @@ export class RegisterComponent {
       next: (res) => {
         this.isLoading = false;
         if (res.success) {
-          alert('Registration successful! Please login.');
-          this.router.navigate(['/login']);
+        console.log('Registration successful', res);
+        this.router.navigate(['/verification'], { queryParams: { email: this.email } });
         } else {
           alert(`Registration failed: ${res.message}`);
         }

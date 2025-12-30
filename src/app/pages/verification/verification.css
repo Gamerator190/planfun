@@ -1,0 +1,235 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  background: rgba(248, 247, 245, 0.65);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-radius: 20px;
+  padding: 24px 22px 18px;
+  box-shadow: 0 18px 45px rgba(15, 25, 57, 0.45);
+  color: #0f1939;
+  box-sizing: border-box;
+  border: 1px solid rgba(243, 222, 194, 0.4);
+}
+
+.brand {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.logo {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #0f1939;
+}
+
+.logo span {
+  color: #e3af64;
+}
+
+.tagline {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #516ac8;
+}
+
+.title {
+  font-size: 20px;
+  margin: 0 0 4px;
+  color: #0f1939;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: #26428b;
+  margin: 0 0 16px;
+}
+
+.form-group {
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 4px;
+  color: #0f1939;
+}
+
+input {
+  width: 100%;
+  padding: 9px 11px;
+  border-radius: 10px;
+  border: 1px solid rgba(81, 106, 200, 0.5);
+  background-color: rgba(250, 235, 215, 0.4);
+  color: #0f1939;
+  outline: none;
+  font-size: 13px;
+  box-sizing: border-box;
+  transition:
+    border 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+input::placeholder {
+  color: #516ac8;
+}
+
+input:focus {
+  border-color: #e3af64;
+  box-shadow: 0 0 0 1px rgba(227, 175, 100, 0.4);
+  background-color: rgba(248, 247, 245, 0.8);
+}
+
+select {
+  width: 100%;
+  padding: 9px 11px;
+  border-radius: 10px;
+  border: 1px solid rgba(81, 106, 200, 0.5);
+  background-color: rgba(250, 235, 215, 0.4);
+  color: #0f1939;
+  outline: none;
+  font-size: 13px;
+  box-sizing: border-box;
+  transition:
+    border 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+select::placeholder {
+  color: #516ac8;
+}
+
+select:focus {
+  border-color: #e3af64;
+  box-shadow: 0 0 0 1px rgba(227, 175, 100, 0.4);
+  background-color: rgba(248, 247, 245, 0.8);
+}
+
+.primary-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #e3af64, #f8f7f5);
+  color: #0f1939;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 6px;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    opacity 0.12s ease;
+}
+
+.primary-btn:hover:enabled {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(15, 25, 57, 0.45);
+  opacity: 0.96;
+}
+
+.primary-btn:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.secondary-btn {
+  width: 100%;
+  padding: 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(81, 106, 200, 0.4);
+  background: rgba(248, 247, 245, 0.5);
+  color: #26428b;
+  font-size: 13px;
+  margin-top: 6px;
+  cursor: pointer;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease;
+}
+
+.secondary-btn:hover {
+  background: rgba(250, 235, 215, 0.6);
+  border-color: #e3af64;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 14px 0 8px;
+  color: #516ac8;
+  font-size: 11px;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #516ac8);
+}
+
+.divider span {
+  padding: 0 8px;
+}
+
+.bottom-text {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #26428b;
+  text-align: center;
+}
+
+.link-btn {
+  border: none;
+  background: none;
+  color: #e3af64;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0 2px;
+  font-size: 12px;
+}
+
+.link-btn:hover {
+  text-decoration: underline;
+}
+
+.alert {
+  padding: .75rem 1.25rem;
+  margin-top: 1rem;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+  font-size: 13px;
+}
+
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.alert-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}

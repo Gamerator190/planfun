@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://localhost:5000/api';
+  private baseUrl = 'http://localhost:3000/api';
 
   constructor(private http: HttpClient) { }
 
@@ -26,10 +26,18 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/auth/signup`, userData, this.getHeaders());
   }
 
+  verify(email: string, verificationCode: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/auth/verify-email`, { email, verificationCode }, this.getHeaders());
+  }
+
+  resendVerification(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/auth/resend-verification`, { email }, this.getHeaders());
+  }
+
   logout(): Observable<any> {
     return this.http.post(`${this.baseUrl}/auth/logout`, {}, this.getHeaders());
   }
-
+  
   checkAuth(): Observable<any> {
     return this.http.get(`${this.baseUrl}/auth/check-auth`, this.getHeaders());
   }
