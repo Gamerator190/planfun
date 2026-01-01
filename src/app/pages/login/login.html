@@ -59,6 +59,13 @@
         </div>
       </div>
 
+      <p class="bottom-text">
+      Forgot your password?
+      <button type="button" class="link-btn" (click)="goToForgotPassword()">
+        Click here
+      </button>
+    </p>
+
       <button class="primary-btn" type="submit" [disabled]="isLoading">
         <span *ngIf="!isLoading">Login</span>
         <span *ngIf="isLoading">Processing...</span>
