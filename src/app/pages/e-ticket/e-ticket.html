@@ -8,13 +8,13 @@
     <div class="top">
       <img
         class="poster"
-        [src]="ticket.event.poster || 'assets/placeholder.jpg'"
-        [alt]="ticket.event.title"
+        [src]="ticket.poster || 'assets/placeholder.jpg'"
+        [alt]="ticket.eventTitle"
       />
       <div class="info">
-        <div class="event-title">{{ ticket.event.title }}</div>
-        <div class="line">Event Date: {{ ticket.event.date }}</div>
-        <div class="line">Event Time: {{ ticket.event.time }}</div>
+        <div class="event-title">{{ ticket.eventTitle }}</div>
+        <div class="line">Event Date: {{ ticket.eventDate }}</div>
+        <div class="line">Event Time: {{ ticket.time }}</div>
         <div class="line">Purchase Date: {{ ticket.purchaseDate }}</div>
         <div class="line">Seats: {{ ticket.seats.join(', ') }}</div>
         <div class="line subtotal" *ngIf="ticket.appliedPromo">

@@ -14,43 +14,56 @@ import { ApiService } from '../../services/api.service';
 })
 export class ETicketComponent implements OnInit, AfterViewInit {
   ticket: any | null = null;
-  index = 0;
+  // index = 0; // No longer needed
 
   @ViewChild('qrcodeCanvas', { static: false }) qrcodeCanvas!: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private apiService: ApiService,
+    // private apiService: ApiService, // No longer directly calling API for user tickets
   ) {}
 
   ngOnInit(): void {
-    this.index = Number(this.route.snapshot.paramMap.get('index') || 0);
+    const ticketId = this.route.snapshot.paramMap.get('id'); // Get ID from route
 
-    this.apiService.getUserTickets().subscribe({
-      next: (res) => {
-        if (res.success && res.tickets.length > this.index) {
-          this.ticket = res.tickets[this.index];
-          if (!this.ticket.seatDetails) {
-            this.ticket.seatDetails = this.ticket.seats.map((s: any) => ({
-              seat: s,
-              typeCode: 'REG',
-            }));
+    if (ticketId) {
+      const rawTickets = localStorage.getItem('pf-tickets');
+      if (rawTickets) {
+        try {
+          const allTickets: any[] = JSON.parse(rawTickets);
+          this.ticket = allTickets.find(t => t._id === ticketId); // Find by _id
+
+          if (this.ticket) {
+            // Ensure seatDetails is populated if it somehow wasn't (legacy data, etc.)
+            if (!this.ticket.seatDetails) {
+              this.ticket.seatDetails = this.ticket.seats.map((s: any) => ({
+                seat: s,
+                typeCode: 'REG',
+              }));
+            }
+            // QRCode generation will happen in ngAfterViewInit now
+          } else {
+            console.error('Ticket not found in localStorage:', ticketId);
+            this.router.navigate(['/notifications']);
           }
-          this.generateQRCode();
-        } else {
+        } catch (e) {
+          console.error('Error parsing tickets from localStorage:', e);
           this.router.navigate(['/notifications']);
         }
-      },
-      error: (err) => {
-        console.error('Error fetching tickets', err);
+      } else {
+        console.error('No tickets found in localStorage.');
         this.router.navigate(['/notifications']);
       }
-    });
+    } else {
+      console.error('Ticket ID is missing from route.');
+      this.router.navigate(['/notifications']);
+    }
   }
 
   ngAfterViewInit(): void {
-    if (this.ticket && this.qrcodeCanvas) {
+    // Generate QR code here now that ticket and qrcodeCanvas are guaranteed to be available after view init
+    if (this.ticket) { // Check this.ticket again to be safe
       this.generateQRCode();
     }
   }
@@ -60,7 +73,7 @@ export class ETicketComponent implements OnInit, AfterViewInit {
       this.qrcodeCanvas.nativeElement.innerHTML = ''; // Clear previous QR code
       const qrData = JSON.stringify({
         ticketId: this.ticket._id,
-        eventName: this.ticket.event.title,
+        eventName: this.ticket.eventTitle, // Use eventTitle
         purchaseDate: this.ticket.purchaseDate,
       });
 

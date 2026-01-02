@@ -32,6 +32,6 @@ export const routes: Routes = [
   { path: 'notifications', component: NotificationsComponent }, 
   { path: 'checkout/:id/:time/:seats', component: CheckoutComponent },
 
-  { path: 'notifications/:index', component: ETicketComponent },
+  { path: 'e-ticket/:id', component: ETicketComponent },
   { path: 'payment', component: PaymentComponent }, 
 ];

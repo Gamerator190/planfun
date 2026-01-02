@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
 import { SeatPickerComponent } from './seat-picker';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-seat-picker-page',
@@ -10,16 +11,20 @@ import { SeatPickerComponent } from './seat-picker';
   templateUrl: './seat-picker-page.component.html',
   styleUrls: ['./seat-picker-page.component.css'],
 })
-export class SeatPickerPageComponent implements OnInit {
+export class SeatPickerPageComponent implements OnInit, OnDestroy {
   eventId: string | null = null;
   time!: string;
   ticketCategories: any[] = [];
   seatConfiguration: any[] = [];
   bookedSeats: string[] = [];
+  private updateHandler = () => this.updateBookedSeats();
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private apiService: ApiService,
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -32,27 +37,55 @@ export class SeatPickerPageComponent implements OnInit {
       return;
     }
 
-    const eventsJson = localStorage.getItem('pf-events');
-    if (eventsJson) {
-      const events = JSON.parse(eventsJson);
-      const currentEvent = events.find((event: any) => event.id === this.eventId || event._id === this.eventId);
-
-      if (currentEvent) {
-        this.ticketCategories = currentEvent.ticketCategories || [];
-        this.seatConfiguration = currentEvent.seatConfiguration || [];
-        this.bookedSeats = currentEvent.bookedSeats || [];
-      } else {
-        alert('Error fetching event data from local storage.');
+    this.apiService.getEventById(this.eventId).subscribe({
+      next: (res) => {
+        if (res.success) {
+          const currentEvent = res.event;
+          this.ticketCategories = currentEvent.ticketCategories || [];
+          this.seatConfiguration = currentEvent.seatConfiguration || [];
+          this.bookedSeats = currentEvent.bookedSeats || [];
+          this.cdr.detectChanges();
+          // Update booked seats when window gains focus
+          if (isPlatformBrowser(this.platformId)) {
+            window.addEventListener('focus', this.updateHandler);
+          }
+        } else {
+          alert('Error fetching event data.');
+          this.router.navigate(['/home']);
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching event', err);
+        alert('Error fetching event');
         this.router.navigate(['/home']);
       }
-    } else {
-        alert('Error fetching event data. No local event cache found.');
-        this.router.navigate(['/home']);
-    }
+    });
   }
 
   handleGoBack() {
     this.router.navigate(['/event', this.eventId]);
+  }
+
+  ngOnDestroy(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      window.removeEventListener('focus', this.updateHandler);
+    }
+  }
+
+  private updateBookedSeats(): void {
+    if (this.eventId) {
+      this.apiService.getEventById(this.eventId).subscribe({
+        next: (res) => {
+          if (res.success) {
+            this.bookedSeats = res.event.bookedSeats || [];
+            this.cdr.detectChanges();
+          }
+        },
+        error: (err) => {
+          console.error('Error updating booked seats', err);
+        }
+      });
+    }
   }
 
   handleContinue({ seatData, categoryTable }: { seatData: string; categoryTable: any }) {

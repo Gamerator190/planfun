@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 type Seat = { id: string; booked: boolean; type: string };
@@ -30,6 +30,8 @@ export class SeatPickerComponent implements OnChanges {
 
   categoryTable: Record<string, { name: string; price: number }> = {};
 
+  constructor(private cdr: ChangeDetectorRef) {}
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['ticketCategories'] || changes['seatConfiguration'] || changes['bookedSeats']) {
       let categories: Record<string, string> = {};
@@ -58,6 +60,7 @@ export class SeatPickerComponent implements OnChanges {
       }
 
       this.generateSeats(categories);
+      this.cdr.detectChanges();
     }
   }
 
@@ -108,6 +111,22 @@ export class SeatPickerComponent implements OnChanges {
     if (idx >= 0) {
       this.selectedSeats.splice(idx, 1);
     } else {
+      // Check max tickets for the category (per session)
+      const category = seat.type;
+      const cat = this.ticketCategories.find(c => c.shortName === category);
+      if (cat && cat.maxTickets > 0) {
+        // Count currently selected seats for this category
+        const selectedCount = this.selectedSeats.filter(seatId => {
+          const s = this.seats.flat().find(s => s.id === seatId);
+          return s && s.type === category;
+        }).length;
+
+        if (selectedCount + 1 > cat.maxTickets) {
+          alert(`Maximum tickets (${cat.maxTickets}) exceeded for category ${cat.name}. You can select up to ${cat.maxTickets} tickets per category in this session.`);
+          return;
+        }
+      }
+
       this.selectedSeats.push(seat.id);
     }
   }
@@ -144,6 +163,8 @@ export class SeatPickerComponent implements OnChanges {
       }
     }
     this.selectedSeats = [...availableSeats];
+    // Bypass max tickets check for dev and go to checkout
+    this.continue();
   }
 
   continue() {

@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
@@ -15,6 +15,7 @@ import { ApiService } from '../../services/api.service';
   imports: [CommonModule, FormsModule],
   templateUrl: './admin-dashboard.html',
   styleUrl: './admin-dashboard.css',
+  standalone: true
 })
 export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('reportChart') reportChart: ElementRef<HTMLCanvasElement> | undefined;
@@ -55,30 +56,36 @@ export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
     private notificationService: NotificationService,
     private reportService: ReportService,
     private apiService: ApiService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {
-    const userJson = localStorage.getItem('pf-current-user');
+    if (isPlatformBrowser(this.platformId)) {
+      const userJson = localStorage.getItem('pf-current-user');
 
-    if (!userJson) {
-      this.router.navigate(['/login']);
-      return;
-    }
+      if (!userJson) {
+        this.router.navigate(['/login']);
+        return;
+      }
 
-    try {
-      const user = JSON.parse(userJson);
-      this.userName = user.name || 'Admin';
-      this.isAdmin = user.role === 'auditorium_admin'; // Set isAdmin based on user role
-    } catch {
-      this.userName = 'Admin';
+      try {
+        const user = JSON.parse(userJson);
+        this.userName = user.name || 'Admin';
+        this.isAdmin = user.role === 'auditorium_admin';
+      } catch {
+        this.userName = 'Admin';
+        this.isAdmin = false;
+      }
+
+      this.notificationService.updateUnreadCount();
+    } else {
+      this.userName = 'Admin (SSR)';
       this.isAdmin = false;
     }
 
     this.notificationSubscription = this.notificationService.unreadCount$.subscribe((count) => {
       this.unreadCount = count;
     });
-
-    this.notificationService.updateUnreadCount();
 
     if (this.isAdmin) {
       this.reportType = 'auditoriumBookings';
@@ -112,11 +119,15 @@ export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
   logout() {
     this.apiService.logout().subscribe({
       next: () => {
-        localStorage.removeItem('pf-current-user');
+        if (isPlatformBrowser(this.platformId)) {
+          localStorage.removeItem('pf-current-user');
+        }
         this.router.navigate(['/login']);
       },
       error: () => {
-        localStorage.removeItem('pf-current-user');
+        if (isPlatformBrowser(this.platformId)) {
+          localStorage.removeItem('pf-current-user');
+        }
         this.router.navigate(['/login']);
       }
     });
@@ -209,21 +220,25 @@ export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
     this.insufficientDataMessage = null;
     this.generatedReportData = null;
 
+    const isCustom = this.reportingPeriod === 'custom';
+    const start = isCustom ? this.startDate : undefined;
+    const end = isCustom ? this.endDate : undefined;
+
     let result: ReportData;
     switch (this.reportType) {
       case 'ticketSales':
       case 'auditoriumBookings':
-        result = this.reportService.generateTicketSales(this.reportingPeriod);
+        result = this.reportService.generateTicketSales(this.reportingPeriod, start, end);
         break;
       case 'revenue':
-        result = this.reportService.generateRevenue(this.reportingPeriod);
+        result = this.reportService.generateRevenue(this.reportingPeriod, start, end);
         break;
       case 'seatOccupancy':
       case 'utilizationStatistics':
-        result = this.reportService.generateSeatOccupancy(this.reportingPeriod);
+        result = this.reportService.generateSeatOccupancy(this.reportingPeriod, start, end);
         break;
       case 'eventsHosted':
-        result = this.reportService.generateEventsHosted(this.reportingPeriod);
+        result = this.reportService.generateEventsHosted(this.reportingPeriod, start, end);
         break;
       default:
         return;

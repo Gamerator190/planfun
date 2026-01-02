@@ -109,6 +109,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 
   openTicket(ticket: Ticket) { // Pass the full ticket object
     if (ticket._id) {
+      this.markAsRead(ticket); // Mark as read before navigating
       this.router.navigate(['/e-ticket', ticket._id]);
     } else {
       console.error('Ticket ID is missing, cannot navigate to e-ticket.');

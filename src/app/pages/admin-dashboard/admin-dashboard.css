@@ -455,3 +455,8 @@ form .form-btn-submit {
     gap: 6px;
   }
 }
+
+.report-chart canvas {
+  height: 300px;
+  width: 100%;
+}

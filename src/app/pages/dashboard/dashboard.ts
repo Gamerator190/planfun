@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SeatPickerComponent } from '../seat-picker/seat-picker';
 
@@ -17,146 +17,101 @@ import { ApiService } from '../../services/api.service';
   imports: [CommonModule, FormsModule, SeatPickerComponent],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
+  standalone: true // Should be standalone as per typical Angular setup
 })
 export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('reportChart') reportChart: ElementRef<HTMLCanvasElement> | undefined;
   private chart: Chart | undefined;
 
-  activeChoice: 'create-event' | 'edit-event' | 'analytics-reports' | '' = 'analytics-reports';
-
-  showChoice(choice: 'create-event' | 'edit-event' | 'analytics-reports' | '') {
-    this.activeChoice = choice;
-  }
-
+  activeChoice: 'analytics-reports' | 'create-event' | 'edit-event' | '' = 'analytics-reports';
   userName = 'Organizer';
   showMenu = false;
-  userEvents: any[] = [];
-  selectedEventId: string | null = null;
-  promo: any[] = [];
-  bookedSeats: string[] = [];
   unreadCount: number = 0;
   private notificationSubscription: Subscription | undefined;
 
-  // Report properties
-  reportType: 'ticketSales' | 'revenue' | 'seatOccupancy' = 'ticketSales';
-  reportingPeriod: 'daily' | 'weekly' | 'monthly' = 'daily';
+  userEvents: any[] = [];
+  selectedEventId: string | null = null;
+
+  ticketCategories: { name: string; shortName: string; price: number; maxTickets: number }[] = [
+    { name: '', shortName: '', price: 0, maxTickets: 0 }
+  ];
+  seatConfiguration: { row: string; category: string }[] = [];
+  promo: {
+    code: string;
+    discountPercent: number;
+    expiryDate: string;
+    applicableTicketTypes: { [key: string]: boolean };
+  }[] = [];
+
+  bookedSeats: string[] = [];
+
+  // Edit event properties
+  editTitle = '';
+  editLocation = '';
+  editDate = '';
+  editTime = '';
+  editDescription = '';
+
+  reportType:
+    | 'ticketSales'
+    | 'revenue'
+    | 'seatOccupancy'
+    | 'auditoriumBookings'
+    | 'eventsHosted'
+    | 'utilizationStatistics' = 'ticketSales';
+  reportingPeriod: 'daily' | 'weekly' | 'monthly' | 'custom' = 'daily';
+  startDate: string = '';
+  endDate: string = '';
+
   generatedReportData: ReportData | null = null;
   insufficientDataMessage: string | null = null;
-
-  ticketCategories = [{ name: 'General Admission', shortName: 'GEN', price: 25000 }];
-  seatConfiguration = [
-    { row: 'A', category: 'GEN' },
-    { row: 'B', category: 'GEN' },
-    { row: 'C', category: 'GEN' },
-    { row: 'D', category: 'GEN' },
-    { row: 'E', category: 'GEN' },
-    { row: 'F', category: 'GEN' },
-    { row: 'G', category: 'GEN' },
-    { row: 'H', category: 'GEN' },
-    { row: 'I', category: 'GEN' },
-    { row: 'J', category: 'GEN' },
-    { row: 'AA', category: 'GEN' },
-    { row: 'BB', category: 'GEN' },
-    { row: 'CC', category: 'GEN' },
-    { row: 'DD', category: 'GEN' },
-    { row: 'EE', category: 'GEN' },
-  ];
-
-  onEventSelect(event: any) {
-    const eventId = event.target.value;
-    if (eventId) {
-      this.selectedEventId = eventId;
-      const selectedEvent = this.userEvents.find((e) => e._id === eventId);
-      if (selectedEvent) {
-        this.ticketCategories = selectedEvent.ticketCategories
-          ? JSON.parse(JSON.stringify(selectedEvent.ticketCategories))
-          : [{ name: 'General Admission', shortName: 'GEN', price: 25000 }];
-        this.seatConfiguration = selectedEvent.seatConfiguration
-          ? JSON.parse(JSON.stringify(selectedEvent.seatConfiguration))
-          : [
-              { row: 'A', category: 'GEN' },
-              { row: 'B', category: 'GEN' },
-              { row: 'C', category: 'GEN' },
-              { row: 'D', category: 'GEN' },
-              { row: 'E', category: 'GEN' },
-              { row: 'F', category: 'GEN' },
-              { row: 'G', category: 'GEN' },
-              { row: 'H', category: 'GEN' },
-              { row: 'I', category: 'GEN' },
-              { row: 'J', category: 'GEN' },
-              { row: 'AA', category: 'GEN' },
-              { row: 'BB', category: 'GEN' },
-              { row: 'CC', category: 'GEN' },
-              { row: 'DD', category: 'GEN' },
-              { row: 'EE', category: 'GEN' },
-            ];
-        this.promo = selectedEvent.promo ? JSON.parse(JSON.stringify(selectedEvent.promo)) : [];
-        this.bookedSeats = selectedEvent.bookedSeats || [];
-      }
-    } else {
-      this.selectedEventId = null;
-      this.ticketCategories = [{ name: 'General Admission', shortName: 'GEN', price: 25000 }];
-      this.seatConfiguration = [
-        { row: 'A', category: 'GEN' },
-        { row: 'B', category: 'GEN' },
-        { row: 'C', category: 'GEN' },
-        { row: 'D', category: 'GEN' },
-        { row: 'E', category: 'GEN' },
-        { row: 'F', category: 'GEN' },
-        { row: 'G', category: 'GEN' },
-        { row: 'H', category: 'GEN' },
-        { row: 'I', category: 'GEN' },
-        { row: 'J', category: 'GEN' },
-        { row: 'AA', category: 'GEN' },
-        { row: 'BB', category: 'GEN' },
-        { row: 'CC', category: 'GEN' },
-        { row: 'DD', category: 'GEN' },
-        { row: 'EE', category: 'GEN' },
-      ];
-      this.promo = [];
-      this.bookedSeats = [];
-    }
-  }
 
   constructor(
     private router: Router,
     private notificationService: NotificationService,
     private reportService: ReportService,
     private apiService: ApiService,
+    private cdr: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID
   ) {}
 
   ngOnInit(): void {
-    const userJson = localStorage.getItem('pf-current-user');
+    if (isPlatformBrowser(this.platformId)) { // Conditionally access localStorage
+      const userJson = localStorage.getItem('pf-current-user');
 
-    if (!userJson) {
-      this.router.navigate(['/login']);
-      return;
-    }
+      if (!userJson) {
+        this.router.navigate(['/login']);
+        return;
+      }
 
-    try {
-      const user = JSON.parse(userJson);
-      this.userName = user.name || 'Organizer';
+      try {
+        const user = JSON.parse(userJson);
+        this.userName = user.name || 'Organizer';
 
-      this.apiService.getEvents().subscribe({
-        next: (res) => {
-          if(res.success){
-            this.userEvents = res.events.filter((event: any) => event.email === user.email);
+        this.apiService.getEvents().subscribe({
+          next: (res) => {
+            if(res.success){
+              this.userEvents = res.events.filter((event: any) => event.email === user.email);
+            }
+          },
+          error: (err) => {
+            console.error('Failed to fetch events', err);
           }
-        },
-        error: (err) => {
-          console.error('Failed to fetch events', err);
-        }
-      })
+        })
+      } catch {
+        this.userName = 'Organizer';
+      }
 
-    } catch {
-      this.userName = 'Organizer';
+      this.notificationService.updateUnreadCount(); // This also needs browser check inside service
+    } else {
+      // Handle SSR case if needed, e.g., default values
+      this.userName = 'Organizer (SSR)';
     }
+
 
     this.notificationSubscription = this.notificationService.unreadCount$.subscribe((count) => {
       this.unreadCount = count;
     });
-
-    this.notificationService.updateUnreadCount();
 
     this.generateReport();
   }
@@ -174,6 +129,38 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     if (this.chart) {
       this.chart.destroy();
     }
+  }
+
+  showChoice(choice: 'analytics-reports' | 'create-event' | 'edit-event' | '') {
+    this.activeChoice = choice;
+    
+    if (choice === 'create-event') {
+      // Reset form data for creating a new event
+      this.ticketCategories = [{ name: '', shortName: '', price: 0, maxTickets: 0 }];
+      this.seatConfiguration = [
+        { row: 'A', category: '' },
+        { row: 'B', category: '' },
+        { row: 'C', category: '' },
+        { row: 'D', category: '' },
+        { row: 'E', category: '' },
+        { row: 'F', category: '' },
+        { row: 'G', category: '' },
+        { row: 'H', category: '' },
+        { row: 'I', category: '' },
+        { row: 'J', category: '' },
+        { row: 'AA', category: '' },
+        { row: 'BB', category: '' },
+        { row: 'CC', category: '' },
+        { row: 'DD', category: '' },
+        { row: 'EE', category: '' }
+      ];
+      this.promo = [];
+      this.selectedEventId = null;
+    }
+  }
+
+  openNotifications() {
+    this.router.navigate(['/notifications']);
   }
 
   toggleUserMenu() {
@@ -202,7 +189,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   }
 
   addCategory() {
-    this.ticketCategories.push({ name: '', shortName: '', price: 0 });
+    this.ticketCategories.push({ name: '', shortName: '', price: 0, maxTickets: 0 });
   }
 
   removeCategory(index: number) {
@@ -238,6 +225,38 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     this.seatConfiguration = [...this.seatConfiguration];
   }
 
+  onEventSelect(event: any) {
+    const selectedId = event.target.value;
+    if (selectedId) {
+      const selectedEvent = this.userEvents.find(e => e._id === selectedId);
+      if (selectedEvent) {
+        // Populate form fields with selected event data
+        this.editTitle = selectedEvent.title || '';
+        this.editLocation = selectedEvent.location || '';
+        this.editDate = selectedEvent.date || '';
+        this.editTime = selectedEvent.time || '';
+        this.editDescription = selectedEvent.description || '';
+        this.ticketCategories = selectedEvent.ticketCategories || [{ name: '', shortName: '', price: 0, maxTickets: 0 }];
+        this.seatConfiguration = selectedEvent.seatConfiguration || [];
+        this.promo = selectedEvent.promo || [];
+        this.bookedSeats = selectedEvent.bookedSeats || [];
+        this.cdr.detectChanges();
+      }
+    } else {
+      // Clear form if no event selected
+      this.editTitle = '';
+      this.editLocation = '';
+      this.editDate = '';
+      this.editTime = '';
+      this.editDescription = '';
+      this.ticketCategories = [{ name: '', shortName: '', price: 0, maxTickets: 0 }];
+      this.seatConfiguration = [];
+      this.promo = [];
+      this.bookedSeats = [];
+      this.cdr.detectChanges();
+    }
+  }
+
   submitForm() {
     if (this.activeChoice === 'create-event') {
       const title = (document.getElementById('event-title') as HTMLInputElement).value;
@@ -265,10 +284,13 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         return;
       }
       
+      // Convert date to a consistent format (ISO string)
+      const formattedDate = new Date(date).toISOString().split('T')[0]; // YYYY-MM-DD
+      
       const eventData = {
         title,
         location,
-        date,
+        date: formattedDate, // Use the formatted date
         time,
         description,
         email: userEmail,
@@ -294,26 +316,56 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         return;
       }
       
-      const eventData = {
+      const selectedEvent = this.userEvents.find((e) => e._id === this.selectedEventId);
+      if (!selectedEvent) {
+        alert('Selected event not found.');
+        return;
+      }
+
+      // Create a full event object to send, preserving existing fields
+      const updatedEventData = {
+        ...selectedEvent, // Start with existing event data
+        title: this.editTitle,
+        location: this.editLocation,
+        date: this.editDate,
+        time: this.editTime,
+        description: this.editDescription,
         ticketCategories: this.ticketCategories,
         seatConfiguration: this.seatConfiguration,
         promo: this.promo,
       };
 
-      this.apiService.updateEvent(this.selectedEventId, eventData).subscribe({
-        next: (res) => {
-          if (res.success) {
-            alert('Event updated successfully!');
-            this.showChoice('');
-            this.ngOnInit(); // refresh data
-          } else {
-            alert('Failed to update event');
+      const posterFile = (document.getElementById('edit-event-poster') as HTMLInputElement).files?.[0];
+
+      const updateEvent = (data: any) => {
+        this.apiService.updateEvent(this.selectedEventId!, data).subscribe({
+          next: (res) => {
+            if (res.success) {
+              alert('Event updated successfully!');
+              this.showChoice('');
+              this.ngOnInit(); // refresh data
+            } else {
+              alert('Failed to update event');
+            }
+          },
+          error: (err) => {
+            console.error('Error updating event:', err); // Log full error for debugging
+            const errorMessage = err.error?.message || 'An unknown error occurred.';
+            alert(`An error occurred while updating the event: ${errorMessage}`);
           }
-        },
-        error: (err) => {
-          alert('An error occurred while updating the event.');
-        }
-      })
+        });
+      };
+
+      if(posterFile) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          updatedEventData.poster = reader.result as string;
+          updateEvent(updatedEventData);
+        };
+        reader.readAsDataURL(posterFile);
+      } else {
+        updateEvent(updatedEventData);
+      }
     }
   }
 
@@ -349,10 +401,6 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     if (posterInput) {
       posterInput.value = '';
     }
-  }
-
-  openNotifications() {
-    this.router.navigate(['/notifications']);
   }
 
   generateReport() {

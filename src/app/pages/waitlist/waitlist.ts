@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
@@ -22,7 +22,7 @@ export class WaitlistComponent implements OnInit {
   // TODO: This should be passed dynamically to the component
   private eventId = '663a3b3c4b5b6c7d8e9f0a1b'; 
 
-  constructor(private router: Router, private apiService: ApiService) { }
+  constructor(private router: Router, private apiService: ApiService, @Inject(PLATFORM_ID) private platformId: Object) { }
 
   ngOnInit(): void {
     this.fetchWaitlistStatus();
@@ -41,14 +41,16 @@ export class WaitlistComponent implements OnInit {
       next: (res) => {
         if (res.success) {
           this.currentWaitlistCount = res.count;
-          const userJson = localStorage.getItem('pf-current-user');
-          if(userJson) {
-            const user = JSON.parse(userJson);
-            this.isUserOnWaitlist = res.waitlist.some((entry: any) => entry.user === user._id);
-            if(this.isUserOnWaitlist) {
-              const userEntry = res.waitlist.find((entry: any) => entry.user === user._id);
-              this.email = userEntry.email;
-              this.phoneNumber = userEntry.phoneNumber;
+          if (isPlatformBrowser(this.platformId)) {
+            const userJson = localStorage.getItem('pf-current-user');
+            if(userJson) {
+              const user = JSON.parse(userJson);
+              this.isUserOnWaitlist = res.waitlist.some((entry: any) => entry.user === user._id);
+              if(this.isUserOnWaitlist) {
+                const userEntry = res.waitlist.find((entry: any) => entry.user === user._id);
+                this.email = userEntry.email;
+                this.phoneNumber = userEntry.phoneNumber;
+              }
             }
           }
         }

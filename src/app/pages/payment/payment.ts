@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NotificationService } from '../../services/notification.service';
@@ -21,6 +21,7 @@ export class PaymentComponent implements OnInit {
     private router: Router,
     private notificationService: NotificationService,
     private apiService: ApiService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {
@@ -45,20 +46,28 @@ export class PaymentComponent implements OnInit {
       next: (res) => {
         if (res.success) {
           // --- BUG FIX: Add new ticket to localStorage ---
-          const rawTickets = localStorage.getItem('pf-tickets');
-          let tickets = [];
-          if (rawTickets) {
-            try {
-              tickets = JSON.parse(rawTickets);
-            } catch (e) {
-              console.error('Could not parse existing tickets, starting fresh.');
+          if (isPlatformBrowser(this.platformId)) {
+            const rawTickets = localStorage.getItem('pf-tickets');
+            let tickets = [];
+            if (rawTickets) {
+              try {
+                tickets = JSON.parse(rawTickets);
+              } catch (e) {
+                console.error('Could not parse existing tickets, starting fresh.');
+              }
             }
+            // The response from createTicket should be the new ticket object.
+            // We'll add the flat eventTitle and poster to it for consistency.
+            const newTicketForStorage = {
+              ...res.ticket,
+              eventTitle: this.ticket.eventTitle,
+              poster: this.ticket.poster,
+              eventDate: this.ticket.eventDate,
+              time: this.ticket.time, // Add the event time here
+            };
+            tickets.push(newTicketForStorage);
+            localStorage.setItem('pf-tickets', JSON.stringify(tickets));
           }
-          // The response from createTicket should be the new ticket object.
-          // We'll add the flat eventTitle to it for consistency.
-          const newTicketForStorage = { ...res.ticket, eventTitle: this.ticket.eventTitle };
-          tickets.push(newTicketForStorage);
-          localStorage.setItem('pf-tickets', JSON.stringify(tickets));
           // --- END BUG FIX ---
 
           alert(`Payment successful via ${this.paymentOption}!`);

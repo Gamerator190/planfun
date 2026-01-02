@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
 import { Subscription } from 'rxjs';
@@ -40,55 +40,63 @@ export class HomeComponent implements OnInit, OnDestroy {
     public router: Router,
     private notificationService: NotificationService,
     private apiService: ApiService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   events: Event[] = [];
 
   ngOnInit(): void {
-    const userJson = localStorage.getItem('pf-current-user');
+    if (isPlatformBrowser(this.platformId)) {
+      const userJson = localStorage.getItem('pf-current-user');
 
-    if (!userJson) {
-      this.router.navigate(['/login']);
-      return;
-    }
+      if (!userJson) {
+        this.router.navigate(['/login']);
+        return;
+      }
 
-    try {
-      const user = JSON.parse(userJson);
-      this.userName = user.name || 'Event Lover';
-      this.userRole = user.role || '';
-    } catch {
+      try {
+        const user = JSON.parse(userJson);
+        this.userName = user.name || 'Event Lover';
+        this.userRole = user.role || '';
+      } catch {
+        this.userName = 'Event Lover';
+      }
+
+      this.notificationService.updateUnreadCount();
+
+      this.apiService.getEvents().subscribe({
+        next: (res) => {
+          if (res.success) {
+            // Also save the raw events to localStorage for other components to use
+            if (isPlatformBrowser(this.platformId)) {
+              localStorage.setItem('pf-events', JSON.stringify(res.events));
+            }
+
+            this.events = res.events.map((event: any) => {
+              const totalSeats = event.seatConfiguration ? event.seatConfiguration.length * 30 : 0;
+              const bookedSeatsCount = event.bookedSeats ? event.bookedSeats.length : 0;
+              return {
+                ...event,
+                id: event._id, // map _id to id
+                availableSeats: totalSeats - bookedSeatsCount,
+              };
+            });
+            this.cdr.detectChanges(); // Manually trigger change detection
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching events', err);
+        }
+      });
+    } else {
+      // Handle SSR case if needed
       this.userName = 'Event Lover';
     }
-
-    this.apiService.getEvents().subscribe({
-      next: (res) => {
-        if (res.success) {
-          // Also save the raw events to localStorage for other components to use
-          localStorage.setItem('pf-events', JSON.stringify(res.events));
-
-          this.events = res.events.map((event: any) => {
-            const totalSeats = event.seatConfiguration ? event.seatConfiguration.length * 30 : 0;
-            const bookedSeatsCount = event.bookedSeats ? event.bookedSeats.length : 0;
-            return {
-              ...event,
-              id: event._id, // map _id to id
-              availableSeats: totalSeats - bookedSeatsCount,
-            };
-          });
-          this.cdr.detectChanges(); // Manually trigger change detection
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching events', err);
-      }
-    });
 
     this.notificationSubscription = this.notificationService.unreadCount$.subscribe((count) => {
       this.unreadCount = count;
     });
-
-    this.notificationService.updateUnreadCount();
   }
 
   ngOnDestroy(): void {
@@ -125,7 +133,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.apiService.logout().subscribe({
       next: (res) => {
         if (res.success) {
-          localStorage.removeItem('pf-current-user');
+          if (isPlatformBrowser(this.platformId)) {
+            localStorage.removeItem('pf-current-user');
+          }
           this.router.navigate(['/login']);
         } else {
           alert('Logout failed');
@@ -134,7 +144,9 @@ export class HomeComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.error('Logout error', err);
         // still remove user and navigate
-        localStorage.removeItem('pf-current-user');
+        if (isPlatformBrowser(this.platformId)) {
+          localStorage.removeItem('pf-current-user');
+        }
         this.router.navigate(['/login']);
       }
     });
