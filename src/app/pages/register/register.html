@@ -66,14 +66,14 @@
         />
       </div>
 
-      <div class="form-group">
+      <!-- <div class="form-group">
         <label for="role">Register as</label>
         <select id="role" name="role" [(ngModel)]="role">
           <option value="attendee">Attendee</option>
           <option value="organizer">Event Organizer</option>
           <option value="auditorium_admin">Auditorium Admin</option>
         </select>
-      </div>
+      </div> -->
 
       <button class="primary-btn" type="submit" [disabled]="isLoading">
         <span *ngIf="!isLoading">Create Account</span>
