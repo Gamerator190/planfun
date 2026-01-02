@@ -58,12 +58,23 @@ export class PaymentComponent implements OnInit {
             }
             // The response from createTicket should be the new ticket object.
             // We'll add the flat eventTitle and poster to it for consistency.
+            const currentUserJson = localStorage.getItem('pf-current-user');
+            let userId = null;
+            if (currentUserJson) {
+              try {
+                const user = JSON.parse(currentUserJson);
+                userId = user.id || user._id;
+              } catch (e) {
+                console.error('Error parsing current user');
+              }
+            }
             const newTicketForStorage = {
               ...res.ticket,
               eventTitle: this.ticket.eventTitle,
               poster: this.ticket.poster,
               eventDate: this.ticket.eventDate,
               time: this.ticket.time, // Add the event time here
+              userId: userId,
             };
             tickets.push(newTicketForStorage);
             localStorage.setItem('pf-tickets', JSON.stringify(tickets));

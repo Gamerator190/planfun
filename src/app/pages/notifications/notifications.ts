@@ -18,6 +18,7 @@ interface Ticket {
   appliedPromo?: any;
   discountAmount?: number;
   isRead: boolean;
+  userId?: string;
   _id?: string; // MongoDB ID for the ticket document itself
 }
 

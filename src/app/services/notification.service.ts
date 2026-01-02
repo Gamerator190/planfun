@@ -11,6 +11,7 @@ interface Ticket {
   appliedPromo?: any;
   discountAmount?: number;
   isRead: boolean;
+  userId?: string;
   _id?: string; // MongoDB ID for the ticket document itself
 }
 
@@ -37,11 +38,22 @@ export class NotificationService {
   updateUnreadCount(): void {
     if (isPlatformBrowser(this.platformId)) { 
       const rawTickets = localStorage.getItem('pf-tickets');
+      const currentUserJson = localStorage.getItem('pf-current-user');
+      let currentUserId = null;
+      if (currentUserJson) {
+        try {
+          const user = JSON.parse(currentUserJson);
+          currentUserId = user.id || user._id;
+        } catch (e) {
+          console.error('Error parsing current user');
+        }
+      }
       if (rawTickets) {
         try {
-          const tickets: Ticket[] = JSON.parse(rawTickets);
-          this._tickets.next(tickets); // Update the tickets stream
-          const count = tickets.filter(t => !t.isRead).length;
+          const allTickets: Ticket[] = JSON.parse(rawTickets);
+          const userTickets = currentUserId ? allTickets.filter(t => t.userId === currentUserId) : [];
+          this._tickets.next(userTickets); // Update the tickets stream with filtered tickets
+          const count = userTickets.filter(t => !t.isRead).length;
           this._unreadCount.next(count);
         } catch (e) {
           console.error('Error parsing tickets for notifications:', e); // Updated error message
