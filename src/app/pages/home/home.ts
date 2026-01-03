@@ -129,6 +129,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.router.navigate(['/forgot-password']);
   }
 
+  goToTicketScanner() {
+    this.router.navigate(['/ticket-scanner']);
+  }
+
   logout() {
     this.apiService.logout().subscribe({
       next: (res) => {

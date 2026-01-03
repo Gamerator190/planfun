@@ -1,0 +1,74 @@
+<div class="scanner-page">
+  <div class="header">
+    <button class="back-btn" [routerLink]="['/dashboard']">«</button>
+    <div class="title">Ticket Validator</div>
+  </div>
+
+  <div class="scanner-container">
+    <p>Enter the Ticket ID below or scan a QR code to validate a booking.</p>
+    <div class="input-group">
+      <input 
+        type="text" 
+        [(ngModel)]="ticketId" 
+        (keyup.enter)="validateTicket()"
+        class="ticket-input" 
+        placeholder="Enter Ticket ID..."
+      >
+      <button (click)="validateTicket()" class="validate-btn">Find Ticket</button>
+    </div>
+  </div>
+
+  <!-- Validation Results Section -->
+  <div class="results-section">
+    <div *ngIf="isLoading" class="centered-message">
+      <div class="loading-spinner"></div>
+      <p>Loading ticket details...</p>
+    </div>
+  
+    <div *ngIf="errorMessage && !isLoading" class="centered-message error">
+      <h2>Validation Failed</h2>
+      <p>{{ errorMessage }}</p>
+    </div>
+  
+    <div *ngIf="ticket && !isLoading" class="ticket-details-card">
+      <div class="event-header">
+        <img [src]="ticket.event.poster" [alt]="ticket.event.title" class="event-poster">
+        <div class="event-info">
+          <h2>{{ ticket.event.title }}</h2>
+          <p>{{ ticket.event.date | date: 'fullDate' }} at {{ ticket.event.time }}</p>
+        </div>
+      </div>
+      
+      <div class="attendee-info">
+        <h3>Attendee Information</h3>
+        <p><strong>Name:</strong> {{ ticket.user.name }}</p>
+        <p><strong>Email:</strong> {{ ticket.user.email }}</p>
+      </div>
+  
+      <div class="ticket-info">
+        <h3>Ticket Details</h3>
+        <p><strong>Seats:</strong> {{ ticket.seats.join(', ') }}</p>
+        <p><strong>Purchase Date:</strong> {{ ticket.purchaseDate | date: 'medium' }}</p>
+        <p><strong>Total Paid:</strong> Rp {{ formatRupiah(ticket.total) }}</p>
+      </div>
+  
+      <div class="status-section">
+        <h3>Status</h3>
+        <div class="status-box" [ngClass]="{'status-active': ticket.status === 'active', 'status-used': ticket.status === 'used', 'status-cancelled': ticket.status === 'cancelled'}">
+          {{ ticket.status | uppercase }}
+        </div>
+      </div>
+  
+      <div class="action-section">
+        <button 
+          class="admit-btn" 
+          (click)="admit()" 
+          [disabled]="ticket.status !== 'active'">
+          <span *ngIf="ticket.status === 'active'">Admit Attendee</span>
+          <span *ngIf="ticket.status === 'used'">Already Admitted</span>
+          <span *ngIf="ticket.status === 'cancelled'">Booking Cancelled</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -35,6 +35,9 @@
       <div class="menu-item" *ngIf="userRole === 'organizer'" (click)="goOrganizer()">
         Dashboard
       </div>
+      <div class="menu-item" *ngIf="userRole === 'organizer'" (click)="goToTicketScanner()">
+        Validate Ticket
+      </div>
       <div class="menu-item" (click)="goToForgotPassword()">
         Forgot Password
       </div>

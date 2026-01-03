@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit, Inj
 import { FormsModule } from '@angular/forms';
 import { SeatPickerComponent } from '../seat-picker/seat-picker';
 
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
 import { Subscription } from 'rxjs';
 import { ReportService, ReportData } from '../../services/report.service';
@@ -14,7 +14,7 @@ import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, FormsModule, SeatPickerComponent],
+  imports: [CommonModule, FormsModule, SeatPickerComponent, RouterModule],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
   standalone: true // Should be standalone as per typical Angular setup
@@ -156,6 +156,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       ];
       this.promo = [];
       this.selectedEventId = null;
+      this.bookedSeats = []; // Reset booked seats
     }
   }
 
@@ -187,6 +188,11 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   goToForgotPassword() {
     this.router.navigate(['/forgot-password']);
   }
+
+  goToTicketScanner() {
+    this.router.navigate(['/ticket-scanner']);
+  }
+
 
   addCategory() {
     this.ticketCategories.push({ name: '', shortName: '', price: 0, maxTickets: 0 });
@@ -295,7 +301,23 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         description,
         email: userEmail,
         ticketCategories: [{ name: 'General', shortName: 'GEN', price: 25000, maxTickets: 0 }],
-        seatConfiguration: [],
+        seatConfiguration: [
+          { row: 'A', category: 'GEN' },
+          { row: 'B', category: 'GEN' },
+          { row: 'C', category: 'GEN' },
+          { row: 'D', category: 'GEN' },
+          { row: 'E', category: 'GEN' },
+          { row: 'F', category: 'GEN' },
+          { row: 'G', category: 'GEN' },
+          { row: 'H', category: 'GEN' },
+          { row: 'I', category: 'GEN' },
+          { row: 'J', category: 'GEN' },
+          { row: 'AA', category: 'GEN' },
+          { row: 'BB', category: 'GEN' },
+          { row: 'CC', category: 'GEN' },
+          { row: 'DD', category: 'GEN' },
+          { row: 'EE', category: 'GEN' }
+        ],
         promo: [],
         isNew: true,
       };

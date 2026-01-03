@@ -68,6 +68,18 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/tickets`, this.getHeaders());
   }
 
+  cancelTicket(ticketId: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/tickets/${ticketId}`, this.getHeaders());
+  }
+
+  getTicketForValidation(ticketId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/tickets/validate/${ticketId}`, this.getHeaders());
+  }
+
+  admitTicket(ticketId: string): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/tickets/${ticketId}/admit`, {}, this.getHeaders());
+  }
+
   // Waitlist
   joinWaitlist(waitlistData: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/waitlist`, waitlistData, this.getHeaders());

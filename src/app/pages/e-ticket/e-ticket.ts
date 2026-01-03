@@ -21,7 +21,7 @@ export class ETicketComponent implements OnInit, AfterViewInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    // private apiService: ApiService, // No longer directly calling API for user tickets
+    private apiService: ApiService, 
   ) {}
 
   ngOnInit(): void {
@@ -71,11 +71,7 @@ export class ETicketComponent implements OnInit, AfterViewInit {
   generateQRCode(): void {
     if (this.ticket && this.qrcodeCanvas && this.qrcodeCanvas.nativeElement) {
       this.qrcodeCanvas.nativeElement.innerHTML = ''; // Clear previous QR code
-      const qrData = JSON.stringify({
-        ticketId: this.ticket._id,
-        eventName: this.ticket.eventTitle, // Use eventTitle
-        purchaseDate: this.ticket.purchaseDate,
-      });
+      const qrData = `${window.location.origin}/ticket-scanner/${this.ticket._id}`;
 
       new QRCode(this.qrcodeCanvas.nativeElement, {
         text: qrData,
@@ -105,37 +101,58 @@ export class ETicketComponent implements OnInit, AfterViewInit {
   }
 
   get isCancelDisabled(): boolean {
-    if (!this.ticket || !this.ticket.event) return true;
+    if (!this.ticket) return true;
+    if (this.ticket.status !== 'active') return true; // Can't cancel if not active
+
     const eventDate = new Date(this.ticket.event.date);
     const today = new Date();
+    // Set time to 0 to compare dates only
+    today.setHours(0, 0, 0, 0);
+    eventDate.setHours(0, 0, 0, 0);
+
     const diffTime = eventDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    // Allow cancellation if event is 7 or more days away
     return diffDays < 7;
   }
 
   cancelBooking() {
     if (!this.ticket) return;
 
-    if (this.isCancelDisabled) {
-      alert('Booking can only be cancelled 7 days or more prior to the event.');
+    // The cancel button should be disabled for non-active tickets
+    if (this.ticket.status !== 'active') {
+      alert(`This booking cannot be cancelled as it is already ${this.ticket.status}.`);
       return;
     }
     
     if (confirm('Are you sure you want to cancel this booking?')) {
-      // this.apiService.deleteTicket(this.ticket._id).subscribe({
-      //   next: (res) => {
-      //     if(res.success){
-      //       alert('Booking cancelled successfully!');
-      //       this.router.navigate(['/notifications']);
-      //     } else {
-      //       alert('Failed to cancel booking.');
-      //     }
-      //   },
-      //   error: (err) => {
-      //     alert('An error occurred while cancelling booking.');
-      //   }
-      // });
-      alert('Booking cancellation is not yet implemented in the backend.');
+      this.apiService.cancelTicket(this.ticket._id).subscribe({
+        next: (res) => {
+          if(res.success){
+            // Update status in local storage
+            const rawTickets = localStorage.getItem('pf-tickets');
+            if (rawTickets) {
+              let allTickets = JSON.parse(rawTickets);
+              const ticketIndex = allTickets.findIndex((t: any) => t._id === this.ticket._id);
+              if (ticketIndex > -1) {
+                allTickets[ticketIndex].status = 'cancelled';
+                localStorage.setItem('pf-tickets', JSON.stringify(allTickets));
+              }
+            }
+            // Update status on the current page view
+            this.ticket.status = 'cancelled';
+            alert('Booking cancelled successfully!');
+            this.router.navigate(['/notifications']); // Navigate to notifications page
+          } else {
+            alert(`Failed to cancel booking: ${res.message || 'Unknown error'}`);
+          }
+        },
+        error: (err) => {
+          console.error('Error cancelling booking:', err);
+          alert(`An error occurred: ${err.error?.message || 'Please try again later.'}`);
+        }
+      });
     }
   }
 }

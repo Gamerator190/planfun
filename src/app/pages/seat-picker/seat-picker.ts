@@ -55,8 +55,10 @@ export class SeatPickerComponent implements OnChanges {
         this.categoryTable = { GEN: { name: 'General', price: 25000 } };
       }
       if (Object.keys(categories).length === 0) {
-        this.lowerRows.forEach((row) => (categories[row] = 'GEN'));
-        this.balconyRows.forEach((row) => (categories[row] = 'GEN'));
+        // If no seat configuration, do not generate default seats
+        this.seats = [];
+        this.cdr.detectChanges();
+        return;
       }
 
       this.generateSeats(categories);

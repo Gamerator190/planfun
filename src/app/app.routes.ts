@@ -13,6 +13,9 @@ import { ETicketComponent } from './pages/e-ticket/e-ticket';
 import { AdminDashboard } from './pages/admin-dashboard/admin-dashboard';
 import { Dashboard } from './pages/dashboard/dashboard';
 import { WaitlistComponent } from './pages/waitlist/waitlist';
+import { TicketScannerComponent } from './pages/ticket-scanner/ticket-scanner';
+import { OrganizerGuard } from './guards/organizer.guard';
+import { AdminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -22,8 +25,8 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'home', component: HomeComponent },
 
-  { path: 'admin-dashboard', component: AdminDashboard },
-  { path: 'dashboard', component: Dashboard },
+  { path: 'admin-dashboard', component: AdminDashboard, canActivate: [AdminGuard] },
+  { path: 'dashboard', component: Dashboard, canActivate: [OrganizerGuard] },
 
   { path: 'event/:id', component: EventDetailComponent },
   { path: 'waitlist', component: WaitlistComponent },
@@ -34,4 +37,7 @@ export const routes: Routes = [
 
   { path: 'e-ticket/:id', component: ETicketComponent },
   { path: 'payment', component: PaymentComponent }, 
+
+  { path: 'ticket-scanner', component: TicketScannerComponent, canActivate: [OrganizerGuard] },
+  { path: 'ticket-scanner/:ticketId', component: TicketScannerComponent, canActivate: [OrganizerGuard] },
 ];

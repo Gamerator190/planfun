@@ -45,7 +45,9 @@
           <span class="value">Rp {{ formatRupiah(t.total) }}</span>
         </div>
 
-        <div class="status-pill">Active E-ticket</div>
+        <div class="status-pill" [ngClass]="'status-' + t.status">
+          {{ t.status | titlecase }} E-ticket
+        </div>
       </div>
     </div>
   </div>

@@ -16,6 +16,7 @@ interface Ticket {
   appliedPromo?: any;
   discountAmount?: number;
   isRead: boolean;
+  status?: 'active' | 'used' | 'cancelled'; 
   _id?: string; // MongoDB ID for the ticket document itself
 }
 

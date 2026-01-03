@@ -18,6 +18,7 @@ interface Ticket {
   appliedPromo?: any;
   discountAmount?: number;
   isRead: boolean;
+  status?: 'active' | 'used' | 'cancelled'; // Added status property
   userId?: string;
   _id?: string; // MongoDB ID for the ticket document itself
 }
@@ -43,6 +44,9 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Always refresh from localStorage when component loads
+    this.notificationService.updateUnreadCount();
+
     // Subscribe to the tickets stream from NotificationService
     this.ticketsSubscription = this.notificationService.tickets$.subscribe(
       (ticketsFromService: Ticket[]) => {
@@ -58,9 +62,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       }
     );
-
-    // Initial load/update of tickets and unread count from localStorage
-    this.notificationService.updateUnreadCount(); 
   }
 
   ngOnDestroy(): void {
