@@ -25,6 +25,138 @@
         </div>
       </div>
 
+      <!-- Credit Card Form -->
+      <div class="payment-form" *ngIf="paymentOption === 'creditCard'">
+        <h3>Credit Card Details</h3>
+        <div class="form-group">
+          <label for="cardholderName">Cardholder Name</label>
+          <input 
+            type="text" 
+            id="cardholderName" 
+            [(ngModel)]="creditCard.cardholderName"
+            name="cardholderName"
+            placeholder="John Doe"
+          />
+        </div>
+        <div class="form-group">
+          <label for="cardNumber">Card Number</label>
+          <input 
+            type="text" 
+            id="cardNumber" 
+            [(ngModel)]="creditCard.cardNumber"
+            name="cardNumber"
+            placeholder="1234 5678 9012 3456"
+            maxlength="19"
+          />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="expiryDate">Expiry Date</label>
+            <input 
+              type="text" 
+              id="expiryDate" 
+              [(ngModel)]="creditCard.expiryDate"
+              name="expiryDate"
+              placeholder="MM/YY"
+              maxlength="5"
+            />
+          </div>
+          <div class="form-group">
+            <label for="cvv">CVV</label>
+            <input 
+              type="text" 
+              id="cvv" 
+              [(ngModel)]="creditCard.cvv"
+              name="cvv"
+              placeholder="123"
+              maxlength="4"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- E-Wallet Form -->
+      <div class="payment-form" *ngIf="paymentOption === 'eWallet'">
+        <h3>E-Wallet Details</h3>
+        <div class="form-group">
+          <label for="eWalletProvider">E-Wallet Provider</label>
+          <select 
+            id="eWalletProvider" 
+            [(ngModel)]="eWallet.provider"
+            name="eWalletProvider"
+          >
+            <option value="">Select a provider</option>
+            <option value="gopay">GoPay</option>
+            <option value="ovo">OVO</option>
+            <option value="dana">DANA</option>
+            <option value="linkaja">LinkAja</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="eWalletNumber">Phone Number / Account ID</label>
+          <input 
+            type="text" 
+            id="eWalletNumber" 
+            [(ngModel)]="eWallet.accountNumber"
+            name="eWalletNumber"
+            placeholder="+62812345678"
+          />
+        </div>
+        <div class="form-group">
+          <label for="eWalletPin">E-Wallet PIN</label>
+          <input 
+            type="password" 
+            id="eWalletPin" 
+            [(ngModel)]="eWallet.pin"
+            name="eWalletPin"
+            placeholder="Enter your PIN"
+            maxlength="6"
+          />
+        </div>
+      </div>
+
+      <!-- Bank Transfer Form -->
+      <div class="payment-form" *ngIf="paymentOption === 'bankTransfer'">
+        <h3>Bank Transfer Details</h3>
+        <div class="form-group">
+          <label for="bankName">Bank Name</label>
+          <select 
+            id="bankName" 
+            [(ngModel)]="bankTransfer.bankName"
+            name="bankName"
+          >
+            <option value="">Select a bank</option>
+            <option value="bca">BCA (Bank Central Asia)</option>
+            <option value="mandiri">Mandiri</option>
+            <option value="bni">BNI</option>
+            <option value="bri">BRI</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="accountNumber">Account Number</label>
+          <input 
+            type="text" 
+            id="accountNumber" 
+            [(ngModel)]="bankTransfer.accountNumber"
+            name="accountNumber"
+            placeholder="1234567890"
+          />
+        </div>
+        <div class="form-group">
+          <label for="accountHolder">Account Holder Name</label>
+          <input 
+            type="text" 
+            id="accountHolder" 
+            [(ngModel)]="bankTransfer.accountHolder"
+            name="accountHolder"
+            placeholder="John Doe"
+          />
+        </div>
+        <div class="info-message">
+          <p>Transfer amount: <strong>Rp {{ formatRupiah(ticket.total) }}</strong></p>
+        </div>
+      </div>
+
       <button class="pay-btn" (click)="processPayment()">Pay Now</button>
     </div>
   </div>

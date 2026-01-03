@@ -16,6 +16,25 @@ export class PaymentComponent implements OnInit {
   ticket: any | null = null;
   paymentOption: 'creditCard' | 'eWallet' | 'bankTransfer' = 'creditCard';
 
+  creditCard = {
+    cardholderName: '',
+    cardNumber: '',
+    expiryDate: '',
+    cvv: ''
+  };
+
+  eWallet = {
+    provider: '',
+    accountNumber: '',
+    pin: ''
+  };
+
+  bankTransfer = {
+    bankName: '',
+    accountNumber: '',
+    accountHolder: ''
+  };
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -38,8 +57,52 @@ export class PaymentComponent implements OnInit {
     }
   }
 
+  validatePaymentDetails(): boolean {
+    if (this.paymentOption === 'creditCard') {
+      if (!this.creditCard.cardholderName || !this.creditCard.cardNumber || !this.creditCard.expiryDate || !this.creditCard.cvv) {
+        alert('Please fill in all credit card details.');
+        return false;
+      }
+      // Basic validation: card number should be 16-19 digits
+      const cardNumberDigits = this.creditCard.cardNumber.replace(/\s/g, '');
+      if (!/^\d{16,19}$/.test(cardNumberDigits)) {
+        alert('Please enter a valid card number.');
+        return false;
+      }
+      // CVV should be 3-4 digits
+      if (!/^\d{3,4}$/.test(this.creditCard.cvv)) {
+        alert('Please enter a valid CVV.');
+        return false;
+      }
+    } else if (this.paymentOption === 'eWallet') {
+      if (!this.eWallet.provider || !this.eWallet.accountNumber || !this.eWallet.pin) {
+        alert('Please fill in all e-wallet details.');
+        return false;
+      }
+      if (!/^\d{6}$/.test(this.eWallet.pin)) {
+        alert('E-Wallet PIN must be 6 digits.');
+        return false;
+      }
+    } else if (this.paymentOption === 'bankTransfer') {
+      if (!this.bankTransfer.bankName || !this.bankTransfer.accountNumber || !this.bankTransfer.accountHolder) {
+        alert('Please fill in all bank transfer details.');
+        return false;
+      }
+      if (!/^\d+$/.test(this.bankTransfer.accountNumber)) {
+        alert('Account number must contain only digits.');
+        return false;
+      }
+    }
+    return true;
+  }
+
   processPayment() {
     if (!this.ticket) return;
+
+    // Validate payment details
+    if (!this.validatePaymentDetails()) {
+      return;
+    }
 
     // The ticket object already contains eventId, so we can pass it directly.
     this.apiService.createTicket(this.ticket).subscribe({
@@ -81,7 +144,7 @@ export class PaymentComponent implements OnInit {
           }
           // --- END BUG FIX ---
 
-          alert(`Payment successful via ${this.paymentOption}!`);
+          alert(`Payment successful via ${this.getPaymentMethodLabel()}!`);
           this.notificationService.updateUnreadCount();
           this.router.navigate(['/home']);
         } else {
@@ -92,6 +155,19 @@ export class PaymentComponent implements OnInit {
         alert(`An error occurred during payment: ${err.error?.message || err.message}`);
       }
     });
+  }
+
+  getPaymentMethodLabel(): string {
+    switch (this.paymentOption) {
+      case 'creditCard':
+        return 'Credit Card';
+      case 'eWallet':
+        return `${this.eWallet.provider.toUpperCase()}`;
+      case 'bankTransfer':
+        return this.bankTransfer.bankName;
+      default:
+        return 'Unknown';
+    }
   }
 
   formatRupiah(value: number): string {
