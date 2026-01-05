@@ -29,7 +29,7 @@ export class ForgotPasswordComponent {
     this.errorMessage = '';
     this.successMessage = '';
 
-    // I will add 'forgotPassword' to the apiService later
+    
     this.apiService.forgotPassword(this.email)
     .pipe(
       finalize(() => this.isLoading = false)
@@ -37,7 +37,7 @@ export class ForgotPasswordComponent {
     .subscribe({
       next: (res) => {
         this.successMessage = res.message || 'If an account with that email exists, a password reset link has been sent.';
-        this.email = ''; // Clear the input
+        this.email = ''; 
         this.cdr.detectChanges();
       },
       error: (err) => {

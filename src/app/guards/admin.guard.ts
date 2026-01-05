@@ -19,7 +19,6 @@ export class AdminGuard implements CanActivate {
     if (user && user.role === 'auditorium_admin') {
       return true;
     } else {
-      // Redirect to home or an unauthorized page if not an admin
       this.router.navigate(['/home']);
       return false;
     }

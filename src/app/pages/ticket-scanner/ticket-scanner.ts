@@ -77,7 +77,7 @@ export class TicketScannerComponent implements OnInit {
           if (res.success) {
             this.ticket.status = 'used';
             
-            // Update localStorage with the new status
+            
             const rawTickets = localStorage.getItem('pf-tickets');
             if (rawTickets) {
               try {
@@ -94,7 +94,7 @@ export class TicketScannerComponent implements OnInit {
             
             alert('Ticket has been admitted successfully!');
             
-            // Clear the ticket display and reset for next scan
+            
             this.ticket = null;
             this.ticketId = '';
             this.errorMessage = null;

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router, CanActivate } from '@angular/router';
-import { AuthService } from '../services/auth.service'; // Assuming you have an auth service
+import { AuthService } from '../services/auth.service'; 
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +19,7 @@ export class OrganizerGuard implements CanActivate {
     if (user && user.role === 'organizer') {
       return true;
     } else {
-      this.router.navigate(['/home']); // Or an unauthorized page
+      this.router.navigate(['/home']);
       return false;
     }
   }

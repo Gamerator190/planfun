@@ -5,7 +5,7 @@ import { ChartType } from 'chart.js';
 interface Ticket {
   eventId: string;
   eventTitle: string;
-  eventDate: string; // Add eventDate here
+  eventDate: string; 
   poster: string;
   time: string;
   seats: string[];
@@ -17,7 +17,7 @@ interface Ticket {
   discountAmount?: number;
   isRead: boolean;
   status?: 'active' | 'used' | 'cancelled'; 
-  _id?: string; // MongoDB ID for the ticket document itself
+  _id?: string; 
 }
 
 interface Event {
@@ -27,7 +27,7 @@ interface Event {
   time: string;
   description: string;
   location: string;
-  email?: string; // Ensure email is part of Event for filtering
+  email?: string; 
   poster?: string;
   isNew?: boolean;
   isSpecial?: boolean;
@@ -36,7 +36,7 @@ interface Event {
   seatConfiguration?: { row: string; category: string }[];
   bookedSeats?: string[];
   availableSeats: number;
-  createdAt?: string; // Add createdAt
+  createdAt?: string; 
 }
 
 export interface ReportData {
@@ -104,8 +104,8 @@ export class ReportService {
         const organizerEventIds = new Set(organizerEvents.map(event => event.id));
         return allTickets.filter(ticket => organizerEventIds.has(ticket.eventId));
       }
-      // For attendees or unauthenticated, no tickets specific to them from this service.
-      // Or if somehow current user is not admin or organizer, return empty.
+      
+      
       return []; 
     } catch (e) {
       console.error('Error parsing tickets from localStorage:', e);
@@ -480,7 +480,7 @@ export class ReportService {
 
   private filterEventsByPeriod(events: Event[], period: string): Event[] {
     const now = new Date();
-    // To compare dates without time, set 'now' to 00:00:00
+    
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     return events.filter(event => {
@@ -489,7 +489,7 @@ export class ReportService {
         return false;
       }
       const year = parseInt(dateParts[0], 10);
-      const month = parseInt(dateParts[1], 10) - 1; // Month is 0-indexed
+      const month = parseInt(dateParts[1], 10) - 1; 
       const day = parseInt(dateParts[2], 10);
 
       const eventDate = new Date(year, month, day);
@@ -503,20 +503,20 @@ export class ReportService {
 
       let includeEvent = false;
       switch (period) {
-        case 'daily': // Events happening today (or occurred today)
+        case 'daily': 
           includeEvent = eventTime === todayTime;
           break;
-        case 'weekly': // Events happening within the last 7 days (including today)
+        case 'weekly': 
           const sevenDaysAgo = new Date(today);
           sevenDaysAgo.setDate(today.getDate() - 7);
           includeEvent = eventTime >= sevenDaysAgo.getTime() && eventTime <= todayTime;
           break;
-        case 'monthly': // Events happening within the last 30 days (including today)
+        case 'monthly': 
           const thirtyDaysAgo = new Date(today);
           thirtyDaysAgo.setDate(today.getDate() - 30);
           includeEvent = eventTime >= thirtyDaysAgo.getTime() && eventTime <= todayTime;
           break;
-        case 'custom': // If custom range is active, assume all events are considered here, and filter will happen elsewhere (or by UI)
+        case 'custom': 
           includeEvent = true;
           break;
         default:

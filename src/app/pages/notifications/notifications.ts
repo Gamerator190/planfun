@@ -2,9 +2,9 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
-import { Subscription } from 'rxjs'; // For managing subscriptions
+import { Subscription } from 'rxjs'; 
 
-// Re-defining Ticket interface here to match what NotificationService provides
+
 interface Ticket {
   eventId: string;
   eventTitle: string;
@@ -18,9 +18,9 @@ interface Ticket {
   appliedPromo?: any;
   discountAmount?: number;
   isRead: boolean;
-  status?: 'active' | 'used' | 'cancelled'; // Added status property
+  status?: 'active' | 'used' | 'cancelled'; 
   userId?: string;
-  _id?: string; // MongoDB ID for the ticket document itself
+  _id?: string; 
 }
 
 @Component({
@@ -28,34 +28,34 @@ interface Ticket {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './notifications.html',
-  styleUrls: ['./notifications.css'] // Corrected from styleUrl
+  styleUrls: ['./notifications.css'] 
 })
 export class NotificationsComponent implements OnInit, OnDestroy {
-  tickets: Ticket[] = []; // Populate from NotificationService
+  tickets: Ticket[] = []; 
   private ticketsSubscription: Subscription | undefined;
-  unreadCount: number = 0; // For displaying unread count if needed in template
+  unreadCount: number = 0; 
   private unreadCountSubscription: Subscription | undefined;
 
   constructor(
     private router: Router,
     private notificationService: NotificationService,
-    // Removed ApiService as it's not directly used here for getUserTickets anymore
-    private cdr: ChangeDetectorRef // Injected ChangeDetectorRef
+    
+    private cdr: ChangeDetectorRef 
   ) {}
 
   ngOnInit(): void {
-    // Always refresh from localStorage when component loads
+    
     this.notificationService.updateUnreadCount();
 
-    // Subscribe to the tickets stream from NotificationService
+    
     this.ticketsSubscription = this.notificationService.tickets$.subscribe(
       (ticketsFromService: Ticket[]) => {
         this.tickets = ticketsFromService;
-        this.cdr.detectChanges(); // Trigger change detection when tickets update
+        this.cdr.detectChanges(); 
       }
     );
 
-    // Subscribe to unread count for display if needed
+    
     this.unreadCountSubscription = this.notificationService.unreadCount$.subscribe(
       (count: number) => {
         this.unreadCount = count;
@@ -87,7 +87,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     const counter: Record<string, number> = {};
 
     for (const s of ticket.seatDetails) {
-      // Ensure typeCode exists and is valid key
+      
       if (s.typeCode && typeof s.typeCode === 'string') {
         counter[s.typeCode] = (counter[s.typeCode] || 0) + 1;
       }
@@ -99,19 +99,19 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 
   markAsRead(ticket: Ticket) {
-    // Logic to update `isRead` in localStorage
+    
     const rawTickets = localStorage.getItem('pf-tickets');
     if (rawTickets) {
       let allTickets: Ticket[] = JSON.parse(rawTickets);
-      allTickets = allTickets.map(t => t._id === ticket._id ? { ...t, isRead: true } : t); // Compare by _id
+      allTickets = allTickets.map(t => t._id === ticket._id ? { ...t, isRead: true } : t); 
       localStorage.setItem('pf-tickets', JSON.stringify(allTickets));
-      this.notificationService.updateUnreadCount(); // Trigger service to refresh
+      this.notificationService.updateUnreadCount(); 
     }
   }
 
-  openTicket(ticket: Ticket) { // Pass the full ticket object
+  openTicket(ticket: Ticket) { 
     if (ticket._id) {
-      this.markAsRead(ticket); // Mark as read before navigating
+      this.markAsRead(ticket); 
       this.router.navigate(['/e-ticket', ticket._id]);
     } else {
       console.error('Ticket ID is missing, cannot navigate to e-ticket.');

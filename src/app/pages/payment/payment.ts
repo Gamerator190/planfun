@@ -63,13 +63,13 @@ export class PaymentComponent implements OnInit {
         alert('Please fill in all credit card details.');
         return false;
       }
-      // Basic validation: card number should be 16-19 digits
+      
       const cardNumberDigits = this.creditCard.cardNumber.replace(/\s/g, '');
       if (!/^\d{16,19}$/.test(cardNumberDigits)) {
         alert('Please enter a valid card number.');
         return false;
       }
-      // CVV should be 3-4 digits
+      
       if (!/^\d{3,4}$/.test(this.creditCard.cvv)) {
         alert('Please enter a valid CVV.');
         return false;
@@ -99,16 +99,16 @@ export class PaymentComponent implements OnInit {
   processPayment() {
     if (!this.ticket) return;
 
-    // Validate payment details
+    
     if (!this.validatePaymentDetails()) {
       return;
     }
 
-    // The ticket object already contains eventId, so we can pass it directly.
+    
     this.apiService.createTicket(this.ticket).subscribe({
       next: (res) => {
         if (res.success) {
-          // --- BUG FIX: Add new ticket to localStorage ---
+          
           if (isPlatformBrowser(this.platformId)) {
             const rawTickets = localStorage.getItem('pf-tickets');
             let tickets = [];
@@ -119,8 +119,8 @@ export class PaymentComponent implements OnInit {
                 console.error('Could not parse existing tickets, starting fresh.');
               }
             }
-            // The response from createTicket should be the new ticket object.
-            // We'll add the flat eventTitle and poster to it for consistency.
+            
+            
             const currentUserJson = localStorage.getItem('pf-current-user');
             let userId = null;
             if (currentUserJson) {
@@ -136,13 +136,13 @@ export class PaymentComponent implements OnInit {
               eventTitle: this.ticket.eventTitle,
               poster: this.ticket.poster,
               eventDate: this.ticket.eventDate,
-              time: this.ticket.time, // Add the event time here
+              time: this.ticket.time, 
               userId: userId,
             };
             tickets.push(newTicketForStorage);
             localStorage.setItem('pf-tickets', JSON.stringify(tickets));
           }
-          // --- END BUG FIX ---
+          
 
           alert(`Payment successful via ${this.getPaymentMethodLabel()}!`);
           this.notificationService.updateUnreadCount();
@@ -184,7 +184,7 @@ export class PaymentComponent implements OnInit {
           this.ticket.seats.join(','),
         ],
         {
-          state: { categoryTable: this.ticket.categoryTable } // Correctly pass state back
+          state: { categoryTable: this.ticket.categoryTable } 
         }
       );
     } else {

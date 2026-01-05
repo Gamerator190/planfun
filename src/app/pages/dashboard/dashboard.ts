@@ -17,7 +17,7 @@ import { ApiService } from '../../services/api.service';
   imports: [CommonModule, FormsModule, SeatPickerComponent, RouterModule],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
-  standalone: true // Should be standalone as per typical Angular setup
+  standalone: true 
 })
 export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('reportChart') reportChart: ElementRef<HTMLCanvasElement> | undefined;
@@ -45,7 +45,6 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   bookedSeats: string[] = [];
 
-  // Edit event properties
   editTitle = '';
   editLocation = '';
   editDate = '';
@@ -72,11 +71,11 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     private reportService: ReportService,
     private apiService: ApiService,
     private cdr: ChangeDetectorRef,
-    @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID
+    @Inject(PLATFORM_ID) private platformId: Object 
   ) {}
 
   ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) { // Conditionally access localStorage
+    if (isPlatformBrowser(this.platformId)) { 
       const userJson = localStorage.getItem('pf-current-user');
 
       if (!userJson) {
@@ -102,9 +101,8 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         this.userName = 'Organizer';
       }
 
-      this.notificationService.updateUnreadCount(); // This also needs browser check inside service
+      this.notificationService.updateUnreadCount(); 
     } else {
-      // Handle SSR case if needed, e.g., default values
       this.userName = 'Organizer (SSR)';
     }
 
@@ -135,7 +133,6 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     this.activeChoice = choice;
     
     if (choice === 'create-event') {
-      // Reset form data for creating a new event
       this.ticketCategories = [{ name: '', shortName: '', price: 0, maxTickets: 0 }];
       this.seatConfiguration = [
         { row: 'A', category: '' },
@@ -156,7 +153,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       ];
       this.promo = [];
       this.selectedEventId = null;
-      this.bookedSeats = []; // Reset booked seats
+      this.bookedSeats = []; 
     }
   }
 
@@ -236,7 +233,6 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     if (selectedId) {
       const selectedEvent = this.userEvents.find(e => e._id === selectedId);
       if (selectedEvent) {
-        // Populate form fields with selected event data
         this.editTitle = selectedEvent.title || '';
         this.editLocation = selectedEvent.location || '';
         this.editDate = selectedEvent.date || '';
@@ -249,7 +245,6 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         this.cdr.detectChanges();
       }
     } else {
-      // Clear form if no event selected
       this.editTitle = '';
       this.editLocation = '';
       this.editDate = '';
@@ -290,13 +285,12 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         return;
       }
       
-      // Convert date to a consistent format (ISO string)
       const formattedDate = new Date(date).toISOString().split('T')[0]; // YYYY-MM-DD
       
       const eventData = {
         title,
         location,
-        date: formattedDate, // Use the formatted date
+        date: formattedDate, 
         time,
         description,
         email: userEmail,
@@ -344,9 +338,8 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         return;
       }
 
-      // Create a full event object to send, preserving existing fields
       const updatedEventData = {
-        ...selectedEvent, // Start with existing event data
+        ...selectedEvent, 
         title: this.editTitle,
         location: this.editLocation,
         date: this.editDate,
@@ -365,13 +358,13 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
             if (res.success) {
               alert('Event updated successfully!');
               this.showChoice('');
-              this.ngOnInit(); // refresh data
+              this.ngOnInit(); 
             } else {
               alert('Failed to update event');
             }
           },
           error: (err) => {
-            console.error('Error updating event:', err); // Log full error for debugging
+            console.error('Error updating event:', err); 
             const errorMessage = err.error?.message || 'An unknown error occurred.';
             alert(`An error occurred while updating the event: ${errorMessage}`);
           }
@@ -398,7 +391,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
           alert('Event created successfully!');
           this.clearCreateEventForm();
           this.showChoice('');
-          this.ngOnInit(); // refresh data
+          this.ngOnInit(); 
         } else {
           alert('Failed to create event');
         }

@@ -17,7 +17,7 @@ export class ApiService {
     return { headers, withCredentials: true };
   }
 
-  // Auth
+  
   login(credentials: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/auth/login`, credentials, this.getHeaders());
   }
@@ -42,7 +42,7 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/auth/check-auth`, this.getHeaders());
   }
 
-  // Events
+  
   createEvent(eventData: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/events`, eventData, this.getHeaders());
   }
@@ -59,7 +59,7 @@ export class ApiService {
     return this.http.put(`${this.baseUrl}/events/${id}`, eventData, this.getHeaders());
   }
 
-  // Tickets
+  
   createTicket(ticketData: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/tickets`, ticketData, this.getHeaders());
   }
@@ -80,7 +80,7 @@ export class ApiService {
     return this.http.patch(`${this.baseUrl}/tickets/${ticketId}/admit`, {}, this.getHeaders());
   }
 
-  // Waitlist
+  
   joinWaitlist(waitlistData: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/waitlist`, waitlistData, this.getHeaders());
   }

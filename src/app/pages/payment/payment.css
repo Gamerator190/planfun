@@ -12,7 +12,7 @@
   align-items: center;
   margin-bottom: 18px;
   position: relative;
-  justify-content: center; /* Center the title */
+  justify-content: center;
 }
 
 .back-btn {

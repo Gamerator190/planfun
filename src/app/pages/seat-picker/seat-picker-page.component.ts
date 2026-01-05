@@ -45,7 +45,7 @@ export class SeatPickerPageComponent implements OnInit, OnDestroy {
           this.seatConfiguration = currentEvent.seatConfiguration || [];
           this.bookedSeats = currentEvent.bookedSeats || [];
           this.cdr.detectChanges();
-          // Update booked seats when window gains focus
+          
           if (isPlatformBrowser(this.platformId)) {
             window.addEventListener('focus', this.updateHandler);
           }

@@ -55,7 +55,7 @@ export class SeatPickerComponent implements OnChanges {
         this.categoryTable = { GEN: { name: 'General', price: 25000 } };
       }
       if (Object.keys(categories).length === 0) {
-        // If no seat configuration, do not generate default seats
+        
         this.seats = [];
         this.cdr.detectChanges();
         return;
@@ -97,7 +97,7 @@ export class SeatPickerComponent implements OnChanges {
     }
   }
 
-  // getter buat template
+  
   get lowerFoyerSeats(): Seat[][] {
     return this.seats.slice(0, this.lowerRows.length);
   }
@@ -113,11 +113,11 @@ export class SeatPickerComponent implements OnChanges {
     if (idx >= 0) {
       this.selectedSeats.splice(idx, 1);
     } else {
-      // Check max tickets for the category (per session)
+      
       const category = seat.type;
       const cat = this.ticketCategories.find(c => c.shortName === category);
       if (cat && cat.maxTickets > 0) {
-        // Count currently selected seats for this category
+        
         const selectedCount = this.selectedSeats.filter(seatId => {
           const s = this.seats.flat().find(s => s.id === seatId);
           return s && s.type === category;
@@ -165,7 +165,7 @@ export class SeatPickerComponent implements OnChanges {
       }
     }
     this.selectedSeats = [...availableSeats];
-    // Bypass max tickets check for dev and go to checkout
+    
     this.continue();
   }
 

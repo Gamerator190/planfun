@@ -209,7 +209,6 @@ export class AdminDashboard implements OnInit, OnDestroy, AfterViewInit {
       },
       error: (err) => {
         this.isLoading = false;
-        // Check for the specific 'error' property from the backend response
         const errorMessage = err.error?.error || err.error?.message || 'An unknown error occurred.';
         alert(`An error occurred: ${errorMessage}`);
       }

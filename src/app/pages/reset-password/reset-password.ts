@@ -49,7 +49,7 @@ export class ResetPasswordComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    // I will add 'resetPassword' to the apiService later
+    
     this.apiService.resetPassword(this.token, this.password)
     .pipe(
       finalize(() => this.isLoading = false)

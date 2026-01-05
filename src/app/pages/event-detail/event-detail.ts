@@ -39,7 +39,7 @@ export class EventDetailComponent implements OnInit {
             id: foundEvent._id,
             availableSeats: totalSeats - bookedSeatsCount,
           };
-          this.cdr.detectChanges(); // Manually trigger change detection
+          this.cdr.detectChanges(); 
         } else {
           alert('Event not found');
           this.router.navigate(['/home']);

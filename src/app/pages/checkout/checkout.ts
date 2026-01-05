@@ -38,11 +38,9 @@ export class CheckoutComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Check for state first
     if (isPlatformBrowser(this.platformId) && history.state && history.state.categoryTable) {
       this.categoryTable = history.state.categoryTable;
     } else {
-        // Fallback or error for direct navigation
         if (isPlatformBrowser(this.platformId)) {
           alert('Error: Category data not found. Please select seats again.');
         }
@@ -175,9 +173,9 @@ export class CheckoutComponent implements OnInit {
     }
 
     const ticket = {
-      eventId: this.event._id, // Pass ID instead of whole object
-      eventTitle: this.event.title, // Pass title for display
-      eventDate: this.event.date, // Add event date here
+      eventId: this.event._id, 
+      eventTitle: this.event.title, 
+      eventDate: this.event.date, 
       poster: this.event.poster,
       time: this.time,
       seats: this.seatSelections.map((s) => s.seat),

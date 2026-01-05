@@ -13,7 +13,7 @@ interface Ticket {
   isRead: boolean;
   status?: 'active' | 'used' | 'cancelled'; 
   userId?: string;
-  _id?: string; // MongoDB ID for the ticket document itself
+  _id?: string; 
 }
 
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core'; 
@@ -27,8 +27,8 @@ export class NotificationService {
   private _unreadCount = new BehaviorSubject<number>(0);
   public readonly unreadCount$: Observable<number> = this._unreadCount.asObservable();
 
-  private _tickets = new BehaviorSubject<Ticket[]>([]); // New BehaviorSubject for tickets
-  public readonly tickets$: Observable<Ticket[]> = this._tickets.asObservable(); // New observable for tickets
+  private _tickets = new BehaviorSubject<Ticket[]>([]); 
+  public readonly tickets$: Observable<Ticket[]> = this._tickets.asObservable(); 
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) { 
     if (isPlatformBrowser(this.platformId)) { 
@@ -53,11 +53,11 @@ export class NotificationService {
         try {
           const allTickets: Ticket[] = JSON.parse(rawTickets);
           const userTickets = currentUserId ? allTickets.filter(t => t.userId === currentUserId) : [];
-          this._tickets.next(userTickets); // Update the tickets stream with filtered tickets
+          this._tickets.next(userTickets); 
           const count = userTickets.filter(t => !t.isRead).length;
           this._unreadCount.next(count);
         } catch (e) {
-          console.error('Error parsing tickets for notifications:', e); // Updated error message
+          console.error('Error parsing tickets for notifications:', e); 
           this._tickets.next([]);
           this._unreadCount.next(0);
         }

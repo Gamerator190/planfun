@@ -68,7 +68,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.apiService.getEvents().subscribe({
         next: (res) => {
           if (res.success) {
-            // Also save the raw events to localStorage for other components to use
+            
             if (isPlatformBrowser(this.platformId)) {
               localStorage.setItem('pf-events', JSON.stringify(res.events));
             }
@@ -78,11 +78,11 @@ export class HomeComponent implements OnInit, OnDestroy {
               const bookedSeatsCount = event.bookedSeats ? event.bookedSeats.length : 0;
               return {
                 ...event,
-                id: event._id, // map _id to id
+                id: event._id, 
                 availableSeats: totalSeats - bookedSeatsCount,
               };
             });
-            this.cdr.detectChanges(); // Manually trigger change detection
+            this.cdr.detectChanges(); 
           }
         },
         error: (err) => {
@@ -90,7 +90,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
       });
     } else {
-      // Handle SSR case if needed
+      
       this.userName = 'Event Lover';
     }
 
@@ -147,7 +147,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Logout error', err);
-        // still remove user and navigate
+        
         if (isPlatformBrowser(this.platformId)) {
           localStorage.removeItem('pf-current-user');
         }

@@ -15,7 +15,7 @@ export class WaitlistComponent implements OnInit {
   email: string = '';
   phoneNumber: string = '';
   
-  waitlistCapacity: number = 50;  // Default capacity
+  waitlistCapacity: number = 50;  
   currentWaitlistCount: number = 0;
   isUserOnWaitlist: boolean = false;
   eventId: string = '';
@@ -30,7 +30,7 @@ export class WaitlistComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Get eventId from route parameter
+    
     this.eventId = this.route.snapshot.paramMap.get('id') || '';
     
     if (!this.eventId) {
@@ -39,12 +39,12 @@ export class WaitlistComponent implements OnInit {
       return;
     }
 
-    // Fetch event details to get the event title
+    
     this.apiService.getEventById(this.eventId).subscribe({
       next: (res) => {
         if (res.success) {
           this.eventTitle = res.event.title;
-          // Set a reasonable default capacity based on event size
+          
           this.waitlistCapacity = 50;
         }
       },
